@@ -26,8 +26,13 @@ export type PromptMessage = {
 
 export type PromptInput = string | PromptMessage[];
 
-export type PromptMonitorEvent = Event & { loaded: number };
+export type PromptMonitorEvent = Event & { loaded: number; total?: number };
 export type PromptMonitor = EventTarget;
+export type PromptDownloadProgress = {
+  loaded: number;
+  total?: number;
+  fraction: number | null;
+};
 
 export interface PromptLanguageModel {
   prompt(
@@ -102,7 +107,7 @@ export type BrowserPromptOptions = {
   initialPrompts?: PromptMessage[];
   tools?: PromptTool[];
   signal?: AbortSignal;
-  onDownloadProgress?: (fraction: number) => void;
+  onDownloadProgress?: (progress: PromptDownloadProgress) => void;
 };
 
 export function getPromptContextUsage(session: PromptSession): number | null {
@@ -252,7 +257,19 @@ export async function createPromptSession(
       }
 
       monitor.addEventListener("downloadprogress", (event: Event) => {
-        options.onDownloadProgress?.((event as PromptMonitorEvent).loaded);
+        const progressEvent = event as PromptMonitorEvent;
+        const fraction =
+          typeof progressEvent.total === "number" && progressEvent.total > 0
+            ? progressEvent.loaded / progressEvent.total
+            : progressEvent.loaded >= 0 && progressEvent.loaded <= 1
+              ? progressEvent.loaded
+              : null;
+
+        options.onDownloadProgress?.({
+          loaded: progressEvent.loaded,
+          total: progressEvent.total,
+          fraction,
+        });
       });
     },
   });

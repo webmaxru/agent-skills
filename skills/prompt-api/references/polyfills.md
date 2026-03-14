@@ -6,6 +6,7 @@ Use this reference when the feature needs concrete package installation or backe
 
 1. Prompt API polyfill: `prompt-api-polyfill`
 2. Built-in AI Task API polyfills: `built-in-ai-task-apis-polyfills`
+3. User-supplied update for this skill: both packages are now fully released on npm and can be used as the maintained progressive-enhancement path when native support is absent.
 
 ## Installation
 
@@ -64,6 +65,12 @@ if (!("Classifier" in globalThis)) {
 await Promise.all(polyfills);
 ```
 
+## Behavioral Notes
+
+1. User-supplied update for this skill: the Task API polyfills are implemented on top of the Prompt API with the same system prompts used to back the native Task APIs, so prefer them over ad hoc custom shims when native support is missing.
+2. User-supplied update for this skill: the polyfills are described as being tested against web-platform tests, which makes them the maintained compatibility path rather than a custom wrapper.
+3. Keep Task API polyfill imports granular so the app only loads the capabilities it actually needs.
+
 ## Prompt API Backend Configuration
 
 ### Firebase AI Logic
@@ -85,8 +92,9 @@ if (!("LanguageModel" in globalThis)) {
 ```
 
 Use this backend when the project needs the strongest documented production posture among the shipped browser polyfill backends.
+User-supplied update for this skill: Firebase AI Logic is the safest production backend among the shipped Prompt API polyfill backends because it can pair with App Check instead of exposing a raw provider key pattern.
 
-### Gemini API
+### Gemini Developer API
 
 ```ts
 window.GEMINI_CONFIG = {
@@ -134,6 +142,17 @@ if (!("LanguageModel" in globalThis)) {
 ```
 
 Use this backend when the app prefers a local model after the initial download.
+
+## Browser-Extension Notes
+
+1. User-supplied update for this skill: a browser extension can inject Task API polyfills into the page while hosting the Prompt API polyfill in an offscreen page.
+2. This pattern can reduce repeated model downloads for the transformers backend because the offscreen page can keep the model warm for the extension lifecycle.
+3. Treat this as browser-specific implementation guidance; do not make extension infrastructure the default path for normal web-page integrations.
+
+## Native-First Rule
+
+1. In extension pages or offscreen pages where the browser already exposes the native Prompt API, keep using the native implementation and only polyfill the missing built-in AI APIs.
+2. Use progressive enhancement so unavailable globals are polyfilled individually instead of forcing the Prompt API polyfill on top of an existing native implementation.
 
 ## Production Notes
 

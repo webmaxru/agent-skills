@@ -16,11 +16,18 @@ const IGNORED_DIRS = new Set([
   "__pycache__",
 ]);
 
-const PROMPT_API_MARKERS = [
-  "LanguageModel",
-  "promptStreaming",
-  "responseConstraint",
-  'allow="language-model"',
+const WEBMCP_MARKERS = [
+  "navigator.modelContext",
+  "registerTool(",
+  "unregisterTool(",
+  "toolname=",
+  "tooldescription=",
+  "toolautosubmit",
+  "toolparamdescription",
+  "agentInvoked",
+  "respondWith(",
+  "toolactivated",
+  "toolcancel",
 ];
 
 const PRIORITY_FILES = new Map([
@@ -92,7 +99,7 @@ function scoreFile(root, filePath) {
   return 0;
 }
 
-function findPromptMarkers(filePath) {
+function findWebMcpMarkers(filePath) {
   let content;
   try {
     content = fs.readFileSync(filePath, "utf8");
@@ -100,7 +107,7 @@ function findPromptMarkers(filePath) {
     return [];
   }
 
-  return PROMPT_API_MARKERS.filter((marker) => content.includes(marker));
+  return WEBMCP_MARKERS.filter((marker) => content.includes(marker));
 }
 
 function main() {
@@ -113,7 +120,7 @@ function main() {
   }
 
   const scoredFiles = [];
-  const promptHits = [];
+  const webMcpHits = [];
 
   for (const filePath of walkFiles(root)) {
     const score = scoreFile(root, filePath);
@@ -122,15 +129,15 @@ function main() {
     }
 
     if (SCAN_EXTENSIONS.has(path.extname(filePath))) {
-      const markers = findPromptMarkers(filePath);
+      const markers = findWebMcpMarkers(filePath);
       if (markers.length > 0) {
-        promptHits.push([toPosixRelative(root, filePath), markers]);
+        webMcpHits.push([toPosixRelative(root, filePath), markers]);
       }
     }
   }
 
   scoredFiles.sort((left, right) => right[0] - left[0] || left[1].localeCompare(right[1]));
-  promptHits.sort((left, right) => left[0].localeCompare(right[0]));
+  webMcpHits.sort((left, right) => left[0].localeCompare(right[0]));
 
   console.log("Frontend targets:");
   if (scoredFiles.length > 0) {
@@ -141,13 +148,13 @@ function main() {
     console.log("- No likely frontend files found");
   }
 
-  console.log("\nPrompt API indicators:");
-  if (promptHits.length > 0) {
-    for (const [relative, markers] of promptHits) {
+  console.log("\nWebMCP indicators:");
+  if (webMcpHits.length > 0) {
+    for (const [relative, markers] of webMcpHits) {
       console.log(`- ${relative}: ${markers.join(", ")}`);
     }
   } else {
-    console.log("- No Prompt API markers found");
+    console.log("- No WebMCP markers found");
   }
 }
 

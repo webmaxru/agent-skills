@@ -5,10 +5,17 @@ Use these examples when the integration needs a spec-valid prompt shape.
 ## Text Prompt Shorthand
 
 ```ts
-const session = await LanguageModel.create({
+const sessionOptions = {
   expectedInputs: [{ type: "text", languages: ["en"] }],
   expectedOutputs: [{ type: "text", languages: ["en"] }],
-});
+};
+
+const availability = await LanguageModel.availability(sessionOptions);
+if (availability === "unavailable") {
+  throw new Error("Prompt API is not available for this text-only flow.");
+}
+
+const session = await LanguageModel.create(sessionOptions);
 
 const result = await session.prompt("Summarize this page in three bullets.");
 ```
@@ -107,7 +114,7 @@ const result = await session.prompt([
 ## Tool-Enabled Session
 
 ```ts
-const session = await LanguageModel.create({
+const sessionOptions = {
   expectedInputs: [{ type: "text", languages: ["en"] }],
   expectedOutputs: [{ type: "text", languages: ["en"] }],
   tools: [
@@ -121,15 +128,70 @@ const session = await LanguageModel.create({
         },
         required: ["city"],
       },
-      async execute(args) {
-        const { city } = args as { city: string };
+      async execute(...arguments_) {
+        const [{ city }] = arguments_ as [{ city: string }];
         return JSON.stringify({ city, summary: "72F and clear" });
       },
     },
   ],
-});
+};
+
+const availability = await LanguageModel.availability(sessionOptions);
+if (availability === "unavailable") {
+  throw new Error("Prompt API tools are not available in this browser configuration.");
+}
+
+const session = await LanguageModel.create(sessionOptions);
 
 const result = await session.prompt("What is the weather in Seattle?");
+```
+
+## Measure Context Usage For Structured Output
+
+```ts
+const schema = {
+  type: "object",
+  required: ["sentiment"],
+  additionalProperties: false,
+  properties: {
+    sentiment: { type: "string", enum: ["positive", "negative", "neutral"] },
+  },
+};
+
+const session = await LanguageModel.create({
+  expectedInputs: [{ type: "text", languages: ["en"] }],
+  expectedOutputs: [{ type: "text", languages: ["en"] }],
+});
+
+const usage = await session.measureContextUsage?.(
+  "Classify this review as positive, negative, or neutral.",
+  {
+    responseConstraint: schema,
+    omitResponseConstraintInput: false,
+  },
+);
+```
+
+## Clone And Destroy A Session
+
+```ts
+const session = await LanguageModel.create({
+  initialPrompts: [
+    { role: "system", content: "You are a concise release-note editor." },
+  ],
+  expectedInputs: [{ type: "text", languages: ["en"] }],
+  expectedOutputs: [{ type: "text", languages: ["en"] }],
+});
+
+await session.prompt("Rewrite this note for application developers.");
+
+const branch = await session.clone();
+const branchedResult = await branch.prompt("Now rewrite the same note for IT admins.");
+
+console.log(branchedResult);
+
+branch.destroy();
+session.destroy();
 ```
 
 ## Invalid Shapes To Avoid
@@ -138,6 +200,7 @@ const result = await session.prompt("What is the weather in Seattle?");
 2. Do not set `prefix: true` on any message except the final `assistant` message.
 3. Do not attach image or audio content to an `assistant` message.
 4. Do not pass an empty message array.
+5. Do not assume `responseConstraint` regular-expression examples from implementation docs are portable when the current spec only defines an object-valued `responseConstraint`.
 
 ## Progressive Enhancement Pattern
 

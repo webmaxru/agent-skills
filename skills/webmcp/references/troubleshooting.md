@@ -1,0 +1,61 @@
+# WebMCP Troubleshooting
+
+## `navigator.modelContext` is undefined
+
+1. Confirm the code runs in a browser window context, not on the server.
+2. Confirm the page is in a secure context.
+3. Confirm the target Chrome build meets the preview version requirement.
+4. Confirm `chrome://flags/#enable-webmcp-testing` is enabled when using the preview.
+5. If the feature must run in a worker or headlessly, stop and redirect the design because WebMCP does not support that mode.
+
+## `registerTool()` throws `InvalidStateError`
+
+1. Check whether the tool name is already registered.
+2. Check whether `name` is an empty string.
+3. Check whether `description` is an empty string.
+4. If the route or page state changes, unregister stale tools before registering replacements.
+
+## `registerTool()` throws `TypeError` or serialization errors
+
+1. Check that `inputSchema` is plain JSON-compatible data.
+2. Remove circular references from `inputSchema`.
+3. Remove custom serialization logic that returns `undefined` or non-JSON values.
+4. Reduce the schema to a minimal plain object, then add properties back incrementally.
+
+## Imperative tool runs but the page stays stale
+
+1. Update the UI and application state before resolving the tool result.
+2. Confirm that async state updates complete before the tool returns.
+3. Keep the human path and agent path on the same state transition logic rather than duplicating side effects.
+
+## Declarative form is not behaving as a tool
+
+1. Check that the `<form>` has both `toolname` and `tooldescription`.
+2. Check that the form controls have stable `name` attributes.
+3. Check that labels or `toolparamdescription` exist for fields that need clear parameter descriptions.
+4. If using custom submit handling, call `preventDefault()` before `respondWith()`.
+5. Return explicit validation errors for agent-invoked submits instead of relying only on HTML validation UI.
+
+## Agent-invoked submit does not return useful output
+
+1. Confirm the code only calls `respondWith()` for the agent-driven path.
+2. Return descriptive, structured results or corrective errors rather than empty values.
+3. If the page redirects after submit, verify that the resulting document still reflects the completed action.
+
+## Preview-only events or styles are missing
+
+1. Check whether the implementation actually targets the current Chrome preview.
+2. Treat `toolactivated`, `toolcancel`, `agentInvoked`, `:tool-form-active`, and `:tool-submit-active` as preview-only behavior.
+3. Do not make core application logic depend exclusively on those preview signals.
+
+## Old examples mention removed APIs
+
+1. Remove any use of `provideContext` or `clearContext`.
+2. Remove any use of `toolparamtitle`.
+3. Align the integration with the current WebMCP surface instead of reviving removed names.
+
+## Deterministic validation is hard
+
+1. Use the Model Context Tool Inspector to inspect the registered tool set and invoke tools manually.
+2. Test imperative and declarative flows without an LLM before optimizing descriptions for natural-language routing.
+3. After manual validation passes, test with an agent to refine descriptions and parameter design.

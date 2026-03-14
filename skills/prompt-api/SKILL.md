@@ -1,16 +1,19 @@
 ---
-name: browser-prompt-api
+name: prompt-api
 description: Implements and debugs browser Prompt API integrations in JavaScript or TypeScript web apps. Use when adding LanguageModel availability checks, session creation, prompt or promptStreaming flows, structured output, download progress UX, or iframe permission-policy handling. Don't use for server-side LLM SDKs, REST AI APIs, or non-browser providers.
 ---
 
-# Browser Prompt API
+# Prompt API
 
 ## Procedures
 
 **Step 1: Identify the integration surface**
 1. Inspect the workspace for browser entry points, UI handlers, and any existing AI abstraction layer.
-2. Execute `node scripts/find-frontend-targets.mjs .` to inventory likely frontend files and existing Prompt API usage.
-3. If the project is not a browser web app, stop and explain that this skill does not apply.
+2. Execute `node scripts/find-frontend-targets.mjs .` to inventory likely frontend files and existing Prompt API usage when a Node runtime is available.
+3. If a Node runtime is unavailable, inspect the nearest `package.json`, HTML entry point, and framework entry files manually to identify the browser app boundary.
+4. If the workspace contains multiple frontend apps, prefer the app that contains the active route, component, or user-requested feature surface.
+5. If the inventory still leaves multiple plausible frontend targets, stop and ask the user which app should receive the Prompt API integration.
+6. If the project is not a browser web app, stop and explain that this skill does not apply.
 
 **Step 2: Confirm Prompt API viability**
 1. Read `references/prompt-api-reference.md` before writing code.
@@ -29,6 +32,7 @@ description: Implements and debugs browser Prompt API integrations in JavaScript
 4. Use `AbortController` for cancelable prompts and call `destroy()` when the session is no longer needed.
 5. If the feature runs in a cross-origin iframe, require `allow="language-model"` on the embedding iframe.
 6. Do not depend on `params()`, `topK`, or `temperature`; current integrations must work without them.
+7. Treat `availability()` as a passive capability check: if it reports `downloading` before user activation, do not assume the current page initiated that download or lock the UI into an app-started busy state.
 
 **Step 4: Wire UX and fallback behavior**
 1. Surface distinct states for unavailable devices, model download, ready sessions, and in-flight prompts.
@@ -36,6 +40,7 @@ description: Implements and debugs browser Prompt API integrations in JavaScript
 3. Keep a non-AI fallback for unsupported browsers, unsupported devices, or blocked iframe contexts.
 4. If the feature needs structured output, pass a JSON Schema through `responseConstraint`, use `omitResponseConstraintInput` only when the prompt already carries the required format instructions, and parse the returned string before using it.
 5. Respect prompt-shape validation rules: `system` messages belong in `initialPrompts`, `prefix: true` applies only to the final `assistant` message, and `assistant` message content must remain text-only.
+6. If `availability()` reports `downloading` before the app has called `create()`, present that as informational browser state rather than a page-owned active download, and keep controls usable unless the app itself is busy.
 
 **Step 5: Validate behavior**
 1. Test short responses with `prompt()` and long responses with `promptStreaming()` when applicable.
@@ -45,7 +50,8 @@ description: Implements and debugs browser Prompt API integrations in JavaScript
 
 ## Error Handling
 * If `LanguageModel` is missing, prefer progressive enhancement with a maintained Prompt API polyfill or a non-AI fallback instead of inventing a custom compatibility layer.
-* If `availability()` returns `downloading`, surface progress and avoid prompting until the model is ready.
+* If `availability()` returns `downloading` before the app has called `create()`, treat it as passive browser state. Only surface live progress and block prompt submission when the app itself has started `LanguageModel.create()`.
 * If `availability()` or `prompt()` throws `NotSupportedError`, align the creation and prompt options with the actual modalities, languages, message roles, and tools used by the feature.
 * If the feature must run in Web Workers, redirect the integration to a window context because the Prompt API is not available in workers.
 * If the feature lives in a cross-origin iframe, require `allow="language-model"` from the embedding page before continuing.
+* If `node scripts/find-frontend-targets.mjs .` cannot run, identify the browser app boundary manually and continue only after a single target app is clear.

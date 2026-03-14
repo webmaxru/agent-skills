@@ -1,0 +1,54 @@
+type JsonSchema = Record<string, unknown>;
+
+type ToolResult = unknown;
+
+type ToolContextClient = {
+  requestUserInteraction(callback: () => Promise<unknown>): Promise<unknown>;
+};
+
+type ToolDefinition = {
+  name: string;
+  description: string;
+  inputSchema?: JsonSchema;
+  annotations?: {
+    readOnlyHint?: boolean;
+  };
+  execute(input: Record<string, unknown>, client: ToolContextClient): Promise<ToolResult> | ToolResult;
+};
+
+function assertModelContext(): Navigator["modelContext"] {
+  if (!("modelContext" in navigator) || !navigator.modelContext) {
+    throw new Error("WebMCP is unavailable in this browser context.");
+  }
+
+  return navigator.modelContext;
+}
+
+export function registerWebMcpTools(tools: ToolDefinition[]) {
+  const modelContext = assertModelContext();
+  const registeredNames: string[] = [];
+
+  for (const tool of tools) {
+    modelContext.registerTool(tool);
+    registeredNames.push(tool.name);
+  }
+
+  return {
+    dispose() {
+      for (const name of registeredNames.splice(0).reverse()) {
+        try {
+          modelContext.unregisterTool(name);
+        } catch {
+          // Ignore stale cleanup during route transitions.
+        }
+      }
+    },
+  };
+}
+
+export async function requestConfirmedAction(
+  client: ToolContextClient,
+  callback: () => Promise<ToolResult>,
+) {
+  return client.requestUserInteraction(async () => callback());
+}
