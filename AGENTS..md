@@ -1,0 +1,3 @@
+This repository contains a collection of agents skills that adhere to the agentskills.io specification. Each skill is designed to be modular, reusable, and easily integrated into various agent frameworks. The skills are organized in a way that promotes progressive disclosure, ensuring that agents can access necessary information without overwhelming their context.
+
+Skils are located in the `skills/` directory, with each skill having its own subdirectory. Each skill subdirectory contains a `SKILL.md` file that outlines the procedures for implementing the skill, as well as any necessary scripts and reference materials.
