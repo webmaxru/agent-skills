@@ -7,17 +7,17 @@ agent: "agent"
 
 Update the `skills/webmcp` skill in this workspace using the latest available inputs and any textual updates the user supplies.
 
-Use this source priority order and resolve conflicts accordingly:
-1. User-supplied textual updates override all other sources.
-2. Attached documents supplied for this run are the primary technical source when the user did not explicitly override them.
-3. Main web specification source, used to fill gaps and provide broader API semantics when higher-priority sources do not override it: https://webmachinelearning.github.io/webmcp/
+Request information in this priority order and resolve conflicts accordingly:
+1. User-supplied prompt text overrides all other sources.
+2. Attached documents supplied for this run override the built-in URLs when the prompt did not explicitly override them.
+3. Built-in prompt URLs fill gaps not covered by higher-priority sources. Main web specification source: https://webmachinelearning.github.io/webmcp/
 
 Rules for source reconciliation:
-- Treat user-supplied textual updates as the highest-priority instruction set for this run, even when they override all attached or fetched sources.
+- Treat user-supplied prompt text as the highest-priority instruction set for this run, even when it overrides all attached or fetched sources.
 - Treat attached documents as authoritative for current implementation details, preview behavior, removed surfaces, examples, and testing workflows whenever the user did not explicitly override them.
-- Use the main specification URL to fill gaps in the API contract, terminology, and imperative API semantics that are not covered or are less detailed in the attached documents.
-- If the attached documents conflict with the main specification on technical behavior, keep the skill aligned to the attached documents and move the broader-spec difference into compatibility or troubleshooting guidance.
-- When user-supplied textual updates conflict with attached documents or the main specification, apply the user-supplied text and note the override clearly in the report.
+- Use the built-in prompt URLs to fill gaps in the API contract, terminology, and imperative API semantics that are not covered or are less detailed in the attached documents.
+- If the attached documents conflict with the built-in prompt URLs on technical behavior, keep the skill aligned to the attached documents and move the broader-spec difference into compatibility or troubleshooting guidance.
+- When user-supplied prompt text conflicts with attached documents or the built-in prompt URLs, apply the prompt text and note the override clearly in the report.
 - Keep the skill document-source agnostic in wording. Preserve technical precedence in the instructions and references without turning the skill files into source-citation notes.
 
 Before editing:
@@ -25,7 +25,7 @@ Before editing:
 - Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
 - Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/webmcp](../../skills/webmcp/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
-- Read any attached documents supplied for this run before fetching the main specification URL.
+- Read any attached documents supplied for this run before fetching the built-in prompt URLs.
 
 Then perform this workflow:
 1. Read inputs in the priority order above.
@@ -49,8 +49,8 @@ Then perform this workflow:
    - no server-side MCP server guidance
    - no generic AI platform or cloud guidance
 7. Keep the files source-agnostic in wording while preserving the intended priority of technical guidance.
-8. If the attached documents contain implementation details that are newer or stricter than the main specification URL, preserve those details in the WebMCP references and compatibility guidance.
-9. If the user supplied textual updates, apply them as the authoritative override for this run and merge them into the appropriate files even when they differ from the attached documents or fetched specification.
+8. If the attached documents contain implementation details that are newer or stricter than the built-in prompt URLs, preserve those details in the WebMCP references and compatibility guidance.
+9. If the user supplied prompt text, apply it as the authoritative override for this run and merge it into the appropriate files even when it differs from the attached documents or fetched specification.
 
 Edit guidance:
 - Prefer minimal edits that improve correctness.
@@ -73,5 +73,5 @@ When reporting results:
 1. Summarize the material deltas you found.
 2. List the files changed, if any.
 3. Explain any conflicts resolved by source priority.
-4. Call out where user-supplied text overrode the attached documents or the fetched specification.
+4. Call out where user-supplied prompt text overrode the attached documents or the built-in prompt URLs.
 5. Note remaining risks, especially if attached-document behavior diverges from the broader specification.

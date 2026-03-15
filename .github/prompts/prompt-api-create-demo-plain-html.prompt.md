@@ -1,5 +1,5 @@
 ---
-name: "Prompt API: Create Chat Demo Plain HTML"
+name: "Prompt API: Create Demo Plain HTML"
 description: "Create a simple plain HTML, CSS, and JavaScript web page with a chat UI that uses the Prompt API. Use when testing Prompt API skill routing with a static browser page and no framework setup."
 argument-hint: "Optional: target folder and any UI preferences"
 agent: "agent"

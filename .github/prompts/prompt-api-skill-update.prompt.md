@@ -7,27 +7,32 @@ agent: "agent"
 
 Update the `skills/prompt-api` skill in this workspace using the latest available documentation and any textual updates the user supplies.
 
-Use this source priority order and resolve conflicts accordingly:
-1. User-supplied textual updates override all other sources.
-2. Main source, authoritative for API shape and behavior when the user did not explicitly override it: https://webmachinelearning.github.io/prompt-api/
-3. Secondary source, implementation guidance for Chrome: https://developer.chrome.com/docs/ai/prompt-api
-4. Tertiary source, implementation guidance for Microsoft Edge: https://learn.microsoft.com/en-us/microsoft-edge/web-platform/prompt-api
+Request information in this priority order and resolve conflicts accordingly:
+1. User-supplied prompt text overrides all other sources.
+2. Attached documents supplied for this run override the built-in URLs when the prompt did not explicitly override them.
+3. Built-in prompt URLs fill gaps not covered by higher-priority sources:
+   - Main source, authoritative for API shape and behavior: https://webmachinelearning.github.io/prompt-api/
+   - Secondary source, implementation guidance for Chrome: https://developer.chrome.com/docs/ai/prompt-api
+   - Tertiary source, implementation guidance for Microsoft Edge: https://learn.microsoft.com/en-us/microsoft-edge/web-platform/prompt-api
 
 Rules for source reconciliation:
-- Treat user-supplied textual updates as the highest-priority instruction set for this run, even when they override the documentation sources.
-- Treat the main specification as the source of truth for the API contract, validation rules, roles, message shapes, permissions-policy behavior, and supported surface area whenever the user did not explicitly override it.
-- Use Chrome and Edge documentation for browser-specific availability, flags, hardware requirements, preview status, demos, typings advice, and implementation notes.
-- If Chrome or Edge documentation conflicts with the main specification on core API semantics, keep the skill aligned to the main specification and move browser-specific differences into compatibility or troubleshooting guidance unless the user explicitly overrode that behavior.
-- When user-supplied textual updates conflict with documentation, apply the user-supplied text and note the override clearly in the report.
+- Treat user-supplied prompt text as the highest-priority instruction set for this run, even when it overrides attached documents or the built-in prompt URLs.
+- Treat attached documents as authoritative for current implementation details, compatibility guidance, examples, preview behavior, and testing workflows whenever the prompt did not explicitly override them.
+- Treat the main specification as the source of truth for the API contract, validation rules, roles, message shapes, permissions-policy behavior, and supported surface area whenever higher-priority sources do not override it.
+- Use the Chrome and Edge built-in prompt URLs for browser-specific availability, flags, hardware requirements, preview status, demos, typings advice, and implementation notes when higher-priority sources do not override them.
+- If attached documents conflict with any built-in prompt URL on technical behavior, keep the skill aligned to the attached documents and move browser-specific differences into compatibility or troubleshooting guidance when needed.
+- If Chrome or Edge documentation conflicts with the main specification on core API semantics, keep the skill aligned to the main specification unless a higher-priority source overrides it.
+- When user-supplied prompt text conflicts with attached documents or the built-in prompt URLs, apply the prompt text and note the override clearly in the report.
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
 - Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
 - Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/prompt-api](../../skills/prompt-api/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
+- Read any attached documents supplied for this run before fetching the built-in prompt URLs.
 
 Then perform this workflow:
-1. Fetch and read the three documentation sources in the priority order above.
+1. Read inputs in the priority order above, then fetch and read the built-in prompt URLs.
 2. Extract only material changes that affect the skill, such as:
    - supported API surface and restrictions
    - `LanguageModel.availability()` and `LanguageModel.create()` option parity
@@ -48,7 +53,7 @@ Then perform this workflow:
    - no server-side LLM SDK guidance
    - no generic cloud AI guidance
 7. Keep core instructions browser-neutral where possible. Put Chrome-only and Edge-only differences into `references/compatibility.md` or `references/troubleshooting.md` unless the difference changes the top-level stop conditions.
-8. If the user supplied textual updates, apply them as the authoritative override for this run and merge them into the appropriate files even when they differ from the documentation. Preserve any ambiguity in the wording only when the supplied text itself is unclear.
+8. If the user supplied prompt text, apply it as the authoritative override for this run and merge it into the appropriate files even when it differs from attached documents or the built-in prompt URLs. Preserve any ambiguity in the wording only when the supplied text itself is unclear.
 
 Edit guidance:
 - Prefer minimal edits that improve correctness.
@@ -71,5 +76,5 @@ When reporting results:
 1. Summarize the documentation deltas you found.
 2. List the files changed, if any.
 3. Explain any conflicts resolved by source priority.
-4. Call out where user-supplied text overrode the documentation sources.
+4. Call out where user-supplied prompt text overrode attached documents or the built-in prompt URLs.
 5. Note remaining risks, especially if the override conflicts with the main specification or browser implementation docs.

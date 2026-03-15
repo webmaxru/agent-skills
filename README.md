@@ -128,7 +128,7 @@ Use it when creating or revising agent skills. Do not use it for generic reposit
 
 These prompt files support maintenance workflows in this repo:
 
-- `create-skill.prompt.md` creates a new skill under `skills/`, can offer validation and remediation, and generates follow-up update and demo prompts for the new skill
+- `create-skill.prompt.md` runs a three-phase workflow for a skill under `skills/`: creation, validation and remediation, and supporting prompt creation; it also supports explicit single-phase execution through a `step=` selector
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
@@ -196,6 +196,60 @@ The scanner prioritizes common web entry points and reports existing imperative 
 4. Start from `.agents/skills/skill-creator/assets/SKILL.template.md`.
 5. Keep the main procedure in `SKILL.md` and move bulky detail into `references/` or `assets/`.
 6. Review the result against `.agents/skills/skill-creator/references/checklist.md`.
+
+### Run The Create Skill Prompt
+
+The saved prompt named `Create Skill` supports a mandatory three-phase full workflow and direct single-phase execution. Use the exact argument text below when invoking that saved prompt.
+
+Full workflow, all three phases mandatory:
+
+```text
+Create Skill: step=all
+```
+
+Then reply to the prompt's required questions in order:
+
+```text
+webgpu-audio
+```
+
+```text
+URLs:
+- https://example.com/spec
+
+Attached documents:
+- webgpu-audio-notes.pdf
+
+Notes:
+- Focus on browser-only usage.
+- Stop when secure context or feature flags are missing.
+```
+
+Phase 1 only, skill creation:
+
+```text
+Create Skill: step=create
+```
+
+Then reply in the same required order: first the skill name, then the source materials.
+
+Phase 2 only, validation and remediation for an existing skill:
+
+```text
+Create Skill: step=validate-remediate skill-name=webgpu-audio
+```
+
+Phase 3 only, supporting saved prompts for an existing skill:
+
+```text
+Create Skill: step=supporting-prompts skill-name=webgpu-audio
+```
+
+Another direct example with inline scope details:
+
+```text
+Create Skill: step=validate-remediate skill-name=webnn notes="tighten negative triggers and re-check metadata"
+```
 
 ## References
 

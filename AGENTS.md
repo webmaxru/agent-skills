@@ -16,3 +16,4 @@ When working in this repo:
 5. Use relative paths with forward slashes in skill files.
 6. Do not add per-skill human-oriented files such as `README.md` or `CHANGELOG.md`.
 7. When creating or revising a skill, use `.agents/skills/skill-creator/scripts/validate-metadata.py` and `.agents/skills/skill-creator/references/checklist.md` as the repository's validation path.
+8. For saved maintenance prompts that gather external information, request sources in this priority order unless the prompt explicitly says otherwise: supplied prompt text, supplied attached documents, then the built-in URLs already defined in the prompt. Higher-priority sources override lower-priority sources.
