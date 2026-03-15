@@ -49,6 +49,16 @@ npx skills add OWNER/REPO --skill SKILL_NAME
 
 For this repository, `OWNER/REPO` is `webmaxru/agent-skills`. The concrete install commands for each available skill are listed in the relevant skill sections below.
 
+For example, the Proofreader API skill installs with:
+
+```bash
+apm install webmaxru/agent-skills/skills/proofreader-api
+```
+
+```bash
+npx skills add webmaxru/agent-skills --skill proofreader-api
+```
+
 ## Included Skills
 
 ### Web AI API Skills
@@ -120,6 +130,39 @@ Its support files are split by purpose:
 - `assets/language-detector-session.template.ts` for a reusable typed session wrapper template
 - `scripts/find-language-detector-targets.mjs` for deterministic scanning of likely web entry points and Language Detector API markers
 
+#### Translator API Skill
+
+`skills/translator-api` is scoped to browser Translator API integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/translator-api
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill translator-api
+```
+
+It covers:
+
+- identifying the correct browser app surface for on-device translation work
+- confirming secure-context, permissions-policy, and language-pair viability before code changes
+- implementing guarded `availability()` and `create()` flows with download progress handling
+- wiring `translate()`, `translateStreaming()`, input-usage checks, cancellation, and cleanup through `destroy()`
+- validating browser-specific preview limits, iframe delegation, and unchanged-output edge cases such as identity translation
+
+Its support files are split by purpose:
+
+- `references/translator-reference.md` for API surface, lifecycle rules, permission-policy requirements, and quota behavior
+- `references/examples.md` for support detection, monitored creation, full-result translation, streaming translation, and cleanup patterns
+- `references/compatibility.md` for browser rollout notes, preview flags, iframe rules, and typing guidance
+- `references/troubleshooting.md` for missing globals, blocked creation, quota issues, filtered output, and worker mismatches
+- `assets/translator-session.template.ts` for a reusable typed session wrapper template
+- `scripts/find-translator-targets.mjs` for deterministic scanning of likely web entry points and Translator API markers
+
 #### Writing Assistance APIs Skill
 
 `skills/writing-assistance-apis` is scoped to browser Summarizer, Writer, and Rewriter integrations in JavaScript or TypeScript web apps.
@@ -152,6 +195,39 @@ Its support files are split by purpose:
 - `references/troubleshooting.md` for missing globals, `NotAllowedError`, `NotSupportedError`, quota issues, and streaming failures
 - `assets/writing-assistance-session.template.ts` for a reusable typed wrapper template
 - `scripts/find-writing-assistance-targets.mjs` for deterministic scanning of likely web entry points and Writing Assistance API markers
+
+#### Proofreader API Skill
+
+`skills/proofreader-api` is scoped to browser Proofreader API integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/proofreader-api
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill proofreader-api
+```
+
+It covers:
+
+- identifying the correct browser app surface for proofreading work
+- confirming secure-context, permissions-policy, and preview-browser viability before code changes
+- implementing guarded `availability()` and `create()` flows with download progress handling
+- wiring `proofread()` result handling, correction rendering, and quota-aware `measureInputUsage()` checks
+- validating cleanup, unsupported-option fallbacks, and preview-specific compatibility limits
+
+Its support files are split by purpose:
+
+- `references/proofreader-reference.md` for API surface, lifecycle rules, result shape, and permissions-policy constraints
+- `references/examples.md` for support detection, monitored creation, correction rendering, quota-aware checks, and cleanup patterns
+- `references/compatibility.md` for spec-versus-preview differences, browser rollout notes, flags, hardware requirements, and typing guidance
+- `references/troubleshooting.md` for missing globals, unavailable models, unsupported option combinations, runtime failures, and worker mismatches
+- `assets/proofreader-session.template.ts` for a reusable typed session wrapper template
+- `scripts/find-proofreader-targets.mjs` for deterministic scanning of likely web entry points and Proofreader API markers
 
 #### WebMCP Skill
 
@@ -295,12 +371,16 @@ These prompt files support maintenance workflows in this repo:
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
+- `proofreader-api-skill-update.prompt.md` refreshes the Proofreader API skill from user-supplied updates, attachments, and the current specification and browser guidance
 - `language-detector-api-skill-update.prompt.md` refreshes the Language Detector API skill from user-supplied updates, attachments, and the current specification and browser guidance
+- `translator-api-skill-update.prompt.md` refreshes the Translator API skill from user-supplied updates, attachments, and the current specification and browser guidance
 - `writing-assistance-apis-skill-update.prompt.md` refreshes the Writing Assistance APIs skill from user-supplied updates, attachments, and the current specification state
 - `webmcp-skill-update.prompt.md` refreshes the WebMCP skill from user-supplied updates, attachments, and the current specification state
 - `webnn-skill-update.prompt.md` refreshes the WebNN skill from user-supplied updates, attachments, and the current specification state
 - `prompt-api-create-chat-demo-plain-html.prompt.md` recreates or extends a plain HTML Prompt API demo under `artifacts/prompt-api/`
+- `proofreader-api-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Proofreader API demo under `artifacts/proofreader-api/`
 - `language-detector-api-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Language Detector API demo under `artifacts/language-detector-api/`
+- `translator-api-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Translator API demo under `artifacts/translator-api/`
 - `writing-assistance-apis-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Writing Assistance APIs demo under `artifacts/writing-assistance-apis/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
@@ -379,6 +459,14 @@ node skills/writing-assistance-apis/scripts/find-writing-assistance-targets.mjs 
 ```
 
 The scanner prioritizes common browser entry points and reports existing Writing Assistance API markers such as `Summarizer`, `Writer`, `Rewriter`, and their streaming methods.
+
+### Scan a Workspace for Proofreader Targets
+
+```bash
+node skills/proofreader-api/scripts/find-proofreader-targets.mjs .
+```
+
+The scanner prioritizes common browser entry points and reports existing Proofreader API markers such as `Proofreader`, `proofread()`, correction-detail options, and the `proofreader` permissions-policy token.
 
 ### Scan a Workspace for WebMCP Targets
 
