@@ -1,0 +1,83 @@
+name: Weekly Skill Updates
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+    inputs:
+      prompt_path:
+        description: Optional single prompt path under .github/prompts/ ending in -skill-update.prompt.md
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-skill-updates
+  cancel-in-progress: false
+
+jobs:
+  discover-prompts:
+    runs-on: ubuntu-latest
+    outputs:
+      prompt_paths: ${{ steps.discover.outputs.prompt_paths }}
+      prompt_count: ${{ steps.discover.outputs.prompt_count }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: discover
+        name: Discover saved skill-update prompts
+        env:
+          REQUESTED_PROMPT: ${{ inputs.prompt_path }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const promptsDir = path.join(process.cwd(), '.github', 'prompts');
+          const requestedPrompt = (process.env.REQUESTED_PROMPT || '').trim();
+
+          function fail(message) {
+            console.error(message);
+            process.exit(1);
+          }
+
+          if (!fs.existsSync(promptsDir)) {
+            fail('Missing .github/prompts directory.');
+          }
+
+          const allPromptPaths = fs
+            .readdirSync(promptsDir, { withFileTypes: true })
+            .filter((entry) => entry.isFile() && entry.name.endsWith('-skill-update.prompt.md'))
+            .map((entry) => `.github/prompts/${entry.name}`)
+            .sort();
+
+          let selectedPromptPaths = allPromptPaths;
+          if (requestedPrompt) {
+            if (!requestedPrompt.startsWith('.github/prompts/') || !requestedPrompt.endsWith('-skill-update.prompt.md')) {
+              fail('prompt_path must be under .github/prompts/ and end with -skill-update.prompt.md');
+            }
+            if (!allPromptPaths.includes(requestedPrompt)) {
+              fail(`Requested prompt not found: ${requestedPrompt}`);
+            }
+            selectedPromptPaths = [requestedPrompt];
+          }
+
+          process.stdout.write(`prompt_paths=${JSON.stringify(selectedPromptPaths)}\n`);
+          process.stdout.write(`prompt_count=${selectedPromptPaths.length}\n`);
+          NODE
+
+  run-skill-update-prompts:
+    needs: discover-prompts
+    if: needs.discover-prompts.outputs.prompt_count != '0'
+    strategy:
+      fail-fast: false
+      matrix:
+        prompt_path: ${{ fromJson(needs.discover-prompts.outputs.prompt_paths) }}
+    uses: ./.github/workflows/skill-update-worker.lock.yml
+    with:
+      prompt_path: ${{ matrix.prompt_path }}
+    secrets: inherit

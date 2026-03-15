@@ -25,8 +25,6 @@ gh aw secrets bootstrap
 
 `gh aw init` configures repository files for authoring, including the dispatcher agent file and related repository settings. Commit and push those files before expecting smooth iterative authoring.
 
-Before relying on any field, command, or compiler behavior from memory, check the installed version with `gh aw version`. The repository may lag or exceed the version described in older notes, and that version drift can change frontmatter support, generated lockfiles, and validation output.
-
 ## Creation Paths
 
 Choose the creation path that matches the working mode:
@@ -57,8 +55,6 @@ Useful frontmatter fields for professional workflows:
 5. `runtimes` when tool or script versions matter.
 6. `concurrency` and `timeout-minutes` for operational control.
 
-Practical default: use `engine: copilot` unless the repository explicitly needs another model provider and is already wired for that provider's secret and runtime expectations.
-
 ## Authoring Style
 
 Keep the markdown body direct and constrained.
@@ -78,14 +74,12 @@ Use this loop for professional changes:
 ```bash
 gh aw fix --write
 gh aw validate --strict
-gh aw compile --verbose
+gh aw compile
 gh aw run <workflow>
 gh aw status --ref main
 ```
 
 Use `gh aw trial` when isolated testing is safer than dispatching directly into the production repository.
-
-If the CLI version was just upgraded, this loop is also the fastest way to surface codemods, deprecated fields, generated lockfile drift, and new warnings.
 
 ## Reuse And Updates
 
@@ -99,8 +93,6 @@ gh aw upgrade
 
 `gh aw update` uses the `source:` field to refresh installed workflows while preserving local modifications through merge behavior by default.
 
-When the task needs dynamic fan-out over a discovered set of files or records, do not force that logic into a single markdown workflow. Prefer a reusable GH-AW worker plus a deterministic GitHub Actions wrapper that performs discovery and matrix expansion, then `uses:` the compiled worker lockfile.
-
 ## Agentic Authoring Support
 
 For authoring with agents:
@@ -108,4 +100,3 @@ For authoring with agents:
 1. Use `gh aw init` to prepare the repository.
 2. Use the debugging prompt at `https://raw.githubusercontent.com/github/gh-aw/main/debug.md` for failed runs.
 3. Use the planner or dictation prompts from the official docs when task shaping is the bottleneck rather than workflow syntax.
-4. If strict mode rejects external-source domains that are still required for the task, add deterministic pre-steps that fetch those sources to local files and instruct the agent to use the local copies.

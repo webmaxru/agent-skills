@@ -26,3 +26,51 @@ dependencies:
   package_type: claude_skill
   deployed_files:
   - .github/skills/webnn
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/language-detector-api
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/language-detector-api
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/translator-api
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/translator-api
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/writing-assistance-apis
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/writing-assistance-apis
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/proofreader-api
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/proofreader-api
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/agent-package-manager
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/agent-package-manager
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: ea8a385575cc4be966ecf768c70aa296bab2d963
+  virtual_path: skills/github-agentic-workflows
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/github-agentic-workflows

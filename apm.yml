@@ -7,5 +7,11 @@ dependencies:
   - webmaxru/agent-skills/skills/prompt-api
   - webmaxru/agent-skills/skills/webmcp
   - webmaxru/agent-skills/skills/webnn
+  - webmaxru/agent-skills/skills/language-detector-api
+  - webmaxru/agent-skills/skills/translator-api
+  - webmaxru/agent-skills/skills/writing-assistance-apis
+  - webmaxru/agent-skills/skills/proofreader-api
+  - webmaxru/agent-skills/skills/agent-package-manager
+  - webmaxru/agent-skills/skills/github-agentic-workflows
   mcp: []
 scripts: {}

@@ -65,7 +65,6 @@ Guidance:
 3. Use blocked domains when privacy or compliance requires it.
 4. Treat `(redacted)` URLs as a signal that the allowlist is incomplete.
 5. Keep the firewall enabled in production.
-6. If the installed compiler rejects custom domains in strict mode, keep the firewall narrow and fetch the needed sources in deterministic setup steps so the agent reads local files instead of making ad hoc outbound requests.
 
 ## Authentication
 
@@ -123,4 +122,3 @@ Use these signals:
 3. Pin or review CLI versions deliberately in controlled environments.
 4. Use `gh aw update` for sourced workflows and `gh aw upgrade` for repository-wide modernization.
 5. Treat `.lock.yml` files as build artifacts that must stay in sync with compile-time changes.
-6. Re-run validation and verbose compile output after a CLI upgrade before concluding that a workflow shape is still valid.
