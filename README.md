@@ -19,6 +19,7 @@ The repository has three practical roles:
 - [Install Skills](#install-skills)
 - [Included Skills](#included-skills)
   - [Prompt API Skill](#prompt-api-skill)
+  - [Writing Assistance APIs Skill](#writing-assistance-apis-skill)
   - [WebMCP Skill](#webmcp-skill)
   - [WebNN Skill](#webnn-skill)
 - [Supporting Assets](#supporting-assets)
@@ -42,6 +43,12 @@ Install the Prompt API skill with APM:
 apm install webmaxru/agent-skills/skills/prompt-api
 ```
 
+Install the Writing Assistance APIs skill with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/writing-assistance-apis
+```
+
 Install the WebMCP skill with APM:
 
 ```bash
@@ -60,6 +67,12 @@ Install the Prompt API skill:
 
 ```bash
 npx skills add webmaxru/agent-skills --skill prompt-api
+```
+
+Install the Writing Assistance APIs skill:
+
+```bash
+npx skills add webmaxru/agent-skills --skill writing-assistance-apis
 ```
 
 Install the WebMCP skill:
@@ -97,6 +110,27 @@ Its support files are split by purpose:
 - `references/troubleshooting.md` for runtime failure cases such as missing `LanguageModel`, iframe issues, and stale session cleanup
 - `assets/language-model-service.template.ts` for a reusable wrapper template
 - `scripts/find-frontend-targets.mjs` for deterministic scanning of likely web entry points and Prompt API markers
+
+### Writing Assistance APIs Skill
+
+`skills/writing-assistance-apis` is scoped to browser Summarizer, Writer, and Rewriter integrations in JavaScript or TypeScript web apps.
+
+It covers:
+
+- identifying the correct browser app surface for writing assistance work
+- confirming API availability, secure-context requirements, and download readiness before code changes
+- implementing guarded session creation, batch and streaming output flows, and cleanup through `destroy()` or abort signals
+- wiring user-visible download, ready, generating, canceled, and fallback UX states
+- validating browser-specific preview limits, permissions-policy constraints, and option-specific failure cases
+
+Its support files are split by purpose:
+
+- `references/writing-assistance-reference.md` for shared lifecycle rules, session methods, option surfaces, and iframe permission requirements
+- `references/examples.md` for feature detection, monitored creation, batch usage, streaming usage, cancellation, and cleanup patterns
+- `references/compatibility.md` for browser rollout notes, preview flags, hardware constraints, and support boundaries
+- `references/troubleshooting.md` for missing globals, `NotAllowedError`, `NotSupportedError`, quota issues, and streaming failures
+- `assets/writing-assistance-session.template.ts` for a reusable typed wrapper template
+- `scripts/find-writing-assistance-targets.mjs` for deterministic scanning of likely web entry points and Writing Assistance API markers
 
 ### WebMCP Skill
 
@@ -146,13 +180,15 @@ Its support files are split by purpose:
 
 These prompt files support maintenance workflows in this repo:
 
-- `create-skill.prompt.md` runs a three-phase workflow for a skill under `skills/`: creation, validation and remediation, and supporting prompt creation; it also supports explicit single-phase execution through a `step=` selector
+- `create-skill.prompt.md` runs a five-phase workflow for a skill under `skills/`: creation, validation and remediation, supporting prompt creation, README update, and install verification; it also supports explicit single-phase execution through a `step=` selector
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
+- `writing-assistance-apis-skill-update.prompt.md` refreshes the Writing Assistance APIs skill from user-supplied updates, attachments, and the current specification state
 - `webmcp-skill-update.prompt.md` refreshes the WebMCP skill from user-supplied updates, attachments, and the current specification state
 - `webnn-skill-update.prompt.md` refreshes the WebNN skill from user-supplied updates, attachments, and the current specification state
 - `prompt-api-create-chat-demo-plain-html.prompt.md` recreates or extends a plain HTML Prompt API demo under `artifacts/prompt-api/`
+- `writing-assistance-apis-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Writing Assistance APIs demo under `artifacts/writing-assistance-apis/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
 
@@ -215,6 +251,14 @@ node skills/prompt-api/scripts/find-frontend-targets.mjs .
 
 The scanner prioritizes common web entry points such as `package.json`, `index.html`, and framework bootstrap files while ignoring transient directories such as `node_modules`, `dist`, `build`, `.next`, `.nuxt`, `coverage`, `out`, and `target`.
 
+### Scan a Workspace for Writing Assistance Targets
+
+```bash
+node skills/writing-assistance-apis/scripts/find-writing-assistance-targets.mjs .
+```
+
+The scanner prioritizes common browser entry points and reports existing Writing Assistance API markers such as `Summarizer`, `Writer`, `Rewriter`, and their streaming methods.
+
 ### Scan a Workspace for WebMCP Targets
 
 ```bash
@@ -242,9 +286,9 @@ The scanner prioritizes common browser app entry points and reports existing loc
 
 ### Run The Create Skill Prompt
 
-The saved prompt named `Create Skill` supports a mandatory three-phase full workflow and direct single-phase execution. Use the exact argument text below when invoking that saved prompt.
+The saved prompt named `Create Skill` supports a mandatory five-phase full workflow and direct single-phase execution. Use the exact argument text below when invoking that saved prompt.
 
-Full workflow, all three phases mandatory:
+Full workflow, all five phases mandatory:
 
 ```text
 Create Skill: step=all
@@ -254,6 +298,10 @@ Then reply to the prompt's required questions in order:
 
 ```text
 webgpu-audio
+```
+
+```text
+Browser-side use of WebGPU audio processing in JavaScript or TypeScript web apps, including capability checks, initialization, error handling, and compatibility limits.
 ```
 
 ```text
@@ -274,7 +322,7 @@ Phase 1 only, skill creation:
 Create Skill: step=create
 ```
 
-Then reply in the same required order: first the skill name, then the source materials.
+Then reply in the same required order: skill name, skill scope, then source materials.
 
 Phase 2 only, validation and remediation for an existing skill:
 
@@ -286,6 +334,18 @@ Phase 3 only, supporting saved prompts for an existing skill:
 
 ```text
 Create Skill: step=supporting-prompts skill-name=webgpu-audio
+```
+
+Phase 4 only, root README update for an existing skill:
+
+```text
+Create Skill: step=readme-update skill-name=webgpu-audio
+```
+
+Phase 5 only, install verification for an existing skill:
+
+```text
+Create Skill: step=install-test skill-name=webgpu-audio
 ```
 
 Another direct example with inline scope details:

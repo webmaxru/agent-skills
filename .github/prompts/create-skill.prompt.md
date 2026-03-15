@@ -1,7 +1,7 @@
 ---
 name: "Create Skill"
-description: "Run the repository's three-phase skill workflow: create a skill, validate and remediate it, and create supporting saved prompts. Use when authoring a new skill end to end or when explicitly running one phase against an existing skill."
-argument-hint: "Optional mode and inputs, for example: step=all, step=create, step=validate-remediate, or step=supporting-prompts, plus a skill name, URLs, attached document notes, or pasted text"
+description: "Run the repository's five-phase skill workflow: create a skill, validate and remediate it, create supporting saved prompts, update the global repository README, and test installation in the current repo with both supported install commands. Use when authoring a new skill end to end or when explicitly running one phase against an existing skill."
+argument-hint: "Optional mode and inputs, for example: step=all, step=create, step=validate-remediate, step=supporting-prompts, step=readme-update, or step=install-test, plus a skill name, URLs, attached document notes, or pasted text"
 agent: "agent"
 ---
 
@@ -17,10 +17,12 @@ Required inputs before starting any workflow actions:
 - If any required input is missing, stop and ask only for the missing input instead of starting the phase.
 
 Execution modes:
-- `step=all` is the default. Run all three phases below in order. All three phases are mandatory in this mode.
+- `step=all` is the default. Run all five phases below in order. All five phases are mandatory in this mode.
 - `step=create` runs only phase 1 for a new skill.
 - `step=validate-remediate` runs only phase 2 for an existing `skills/<skill-name>` directory.
 - `step=supporting-prompts` runs only phase 3 for an existing `skills/<skill-name>` directory.
+- `step=readme-update` runs only phase 4 for an existing `skills/<skill-name>` directory.
+- `step=install-test` runs only phase 5 for an existing `skills/<skill-name>` directory.
 - If the user omits `step`, treat the request as `step=all`.
 - If the user explicitly selects one phase, do not run the other phases unless the user asks for them.
 - If an explicit phase is missing prerequisites, stop and explain exactly what is missing instead of guessing.
@@ -29,6 +31,8 @@ Mandatory phases for `step=all`:
 1. skill creation
 2. skill validation and remediation
 3. post-skill-creation supporting prompt creation
+4. global repository README update
+5. installation test in the current repository using both documented install commands
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
@@ -118,6 +122,39 @@ Run this phase when `step=all` or `step=supporting-prompts`.
 
 5. In `step=all`, do not present supporting prompt creation as optional.
 
+Phase 4: Global Repository README Update
+Run this phase when `step=all` or `step=readme-update`.
+
+1. Confirm that `skills/<skill-name>` exists. If this phase was invoked directly and the skill name is missing, ask for it.
+2. Read `README.md` and update only the sections that materially need changes for the new skill and its generated prompts.
+3. Add the new skill to `Included Skills` with a concise scope summary and support-file overview that matches the level of detail used for the existing skills.
+4. Add install instructions for the new skill under `Install Skills` using both supported repository patterns when they apply:
+   - an `apm install owner/repo/skills/<skill-name>` example
+   - an `npx skills add owner/repo --skill <skill-name>` example
+5. Update the `.github/prompts` supporting-assets section so the newly generated saved prompts are listed with accurate one-line descriptions.
+6. If phase 3 created a plain HTML demo prompt and the skill is browser-demoable, update any README overview text that should mention the new demo workflow without treating `artifacts/` as durable source of truth.
+7. Keep the README aligned with repository rules:
+   - list only real `skills/` entries under `Included Skills`
+   - describe `artifacts/` as disposable
+   - assume README install examples describe the intended published repository state; do not add qualifiers such as "after the updated repository revision is published" unless the user explicitly asks for unpublished-local wording
+   - do not invent install paths, package names, or prompt capabilities not established by the created files
+8. In `step=all`, run this phase only after phase 3 completes.
+9. If the new skill cannot be installed through one of the documented patterns, stop and explain the exact limitation instead of guessing.
+
+Phase 5: Install Test In Current Repository
+Run this phase when `step=all` or `step=install-test`.
+
+1. Confirm that `skills/<skill-name>` exists. If this phase was invoked directly and the skill name is missing, ask for it.
+2. Read the install commands added to `README.md` for the new skill and use those exact command shapes as the source of truth for testing.
+3. Run both installation paths in the current repository to verify the documented commands actually work for this skill:
+   - `apm install owner/repo/skills/<skill-name>`
+   - `npx skills add owner/repo --skill <skill-name>`
+4. Treat this as a real verification step, not a dry run. Use the current workspace as the install target unless the user explicitly asks for a different target.
+5. If one install path modifies repo-level manifests or lockfiles while the other does not, report the exact files changed and keep only the minimal resulting changes required for the repo's documented workflow.
+6. If either install command fails, capture the exact failure, remediate only if the fix is safe and directly related to the new skill or documented install path, then re-run the failed command once.
+7. In `step=all`, run this phase only after phase 4 completes so the tested commands match the documented README commands.
+8. If testing one install path would be unsafe or impossible in the current repo, stop and explain the exact blocker instead of claiming success.
+
 When reporting results:
 1. State the requested `step` and which phases ran.
 2. Summarize the skill that was created or updated and the materials used.
@@ -125,5 +162,7 @@ When reporting results:
 4. State whether metadata validation passed.
 5. State the validation and remediation outcome: no fixes needed, fixes applied, or blocked.
 6. List the generated or updated saved prompts under `.github/prompts/`.
-7. Call out any unresolved gaps caused by missing, conflicting, or ambiguous source material.
-8. For `step=all`, make it explicit whether all three mandatory phases completed.
+7. State whether `README.md` was updated and summarize the install and prompt-documentation changes.
+8. State the installation test outcome for both `apm` and `npx skills add`, including whether either command required remediation.
+9. Call out any unresolved gaps caused by missing, conflicting, or ambiguous source material.
+10. For `step=all`, make it explicit whether all five mandatory phases completed.
