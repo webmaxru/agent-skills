@@ -69,7 +69,9 @@ steps:
       const urlPattern = /https?:\/\/[^\s)>'"`]+/g;
       const uniqueUrls = Array.from(new Set(promptText.match(urlPattern) || [])).sort();
 
+      const runtimeRoot = path.join(process.cwd(), '.github', 'aw');
       const sourcesRoot = path.join(process.cwd(), '.github', 'aw', 'prompt-sources', promptSlug);
+      fs.mkdirSync(runtimeRoot, { recursive: true });
       fs.rmSync(sourcesRoot, { recursive: true, force: true });
       fs.mkdirSync(sourcesRoot, { recursive: true });
 
@@ -110,10 +112,26 @@ steps:
         const manifestRelativePath = path.posix.join('.github', 'aw', 'prompt-sources', promptSlug, 'manifest.json');
         fs.writeFileSync(path.join(sourcesRoot, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', 'utf8');
 
+        const runtimeInstructionsPath = path.join(runtimeRoot, 'skill-update-runtime.md');
+        const runtimeInstructions = [
+          '# Skill Update Runtime Context',
+          '',
+          `- Saved prompt path: ${promptPath}`,
+          `- Prompt slug: ${promptSlug}`,
+          `- Prefetched source directory: .github/aw/prompt-sources/${promptSlug}`,
+          `- Prefetched source manifest: ${manifestRelativePath}`,
+          `- Prefetched source count: ${manifest.length}`,
+          '',
+          'Use the saved prompt path above as the single authoritative task definition for this run.',
+          'Use the prefetched source files and manifest above as local replacements for any built-in URLs referenced by that prompt.',
+        ].join('\n');
+        fs.writeFileSync(runtimeInstructionsPath, `${runtimeInstructions}\n`, 'utf8');
+
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_path=${promptPath}\n`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_slug=${promptSlug}\n`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_dir=.github/aw/prompt-sources/${promptSlug}\n`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_manifest=${manifestRelativePath}\n`);
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, 'runtime_instructions=.github/aw/skill-update-runtime.md\n');
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `source_count=${manifest.length}\n`);
       }
 
@@ -126,21 +144,18 @@ steps:
 
 # Skill Update Worker
 
-Execute the saved prompt at `${{ steps.prepare_prompt.outputs.prompt_path }}` and produce one pull request if that prompt leads to material repository changes.
+Read `.github/aw/skill-update-runtime.md` first, then execute the selected saved prompt described there and produce one pull request if that prompt leads to material repository changes.
 
 ## Inputs
 
-- Saved prompt path: `${{ steps.prepare_prompt.outputs.prompt_path }}`
-- Prompt slug: `${{ steps.prepare_prompt.outputs.prompt_slug }}`
-- Prefetched source directory: `${{ steps.prepare_prompt.outputs.sources_dir }}`
-- Prefetched source manifest: `${{ steps.prepare_prompt.outputs.sources_manifest }}`
+- Runtime context file: `.github/aw/skill-update-runtime.md`
 
 ## Process
 
-1. Read the saved prompt file at `${{ steps.prepare_prompt.outputs.prompt_path }}` in full before taking any action.
+1. Read `.github/aw/skill-update-runtime.md` in full before taking any action.
 2. Treat the markdown body of that saved prompt as the authoritative task definition for this run. Use its frontmatter only as routing and context metadata unless the body explicitly relies on it.
 3. Resolve any relative file links in the saved prompt relative to the prompt file location.
-4. Use the prefetched external-source copies under `${{ steps.prepare_prompt.outputs.sources_dir }}` and the URL-to-file mapping in `${{ steps.prepare_prompt.outputs.sources_manifest }}` as the local substitutes for the saved prompt's built-in URLs.
+4. Use the prefetched external-source copies and URL-to-file mapping listed in `.github/aw/skill-update-runtime.md` as the local substitutes for the saved prompt's built-in URLs.
 5. Follow the saved prompt faithfully inside this repository: inspect the referenced files, use the prefetched source copies when the prompt refers to built-in URLs, and make only the edits justified by that prompt.
 6. Reuse repository conventions from AGENTS.md and any checklist, template, validator, or support file that the saved prompt references.
 7. Run the validation commands requested by the saved prompt when they apply to the files you changed and the command is available in this environment.
@@ -149,13 +164,13 @@ Execute the saved prompt at `${{ steps.prepare_prompt.outputs.prompt_path }}` an
 
 ## Pull Request Requirements
 
-- Keep the branch and PR scoped to `${{ steps.prepare_prompt.outputs.prompt_slug }}` only.
-- Use a concise PR title derived from `${{ steps.prepare_prompt.outputs.prompt_slug }}`.
+- Keep the branch and PR scoped only to the selected prompt described in `.github/aw/skill-update-runtime.md`.
+- Use a concise PR title derived from the selected prompt slug in `.github/aw/skill-update-runtime.md`.
 - Summarize the material deltas, validations run, and unresolved risks in the PR body.
 
 ## Constraints
 
-- Do not process any prompt file other than `${{ steps.prepare_prompt.outputs.prompt_path }}`.
+- Do not process any prompt file other than the one identified in `.github/aw/skill-update-runtime.md`.
 - Do not batch multiple prompt tasks into one branch or one pull request.
 - Do not modify `.github/workflows/` or other automation files unless the saved prompt explicitly requires it.
 - If no action is needed, call `noop` with a concise explanation.

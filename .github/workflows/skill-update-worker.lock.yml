@@ -23,7 +23,7 @@
 #
 # Run one saved skill-update prompt from .github/prompts with GitHub Copilot and create a pull request for its resulting repository changes.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"cabe0e523eefb5858be6c02940654b80c2150e400d33556dbd8668c875303796","compiler_version":"v0.58.3","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"518bfe44a4d4885078ea6ede10e88a02b32eead98620ba9cc1f64eb4f9a06c69","compiler_version":"v0.58.3","strict":true}
 
 name: "Skill Update Worker"
 "on":
@@ -158,10 +158,6 @@ jobs:
           GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
           GH_AW_GITHUB_RUN_ID: ${{ github.run_id }}
           GH_AW_GITHUB_WORKSPACE: ${{ github.workspace }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_PATH: ${{ steps.prepare_prompt.outputs.prompt_path }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_SLUG: ${{ steps.prepare_prompt.outputs.prompt_slug }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_DIR: ${{ steps.prepare_prompt.outputs.sources_dir }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_MANIFEST: ${{ steps.prepare_prompt.outputs.sources_manifest }}
         run: |
           bash /opt/gh-aw/actions/create_prompt_first.sh
           {
@@ -219,10 +215,6 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_PATH: ${{ steps.prepare_prompt.outputs.prompt_path }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_SLUG: ${{ steps.prepare_prompt.outputs.prompt_slug }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_DIR: ${{ steps.prepare_prompt.outputs.sources_dir }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_MANIFEST: ${{ steps.prepare_prompt.outputs.sources_manifest }}
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -242,10 +234,6 @@ jobs:
           GH_AW_GITHUB_RUN_ID: ${{ github.run_id }}
           GH_AW_GITHUB_WORKSPACE: ${{ github.workspace }}
           GH_AW_NEEDS_PRE_ACTIVATION_OUTPUTS_ACTIVATED: ${{ needs.pre_activation.outputs.activated }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_PATH: ${{ steps.prepare_prompt.outputs.prompt_path }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_SLUG: ${{ steps.prepare_prompt.outputs.prompt_slug }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_DIR: ${{ steps.prepare_prompt.outputs.sources_dir }}
-          GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_MANIFEST: ${{ steps.prepare_prompt.outputs.sources_manifest }}
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -265,11 +253,7 @@ jobs:
                 GH_AW_GITHUB_REPOSITORY: process.env.GH_AW_GITHUB_REPOSITORY,
                 GH_AW_GITHUB_RUN_ID: process.env.GH_AW_GITHUB_RUN_ID,
                 GH_AW_GITHUB_WORKSPACE: process.env.GH_AW_GITHUB_WORKSPACE,
-                GH_AW_NEEDS_PRE_ACTIVATION_OUTPUTS_ACTIVATED: process.env.GH_AW_NEEDS_PRE_ACTIVATION_OUTPUTS_ACTIVATED,
-                GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_PATH: process.env.GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_PATH,
-                GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_SLUG: process.env.GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_PROMPT_SLUG,
-                GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_DIR: process.env.GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_DIR,
-                GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_MANIFEST: process.env.GH_AW_STEPS_PREPARE_PROMPT_OUTPUTS_SOURCES_MANIFEST
+                GH_AW_NEEDS_PRE_ACTIVATION_OUTPUTS_ACTIVATED: process.env.GH_AW_NEEDS_PRE_ACTIVATION_OUTPUTS_ACTIVATED
               }
             });
       - name: Validate prompt placeholders
@@ -332,7 +316,7 @@ jobs:
           PROMPT_PATH: ${{ inputs.prompt_path }}
         id: prepare_prompt
         name: Prepare prompt context
-        run: "set -euo pipefail\nnode <<'NODE'\nconst fs = require('node:fs');\nconst path = require('node:path');\n\nconst promptPath = (process.env.PROMPT_PATH || '').trim();\nif (!promptPath) {\n  throw new Error('prompt_path input is required');\n}\nif (!promptPath.startsWith('.github/prompts/') || !promptPath.endsWith('-skill-update.prompt.md')) {\n  throw new Error('prompt_path must match .github/prompts/*-skill-update.prompt.md');\n}\n\nconst absolutePromptPath = path.join(process.cwd(), promptPath);\nif (!fs.existsSync(absolutePromptPath)) {\n  throw new Error(`Prompt file not found: ${promptPath}`);\n}\n\nconst promptSlug = path.basename(promptPath, '.prompt.md');\nconst promptText = fs.readFileSync(absolutePromptPath, 'utf8');\nconst urlPattern = /https?:\\/\\/[^\\s)>'\"`]+/g;\nconst uniqueUrls = Array.from(new Set(promptText.match(urlPattern) || [])).sort();\n\nconst sourcesRoot = path.join(process.cwd(), '.github', 'aw', 'prompt-sources', promptSlug);\nfs.rmSync(sourcesRoot, { recursive: true, force: true });\nfs.mkdirSync(sourcesRoot, { recursive: true });\n\nasync function fetchSource(url) {\n  const response = await fetch(url, {\n    headers: {\n      'user-agent': 'gh-aw-skill-update-worker',\n      'accept': 'text/markdown,text/plain,text/html,application/json;q=0.9,*/*;q=0.8',\n    },\n  });\n  if (!response.ok) {\n    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);\n  }\n  const body = await response.text();\n  return {\n    status: response.status,\n    contentType: response.headers.get('content-type') || 'text/plain',\n    body,\n  };\n}\n\nasync function main() {\n  const manifest = [];\n  for (let index = 0; index < uniqueUrls.length; index += 1) {\n    const url = uniqueUrls[index];\n    const fetched = await fetchSource(url);\n    const fileName = `${String(index + 1).padStart(2, '0')}.txt`;\n    const relativeFilePath = path.posix.join('.github', 'aw', 'prompt-sources', promptSlug, fileName);\n    fs.writeFileSync(path.join(sourcesRoot, fileName), fetched.body, 'utf8');\n    manifest.push({\n      url,\n      file: relativeFilePath,\n      contentType: fetched.contentType,\n      status: fetched.status,\n    });\n  }\n\n  const manifestRelativePath = path.posix.join('.github', 'aw', 'prompt-sources', promptSlug, 'manifest.json');\n  fs.writeFileSync(path.join(sourcesRoot, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\\n', 'utf8');\n\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_path=${promptPath}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_slug=${promptSlug}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_dir=.github/aw/prompt-sources/${promptSlug}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_manifest=${manifestRelativePath}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `source_count=${manifest.length}\\n`);\n}\n\nmain().catch((error) => {\n  console.error(error instanceof Error ? error.message : String(error));\n  process.exit(1);\n});\nNODE\n"
+        run: "set -euo pipefail\nnode <<'NODE'\nconst fs = require('node:fs');\nconst path = require('node:path');\n\nconst promptPath = (process.env.PROMPT_PATH || '').trim();\nif (!promptPath) {\n  throw new Error('prompt_path input is required');\n}\nif (!promptPath.startsWith('.github/prompts/') || !promptPath.endsWith('-skill-update.prompt.md')) {\n  throw new Error('prompt_path must match .github/prompts/*-skill-update.prompt.md');\n}\n\nconst absolutePromptPath = path.join(process.cwd(), promptPath);\nif (!fs.existsSync(absolutePromptPath)) {\n  throw new Error(`Prompt file not found: ${promptPath}`);\n}\n\nconst promptSlug = path.basename(promptPath, '.prompt.md');\nconst promptText = fs.readFileSync(absolutePromptPath, 'utf8');\nconst urlPattern = /https?:\\/\\/[^\\s)>'\"`]+/g;\nconst uniqueUrls = Array.from(new Set(promptText.match(urlPattern) || [])).sort();\n\nconst runtimeRoot = path.join(process.cwd(), '.github', 'aw');\nconst sourcesRoot = path.join(process.cwd(), '.github', 'aw', 'prompt-sources', promptSlug);\nfs.mkdirSync(runtimeRoot, { recursive: true });\nfs.rmSync(sourcesRoot, { recursive: true, force: true });\nfs.mkdirSync(sourcesRoot, { recursive: true });\n\nasync function fetchSource(url) {\n  const response = await fetch(url, {\n    headers: {\n      'user-agent': 'gh-aw-skill-update-worker',\n      'accept': 'text/markdown,text/plain,text/html,application/json;q=0.9,*/*;q=0.8',\n    },\n  });\n  if (!response.ok) {\n    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);\n  }\n  const body = await response.text();\n  return {\n    status: response.status,\n    contentType: response.headers.get('content-type') || 'text/plain',\n    body,\n  };\n}\n\nasync function main() {\n  const manifest = [];\n  for (let index = 0; index < uniqueUrls.length; index += 1) {\n    const url = uniqueUrls[index];\n    const fetched = await fetchSource(url);\n    const fileName = `${String(index + 1).padStart(2, '0')}.txt`;\n    const relativeFilePath = path.posix.join('.github', 'aw', 'prompt-sources', promptSlug, fileName);\n    fs.writeFileSync(path.join(sourcesRoot, fileName), fetched.body, 'utf8');\n    manifest.push({\n      url,\n      file: relativeFilePath,\n      contentType: fetched.contentType,\n      status: fetched.status,\n    });\n  }\n\n  const manifestRelativePath = path.posix.join('.github', 'aw', 'prompt-sources', promptSlug, 'manifest.json');\n  fs.writeFileSync(path.join(sourcesRoot, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\\n', 'utf8');\n\n  const runtimeInstructionsPath = path.join(runtimeRoot, 'skill-update-runtime.md');\n  const runtimeInstructions = [\n    '# Skill Update Runtime Context',\n    '',\n    `- Saved prompt path: ${promptPath}`,\n    `- Prompt slug: ${promptSlug}`,\n    `- Prefetched source directory: .github/aw/prompt-sources/${promptSlug}`,\n    `- Prefetched source manifest: ${manifestRelativePath}`,\n    `- Prefetched source count: ${manifest.length}`,\n    '',\n    'Use the saved prompt path above as the single authoritative task definition for this run.',\n    'Use the prefetched source files and manifest above as local replacements for any built-in URLs referenced by that prompt.',\n  ].join('\\n');\n  fs.writeFileSync(runtimeInstructionsPath, `${runtimeInstructions}\\n`, 'utf8');\n\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_path=${promptPath}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `prompt_slug=${promptSlug}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_dir=.github/aw/prompt-sources/${promptSlug}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_manifest=${manifestRelativePath}\\n`);\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, 'runtime_instructions=.github/aw/skill-update-runtime.md\\n');\n  fs.appendFileSync(process.env.GITHUB_OUTPUT, `source_count=${manifest.length}\\n`);\n}\n\nmain().catch((error) => {\n  console.error(error instanceof Error ? error.message : String(error));\n  process.exit(1);\n});\nNODE\n"
         shell: bash
 
       - name: Configure Git credentials

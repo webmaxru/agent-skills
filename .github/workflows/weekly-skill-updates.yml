@@ -11,7 +11,9 @@ on:
         type: string
 
 permissions:
-  contents: read
+  actions: read
+  contents: write
+  pull-requests: write
 
 concurrency:
   group: weekly-skill-updates
@@ -19,6 +21,8 @@ concurrency:
 
 jobs:
   discover-prompts:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       prompt_paths: ${{ steps.discover.outputs.prompt_paths }}
