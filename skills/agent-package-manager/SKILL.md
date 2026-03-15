@@ -1,9 +1,9 @@
 ---
-name: apm
+name: agent-package-manager
 description: Installs, configures, audits, and operates Agent Package Manager (APM) in repositories. Use when initializing apm.yml, installing or updating packages, validating manifests, managing lockfiles, compiling agent context, browsing MCP servers, setting up runtimes, or packaging resolved context for CI and team distribution. Don't use for writing a single skill by hand, generic package managers like npm or pip, or non-APM agent configuration systems.
 ---
 
-# APM
+# Agent Package Manager
 
 ## Procedures
 

@@ -1,8 +1,8 @@
 # Web AI Agent Skills
 
-This repository is a working collection of agent skills and support assets for modern Web AI APIs, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
+This repository is a working collection of agent skills created and maintained by me, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
 
-The main purpose of this repo is not just to hold examples. It is to provide reusable Web AI skills that stay aligned with regularly updated specifications and implementation guidance for browser AI surfaces such as the Prompt API, WebMCP, and WebNN.
+The primary focus of the collection is modern Web AI APIs for the browser, including surfaces such as the Prompt API, WebMCP, and WebNN. It also includes AI-native development skills for professional repository workflows such as Agent Package Manager (APM) operations and GitHub Agentic Workflows.
 
 For these APIs, staying close to the latest specification is not optional. The standards and preview implementations are still moving, browser behavior can differ across milestones, and ecosystem examples become stale quickly. These skills exist to reduce that ambiguity so generated or assisted code follows the newest public specification state as closely as possible instead of relying on outdated snippets or improvised assumptions.
 
@@ -10,7 +10,7 @@ I actively maintain the skills in this repository against current specification 
 
 The repository has three practical roles:
 
-1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN.
+1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN, plus AI-native development skills where durable workflow assets are useful.
 2. Provide a local authoring workflow for creating, validating, and reviewing additional skills.
 3. Keep disposable demos and research artifacts separate from persistent skill assets while the durable skill content tracks evolving specifications.
 
@@ -18,11 +18,8 @@ The repository has three practical roles:
 
 - [Install Skills](#install-skills)
 - [Included Skills](#included-skills)
-  - [Prompt API Skill](#prompt-api-skill)
-  - [Language Detector API Skill](#language-detector-api-skill)
-  - [Writing Assistance APIs Skill](#writing-assistance-apis-skill)
-  - [WebMCP Skill](#webmcp-skill)
-  - [WebNN Skill](#webnn-skill)
+  - [Web AI API Skills](#web-ai-api-skills)
+  - [AI-Native Development Skills](#ai-native-development-skills)
 - [Supporting Assets](#supporting-assets)
   - [Skill Creator](#skill-creator)
 - [Repository Conventions](#repository-conventions)
@@ -38,73 +35,39 @@ If the target repository does not already use APM, initialize it first:
 apm init
 ```
 
-Install the Prompt API skill with APM:
+Then install any skill from this repository with the repository and skill placeholders replaced as needed:
+
+```bash
+apm install OWNER/REPO/skills/SKILL_NAME
+```
+
+Secondary installation path: use the `skills` package from npm for direct per-skill installs.
+
+```bash
+npx skills add OWNER/REPO --skill SKILL_NAME
+```
+
+For this repository, `OWNER/REPO` is `webmaxru/agent-skills`. The concrete install commands for each available skill are listed in the relevant skill sections below.
+
+## Included Skills
+
+### Web AI API Skills
+
+#### Prompt API Skill
+
+`skills/prompt-api` is the main production-style example skill in the repository. It is scoped to browser Prompt API work in JavaScript or TypeScript web apps.
+
+Install with APM:
 
 ```bash
 apm install webmaxru/agent-skills/skills/prompt-api
 ```
 
-Install the Language Detector API skill with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/language-detector-api
-```
-
-Install the Writing Assistance APIs skill with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/writing-assistance-apis
-```
-
-Install the WebMCP skill with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/webmcp
-```
-
-Install the WebNN skill with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/webnn
-```
-
-Secondary installation path: use the `skills` package from npm for direct per-skill installs.
-
-Install the Prompt API skill:
+Install with npm:
 
 ```bash
 npx skills add webmaxru/agent-skills --skill prompt-api
 ```
-
-Install the Language Detector API skill:
-
-```bash
-npx skills add webmaxru/agent-skills --skill language-detector-api
-```
-
-Install the Writing Assistance APIs skill:
-
-```bash
-npx skills add webmaxru/agent-skills --skill writing-assistance-apis
-```
-
-Install the WebMCP skill:
-
-```bash
-npx skills add webmaxru/agent-skills --skill webmcp
-```
-
-Install the WebNN skill:
-
-```bash
-npx skills add webmaxru/agent-skills --skill webnn
-```
-
-## Included Skills
-
-### Prompt API Skill
-
-`skills/prompt-api` is the main production-style example skill in the repository. It is scoped to browser Prompt API work in JavaScript or TypeScript web apps.
 
 It covers:
 
@@ -124,9 +87,21 @@ Its support files are split by purpose:
 - `assets/language-model-service.template.ts` for a reusable wrapper template
 - `scripts/find-frontend-targets.mjs` for deterministic scanning of likely web entry points and Prompt API markers
 
-### Language Detector API Skill
+#### Language Detector API Skill
 
 `skills/language-detector-api` is scoped to browser Language Detector API integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/language-detector-api
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill language-detector-api
+```
 
 It covers:
 
@@ -145,9 +120,21 @@ Its support files are split by purpose:
 - `assets/language-detector-session.template.ts` for a reusable typed session wrapper template
 - `scripts/find-language-detector-targets.mjs` for deterministic scanning of likely web entry points and Language Detector API markers
 
-### Writing Assistance APIs Skill
+#### Writing Assistance APIs Skill
 
 `skills/writing-assistance-apis` is scoped to browser Summarizer, Writer, and Rewriter integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/writing-assistance-apis
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill writing-assistance-apis
+```
 
 It covers:
 
@@ -166,9 +153,21 @@ Its support files are split by purpose:
 - `assets/writing-assistance-session.template.ts` for a reusable typed wrapper template
 - `scripts/find-writing-assistance-targets.mjs` for deterministic scanning of likely web entry points and Writing Assistance API markers
 
-### WebMCP Skill
+#### WebMCP Skill
 
 `skills/webmcp` is scoped to browser WebMCP integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/webmcp
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill webmcp
+```
 
 It covers:
 
@@ -187,9 +186,21 @@ Its support files are split by purpose:
 - `assets/model-context-registry.template.ts` for a reusable imperative registration helper
 - `scripts/find-webmcp-targets.mjs` for deterministic scanning of likely web entry points and WebMCP markers
 
-### WebNN Skill
+#### WebNN Skill
 
 `skills/webnn` is scoped to browser Web Neural Network API integrations in JavaScript or TypeScript web apps.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/webnn
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill webnn
+```
 
 It covers:
 
@@ -207,6 +218,72 @@ Its support files are split by purpose:
 - `references/troubleshooting.md` for context creation failures, dispatch issues, readback problems, and device fallback behavior
 - `assets/webnn-runtime.template.ts` for a reusable runtime wrapper template
 - `scripts/find-webnn-targets.mjs` for deterministic scanning of likely web entry points and WebNN markers
+
+### AI-Native Development Skills
+
+#### Agent Package Manager Skill
+
+`skills/agent-package-manager` is scoped to installing, configuring, auditing, and operating Agent Package Manager (APM) in repositories that use agent instructions, skills, prompts, or MCP integrations.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/agent-package-manager
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill agent-package-manager
+```
+
+It covers:
+
+- assessing existing APM state across `apm.yml`, `apm.lock.yaml`, tool config folders, and installed modules before making changes
+- shaping or repairing `apm.yml` deliberately, including package dependencies, MCP servers, scripts, and reproducible dependency forms
+- using `apm install`, `apm deps`, and dry-run flows to manage packages and lockfiles without guesswork
+- validating when `apm compile` is useful, when install-only flows are sufficient, and how explicit targets affect generation
+- operating scripts, runtimes, pack and unpack workflows, and CI-oriented distribution paths professionally
+
+Its support files are split by purpose:
+
+- `references/manifest-and-lockfile.md` for manifest structure, dependency forms, lockfile expectations, and configuration guidance
+- `references/command-workflows.md` for install, update, prune, compile, preview, runtime, and bundle workflows
+- `references/troubleshooting.md` for authentication issues, collisions, compile confusion, pack failures, and related recovery paths
+- `assets/apm.yml.template` for a reusable manifest starter or repair template
+
+#### GitHub Agentic Workflows Skill
+
+`skills/github-agentic-workflows` is scoped to professional authoring, review, installation, debugging, and day-two operation of GitHub Agentic Workflows repositories.
+
+Install with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/github-agentic-workflows
+```
+
+Install with npm:
+
+```bash
+npx skills add webmaxru/agent-skills --skill github-agentic-workflows
+```
+
+It covers:
+
+- identifying whether a repository already uses GH-AW and locating its active workflow surfaces
+- creating or revising workflow markdown, frontmatter, and compile-time configuration professionally
+- choosing safe outputs, network policy, authentication, and lockdown settings with least privilege
+- validating, compiling, running, and auditing workflows with the `gh aw` CLI
+- diagnosing common setup, compilation, permissions, network, and engine failures
+
+Its support files are split by purpose:
+
+- `references/authoring.md` for repository setup, workflow structure, frontmatter priorities, and validation loops
+- `references/examples.md` for proven workflow shapes, creation prompts, orchestration decisions, and production review areas
+- `references/security-and-operations.md` for safe outputs, network policy, authentication, lockdown, and observability guidance
+- `references/troubleshooting.md` for installation failures, enterprise policy blockers, compile issues, safe-output failures, and runtime debugging
+- `assets/workflow.template.md` for a reusable markdown workflow starter
+- `scripts/find-gh-aw-targets.mjs` for deterministic scanning of workflow files and GH-AW markers
 
 ## Supporting Assets
 
@@ -286,6 +363,14 @@ node skills/prompt-api/scripts/find-frontend-targets.mjs .
 ```
 
 The scanner prioritizes common web entry points such as `package.json`, `index.html`, and framework bootstrap files while ignoring transient directories such as `node_modules`, `dist`, `build`, `.next`, `.nuxt`, `coverage`, `out`, and `target`.
+
+### Scan a Workspace for GitHub Agentic Workflow Targets
+
+```bash
+node skills/github-agentic-workflows/scripts/find-gh-aw-targets.mjs .
+```
+
+The scanner inventories `.github/workflows/` files, highlights repository setup surfaces such as `.github/agents/agentic-workflows.agent.md`, and reports GH-AW markers including `gh aw`, `safe-outputs:`, `network:`, and orchestration fields.
 
 ### Scan a Workspace for Writing Assistance Targets
 
