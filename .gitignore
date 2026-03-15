@@ -49,3 +49,5 @@ artifacts/
 
 # APM dependencies
 apm_modules/
+
+.playwright-mcp/

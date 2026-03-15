@@ -19,6 +19,7 @@ The repository has three practical roles:
 - [Install Skills](#install-skills)
 - [Included Skills](#included-skills)
   - [Prompt API Skill](#prompt-api-skill)
+  - [Language Detector API Skill](#language-detector-api-skill)
   - [Writing Assistance APIs Skill](#writing-assistance-apis-skill)
   - [WebMCP Skill](#webmcp-skill)
   - [WebNN Skill](#webnn-skill)
@@ -41,6 +42,12 @@ Install the Prompt API skill with APM:
 
 ```bash
 apm install webmaxru/agent-skills/skills/prompt-api
+```
+
+Install the Language Detector API skill with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/language-detector-api
 ```
 
 Install the Writing Assistance APIs skill with APM:
@@ -67,6 +74,12 @@ Install the Prompt API skill:
 
 ```bash
 npx skills add webmaxru/agent-skills --skill prompt-api
+```
+
+Install the Language Detector API skill:
+
+```bash
+npx skills add webmaxru/agent-skills --skill language-detector-api
 ```
 
 Install the Writing Assistance APIs skill:
@@ -110,6 +123,27 @@ Its support files are split by purpose:
 - `references/troubleshooting.md` for runtime failure cases such as missing `LanguageModel`, iframe issues, and stale session cleanup
 - `assets/language-model-service.template.ts` for a reusable wrapper template
 - `scripts/find-frontend-targets.mjs` for deterministic scanning of likely web entry points and Prompt API markers
+
+### Language Detector API Skill
+
+`skills/language-detector-api` is scoped to browser Language Detector API integrations in JavaScript or TypeScript web apps.
+
+It covers:
+
+- identifying the correct browser app surface for language-detection work
+- confirming secure-context, permissions-policy, and browser-preview viability before code changes
+- implementing guarded `availability()` and `create()` flows with download progress handling
+- wiring confidence-aware `detect()` results, `und` handling, and quota-aware `measureInputUsage()` checks
+- validating cleanup, abort behavior, iframe delegation, and preview-specific compatibility limits
+
+Its support files are split by purpose:
+
+- `references/language-detector-reference.md` for API surface, lifecycle rules, result semantics, and permissions-policy constraints
+- `references/examples.md` for support detection, monitored creation, confidence-aware ranking, and cleanup patterns
+- `references/compatibility.md` for browser rollout notes, preview flags, iframe rules, and typing guidance
+- `references/troubleshooting.md` for missing globals, unavailable models, quota issues, uncertain results, and worker mismatches
+- `assets/language-detector-session.template.ts` for a reusable typed session wrapper template
+- `scripts/find-language-detector-targets.mjs` for deterministic scanning of likely web entry points and Language Detector API markers
 
 ### Writing Assistance APIs Skill
 
@@ -184,10 +218,12 @@ These prompt files support maintenance workflows in this repo:
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
+- `language-detector-api-skill-update.prompt.md` refreshes the Language Detector API skill from user-supplied updates, attachments, and the current specification and browser guidance
 - `writing-assistance-apis-skill-update.prompt.md` refreshes the Writing Assistance APIs skill from user-supplied updates, attachments, and the current specification state
 - `webmcp-skill-update.prompt.md` refreshes the WebMCP skill from user-supplied updates, attachments, and the current specification state
 - `webnn-skill-update.prompt.md` refreshes the WebNN skill from user-supplied updates, attachments, and the current specification state
 - `prompt-api-create-chat-demo-plain-html.prompt.md` recreates or extends a plain HTML Prompt API demo under `artifacts/prompt-api/`
+- `language-detector-api-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Language Detector API demo under `artifacts/language-detector-api/`
 - `writing-assistance-apis-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Writing Assistance APIs demo under `artifacts/writing-assistance-apis/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`

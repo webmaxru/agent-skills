@@ -1,5 +1,5 @@
 ---
-name: "Create Skill"
+name: "Create Web AI Skill"
 description: "Run the repository's five-phase skill workflow: create a skill, validate and remediate it, create supporting saved prompts, update the global repository README, and test installation in the current repo with both supported install commands. Use when authoring a new skill end to end or when explicitly running one phase against an existing skill."
 argument-hint: "Optional mode and inputs, for example: step=all, step=create, step=validate-remediate, step=supporting-prompts, step=readme-update, or step=install-test, plus a skill name, URLs, attached document notes, or pasted text"
 agent: "agent"
@@ -12,9 +12,10 @@ The skill destination must be a new folder under `skills/` whose name exactly ma
 Use the local `skill-creator` skill as the authoring source of truth for scaffolding and structure.
 
 Required inputs before starting any workflow actions:
-- For any run that includes phase 1, require all three inputs before starting skill work: skill name, skill scope, and at least one source material.
+- For any run that includes phase 1, require all three inputs before starting skill work: skill name (name of respective Web API), and at least one source material.
 - For phase 3 run directly, require the skill name and source materials for the prompt content before creating or updating supporting prompts. Prefer URLs when available and ask for them if they are missing.
 - If any required input is missing, stop and ask only for the missing input instead of starting the phase.
+- If no skill scope provided, default to browser-side use of API mentioned in a name in plain JavaScript/TypeScript web apps, including capability checks, session setup, error handling, and compatibility limits.
 
 Execution modes:
 - `step=all` is the default. Run all five phases below in order. All five phases are mandatory in this mode.
