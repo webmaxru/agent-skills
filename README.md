@@ -1,6 +1,10 @@
-# agent-skills
+# Agent Skills for Web AI
 
-This repository is a small working collection of agent skills and support assets built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
+This repository is a working collection of agent skills and support assets for cutting-edge web AI APIs, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
+
+For APIs such as the browser Prompt API and WebMCP, staying close to the latest specification is not optional. These surfaces are still evolving, implementation details can move, and some behaviors remain ambiguous across drafts, browser previews, and ecosystem guidance. The point of these custom skills is to reduce that ambiguity so generated or assisted code follows the newest public specification state as closely as possible instead of relying on stale examples or improvised assumptions.
+
+I actively update these skills to track the latest specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
 The repository has three practical roles:
 
@@ -27,6 +31,7 @@ The repository has three practical roles:
 |               `-- validate-metadata.py
 |-- .github/
 |   `-- prompts/
+|       |-- create-skill.prompt.md
 |       |-- prompt-api-create-chat-demo-plain-html.prompt.md
 |       |-- prompt-api-skill-update.prompt.md
 |       |-- remediate-skills.prompt.md
@@ -123,6 +128,7 @@ Use it when creating or revising agent skills. Do not use it for generic reposit
 
 These prompt files support maintenance workflows in this repo:
 
+- `create-skill.prompt.md` creates a new skill under `skills/`, can offer validation and remediation, and generates follow-up update and demo prompts for the new skill
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
