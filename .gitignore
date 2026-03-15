@@ -45,3 +45,7 @@ env/
 
 # Generated artifacts
 artifacts/
+
+
+# APM dependencies
+apm_modules/

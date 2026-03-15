@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "prompt-api": {
+      "source": "webmaxru/agent-skills",
+      "sourceType": "github",
+      "computedHash": "9102c8ce628b84aade10bd7abfe8ff9a6c7bd7d2e6996ba68b69d82acbe81636"
+    },
+    "webmcp": {
+      "source": "webmaxru/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ab76e1bf8ed859c97199303958e5e87a7008ca0b495ba234eaf3f8d0f9340dcd"
+    },
+    "webnn": {
+      "source": "webmaxru/agent-skills",
+      "sourceType": "github",
+      "computedHash": "2e8d40c8478843a2e44797f1b73407772a0800a8337eea0d010c0d508511860c"
+    }
+  }
+}

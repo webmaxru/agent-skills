@@ -1,0 +1,11 @@
+name: agent-skills
+version: 1.0.0
+description: APM project for agent-skills
+author: Maxim Salnikov
+dependencies:
+  apm:
+  - webmaxru/agent-skills/skills/prompt-api
+  - webmaxru/agent-skills/skills/webmcp
+  - webmaxru/agent-skills/skills/webnn
+  mcp: []
+scripts: {}

@@ -1,74 +1,84 @@
-# Agent Skills for Web AI
+# Web AI Agent Skills
 
-This repository is a working collection of agent skills and support assets for cutting-edge web AI APIs, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
+This repository is a working collection of agent skills and support assets for modern Web AI APIs, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
 
-For APIs such as the browser Prompt API and WebMCP, staying close to the latest specification is not optional. These surfaces are still evolving, implementation details can move, and some behaviors remain ambiguous across drafts, browser previews, and ecosystem guidance. The point of these custom skills is to reduce that ambiguity so generated or assisted code follows the newest public specification state as closely as possible instead of relying on stale examples or improvised assumptions.
+The main purpose of this repo is not just to hold examples. It is to provide reusable Web AI skills that stay aligned with regularly updated specifications and implementation guidance for browser AI surfaces such as the Prompt API, WebMCP, and WebNN.
 
-I actively update these skills to track the latest specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
+For these APIs, staying close to the latest specification is not optional. The standards and preview implementations are still moving, browser behavior can differ across milestones, and ecosystem examples become stale quickly. These skills exist to reduce that ambiguity so generated or assisted code follows the newest public specification state as closely as possible instead of relying on outdated snippets or improvised assumptions.
+
+I actively maintain the skills in this repository against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
 The repository has three practical roles:
 
-1. Provide production-style example skills for browser Prompt API and WebMCP integrations.
+1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN.
 2. Provide a local authoring workflow for creating, validating, and reviewing additional skills.
-3. Keep disposable demos and research artifacts separate from persistent skill assets.
+3. Keep disposable demos and research artifacts separate from persistent skill assets while the durable skill content tracks evolving specifications.
 
-## Repository Layout
+## Contents
 
-```text
-.
-|-- AGENTS.md
-|-- README.md
-|-- .gitignore
-|-- .agents/
-|   `-- skills/
-|       `-- skill-creator/
-|           |-- SKILL.md
-|           |-- assets/
-|           |   `-- SKILL.template.md
-|           |-- references/
-|           |   `-- checklist.md
-|           `-- scripts/
-|               `-- validate-metadata.py
-|-- .github/
-|   `-- prompts/
-|       |-- create-skill.prompt.md
-|       |-- prompt-api-create-chat-demo-plain-html.prompt.md
-|       |-- prompt-api-skill-update.prompt.md
-|       |-- remediate-skills.prompt.md
-|       |-- validate-skills.prompt.md
-|       |-- webmcp-create-demo-plain-html.prompt.md
-|       `-- webmcp-skill-update.prompt.md
-`-- skills/
-    |-- prompt-api/
-    |   |-- SKILL.md
-    |   |-- assets/
-    |   |   `-- language-model-service.template.ts
-    |   |-- references/
-    |   |   |-- compatibility.md
-    |   |   |-- examples.md
-    |   |   |-- polyfills.md
-    |   |   |-- prompt-api-reference.md
-    |   |   `-- troubleshooting.md
-    |   `-- scripts/
-    |       `-- find-frontend-targets.mjs
-    `-- webmcp/
-        |-- SKILL.md
-        |-- assets/
-        |   `-- model-context-registry.template.ts
-        |-- references/
-        |   |-- compatibility.md
-        |   |-- declarative-api.md
-        |   |-- troubleshooting.md
-        |   `-- webmcp-reference.md
-        `-- scripts/
-            `-- find-webmcp-targets.mjs
+- [Install Skills](#install-skills)
+- [Included Skills](#included-skills)
+  - [Prompt API Skill](#prompt-api-skill)
+  - [WebMCP Skill](#webmcp-skill)
+  - [WebNN Skill](#webnn-skill)
+- [Supporting Assets](#supporting-assets)
+  - [Skill Creator](#skill-creator)
+- [Repository Conventions](#repository-conventions)
+- [Common Workflows](#common-workflows)
+
+## Install Skills
+
+Primary installation path: use [Agent Package Manager (APM)](https://github.com/microsoft/apm), a package manager for agent instructions, prompts, skills, and related configuration.
+
+If the target repository does not already use APM, initialize it first:
+
+```bash
+apm init
+```
+
+Install the Prompt API skill with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/prompt-api
+```
+
+Install the WebMCP skill with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/webmcp
+```
+
+Install the WebNN skill with APM:
+
+```bash
+apm install webmaxru/agent-skills/skills/webnn
+```
+
+Secondary installation path: use the `skills` package from npm for direct per-skill installs.
+
+Install the Prompt API skill:
+
+```bash
+npx skills add webmaxru/agent-skills --skill prompt-api
+```
+
+Install the WebMCP skill:
+
+```bash
+npx skills add webmaxru/agent-skills --skill webmcp
+```
+
+Install the WebNN skill:
+
+```bash
+npx skills add webmaxru/agent-skills --skill webnn
 ```
 
 ## Included Skills
 
-### `skills/prompt-api`
+### Prompt API Skill
 
-This is the main production-style example skill in the repository. It is scoped to browser Prompt API work in JavaScript or TypeScript web apps.
+`skills/prompt-api` is the main production-style example skill in the repository. It is scoped to browser Prompt API work in JavaScript or TypeScript web apps.
 
 It covers:
 
@@ -88,9 +98,9 @@ Its support files are split by purpose:
 - `assets/language-model-service.template.ts` for a reusable wrapper template
 - `scripts/find-frontend-targets.mjs` for deterministic scanning of likely web entry points and Prompt API markers
 
-### `skills/webmcp`
+### WebMCP Skill
 
-This skill is scoped to browser WebMCP integrations in JavaScript or TypeScript web apps.
+`skills/webmcp` is scoped to browser WebMCP integrations in JavaScript or TypeScript web apps.
 
 It covers:
 
@@ -109,18 +119,26 @@ Its support files are split by purpose:
 - `assets/model-context-registry.template.ts` for a reusable imperative registration helper
 - `scripts/find-webmcp-targets.mjs` for deterministic scanning of likely web entry points and WebMCP markers
 
-### `.agents/skills/skill-creator`
+### WebNN Skill
 
-This local authoring skill is the repository source of truth for creating and reviewing skills.
+`skills/webnn` is scoped to browser Web Neural Network API integrations in JavaScript or TypeScript web apps.
 
-It includes:
+It covers:
 
-- `SKILL.md` with the authoring procedure
-- `scripts/validate-metadata.py` for metadata validation
-- `assets/SKILL.template.md` as a starting point for new skills
-- `references/checklist.md` for final review
+- identifying the correct browser integration surface for local inference work
+- confirming secure-context, `navigator.ml`, and device viability before code changes
+- implementing guarded `MLContext` and `MLGraphBuilder` flows with explicit runtime selection
+- wiring fallback behavior for unsupported devices or browsers without silently switching to remote inference
+- validating context creation, graph execution, tensor readback, and preview-specific behavior against the current spec and runtime landscape
 
-Use it when creating or revising agent skills. Do not use it for generic repository documentation or other non-skill content.
+Its support files are split by purpose:
+
+- `references/webnn-reference.md` for API surface, execution model, and graph/runtime rules
+- `references/examples.md` for direct graph and adapter implementation patterns
+- `references/compatibility.md` for browser support, preview requirements, and backend differences
+- `references/troubleshooting.md` for context creation failures, dispatch issues, readback problems, and device fallback behavior
+- `assets/webnn-runtime.template.ts` for a reusable runtime wrapper template
+- `scripts/find-webnn-targets.mjs` for deterministic scanning of likely web entry points and WebNN markers
 
 ## Supporting Assets
 
@@ -133,8 +151,23 @@ These prompt files support maintenance workflows in this repo:
 - `remediate-skills.prompt.md` applies targeted fixes to skills
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
 - `webmcp-skill-update.prompt.md` refreshes the WebMCP skill from user-supplied updates, attachments, and the current specification state
+- `webnn-skill-update.prompt.md` refreshes the WebNN skill from user-supplied updates, attachments, and the current specification state
 - `prompt-api-create-chat-demo-plain-html.prompt.md` recreates or extends a plain HTML Prompt API demo under `artifacts/prompt-api/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
+- `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
+
+### Skill Creator
+
+`.agents/skills/skill-creator` is the local authoring skill and repository source of truth for creating and reviewing skills.
+
+It includes:
+
+- `SKILL.md` with the authoring procedure
+- `scripts/validate-metadata.py` for metadata validation
+- `assets/SKILL.template.md` as a starting point for new skills
+- `references/checklist.md` for final review
+
+Use it when creating or revising agent skills. Do not use it for generic repository documentation or other non-skill content.
 
 ### `artifacts/`
 
@@ -143,7 +176,9 @@ These prompt files support maintenance workflows in this repo:
 Current workspace contents include:
 
 - `artifacts/prompt-api/` with a plain HTML Prompt API demo (`index.html`, `styles.css`, `app.js`)
-- `artifacts/webmcp/` as the target folder for generated WebMCP demo artifacts
+- `artifacts/webmcp/` with a plain HTML WebMCP demo surface and generated demo artifacts
+- `artifacts/webnn/` with a plain HTML WebNN demo (`index.html`, `styles.css`, `app.js`)
+- `artifacts/pr-submissions/` for disposable pull request submission material and related working state
 
 Do not move durable templates, references, or skill logic into `artifacts/`.
 
@@ -187,6 +222,14 @@ node skills/webmcp/scripts/find-webmcp-targets.mjs .
 ```
 
 The scanner prioritizes common web entry points and reports existing imperative or declarative WebMCP markers such as `navigator.modelContext`, `registerTool()`, `unregisterTool()`, and form tool annotations.
+
+### Scan a Workspace for WebNN Targets
+
+```bash
+node skills/webnn/scripts/find-webnn-targets.mjs .
+```
+
+The scanner prioritizes common browser app entry points and reports existing local inference markers such as `navigator.ml`, `createContext()`, `MLGraphBuilder`, and related runtime setup code.
 
 ### Create a New Skill
 

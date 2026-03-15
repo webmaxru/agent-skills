@@ -1,0 +1,28 @@
+lockfile_version: '1'
+generated_at: '2026-03-15T12:26:40.529497+00:00'
+apm_version: 0.7.9
+dependencies:
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: c04190eb154861104cb67998a8634bc039dbc16a
+  virtual_path: skills/prompt-api
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/prompt-api
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: c04190eb154861104cb67998a8634bc039dbc16a
+  virtual_path: skills/webmcp
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/webmcp
+- repo_url: webmaxru/agent-skills
+  host: github.com
+  resolved_commit: c04190eb154861104cb67998a8634bc039dbc16a
+  virtual_path: skills/webnn
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/webnn
