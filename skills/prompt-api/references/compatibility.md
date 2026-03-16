@@ -12,10 +12,11 @@ Use this reference when the feature must support multiple Prompt API generations
 ## Browser Availability Snapshot
 
 1. Chrome documents the web Prompt API as an origin-trial feature in Chrome 138 and requires on-device model support on desktop-class hardware.
-2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices on supported ChromeOS builds.
-3. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
-4. Edge page integrations currently target the built-in Phi-4-mini model and require supported preview hardware.
-5. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
+2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+ (Ventura and later), Linux, and Chromebook Plus devices on ChromeOS Platform 16389.0.0 or later. Chrome for Android, iOS, and non-Chromebook Plus ChromeOS devices are not yet supported.
+3. Chrome hardware requirements: at least 22 GB of free storage on the volume containing the Chrome profile (model deleted if available storage drops below 10 GB after download); GPU with strictly more than 4 GB of VRAM, or CPU with at least 16 GB of RAM and 4 or more cores; unmetered network connection for the initial download only.
+4. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
+5. Edge page integrations target the built-in Phi-4-mini model on Windows 10 or 11 and macOS 13.3 or later, and require at least 20 GB of free storage (model deleted if available storage drops below 10 GB) and a GPU with at least 5.5 GB of VRAM. The device performance class must be `High` or greater as reported by `edge://on-device-internals`.
+6. Both browser docs treat model download as a separate readiness step that requires an unmetered network connection for the initial download. No data is sent to external servers during model inference.
 
 ## Browser Setup Notes
 
@@ -24,6 +25,7 @@ Use this reference when the feature must support multiple Prompt API generations
 3. Chrome and Edge both document download progress monitoring through the `monitor` callback on `LanguageModel.create()`.
 4. The Prompt API remains unavailable in workers, and cross-origin iframes still require `allow="language-model"`.
 5. User-supplied update for this skill: extension pages and offscreen pages can expose the native Prompt API even when a page integration still needs polyfill or preview handling.
+6. Chrome extension developers should remove the now-expired `"aiLanguageModelOriginTrial"` entry from the `"permissions"` array in their extension manifest.
 
 ## Typings
 
