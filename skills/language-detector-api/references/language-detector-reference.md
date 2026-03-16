@@ -63,7 +63,8 @@ Behavior guarantees:
 
 * Results are sorted by confidence in descending order.
 * Returned confidence values are between `0` and `1`.
-* Low-probability languages can be omitted from the returned list.
+* A language is omitted from results when its confidence is zero, or when its confidence is less than the `und` confidence value. Languages roughly less than 1% likely are considered noise and excluded.
+* The loop also terminates once cumulative confidence across returned languages reaches or exceeds 0.99, so high-confidence detections can cut the list short.
 * The final result is always `und`, representing confidence that the text is not in any supported language strongly enough to return more specific candidates.
 * The total confidence of returned results can be less than `1` because low-probability results are filtered out.
 

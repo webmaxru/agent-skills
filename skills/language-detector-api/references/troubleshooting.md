@@ -37,6 +37,18 @@ Checks:
 2. Confirm iframe delegation for `language-detector`.
 3. Confirm browser policy or enterprise restrictions are not blocking access.
 
+## `create()` throws `OperationError`
+
+Likely cause:
+
+* the underlying model failed to initialize after download
+
+Checks:
+
+1. Retry `create()` once to rule out a transient initialization failure.
+2. Confirm the browser and model are not in a partially-downloaded or corrupted state; clearing browser data may help.
+3. If the error persists, treat it as a permanent environment issue and surface a non-AI fallback.
+
 ## `create()` or `detect()` throws `AbortError`
 
 Likely causes:
