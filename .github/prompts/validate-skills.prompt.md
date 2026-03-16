@@ -9,9 +9,9 @@ Validate the skills in this workspace, defaulting to `skills/` unless the user n
 
 Use the local authoring skill as the source of truth:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before evaluating any skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before writing the final report.
-- Use [skill template](../../.agents/skills/skill-creator/assets/SKILL.template.md) only when comparing structure or expected sections.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before evaluating any skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before writing the final report.
+- Use [skill template](../../.github/skills/skill-creator/assets/SKILL.template.md) only when comparing structure or expected sections.
 
 For each skill in scope:
 1. Inspect the skill directory structure and confirm it follows the expected flat layout: `SKILL.md`, `scripts/`, `references/`, and `assets/` where applicable.
@@ -19,7 +19,7 @@ For each skill in scope:
 3. Run the metadata validator with the exact extracted values:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "<name>" --description "<description>"
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "<name>" --description "<description>"
 ```
 
 4. Review the `description` for routing quality:

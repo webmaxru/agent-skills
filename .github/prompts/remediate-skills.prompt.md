@@ -9,9 +9,9 @@ Remediate skill issues in this workspace, defaulting to `skills/` unless the use
 
 Use the local authoring skill as the source of truth:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before making edits.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
-- Use [skill template](../../.agents/skills/skill-creator/assets/SKILL.template.md) only when comparing expected structure or section layout.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before making edits.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
+- Use [skill template](../../.github/skills/skill-creator/assets/SKILL.template.md) only when comparing expected structure or section layout.
 
 If the user provides a validation report, use it as the remediation backlog. If no report is provided, inspect the targeted skills first and determine the minimum necessary fixes.
 
@@ -44,7 +44,7 @@ After editing each skill:
 1. Re-run the metadata validator with the exact final values:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "<name>" --description "<description>"
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "<name>" --description "<description>"
 ```
 
 2. Re-check the skill against the checklist and confirm whether the result is `pass` or `warning`.

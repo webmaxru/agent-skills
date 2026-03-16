@@ -23,8 +23,8 @@ Rules for source reconciliation:
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before changing the skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/webnn](../../skills/webnn/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
 - Read any attached documents supplied for this run before using the built-in prompt URLs to fill gaps.
 
@@ -67,7 +67,7 @@ Validation:
 1. Re-run the metadata validator with the final `name` and `description`:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "webnn" --description "Implements and debugs browser Web Neural Network API integrations in JavaScript or TypeScript web apps. Use when adding navigator.ml checks, MLContext creation, MLGraphBuilder flows, device selection, tensor dispatch and readback, or explicit fallback paths to ONNX Runtime Web or other local runtimes. Don't use for model training, server-side ML inference, or cloud AI APIs."
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "webnn" --description "Implements and debugs browser Web Neural Network API integrations in JavaScript or TypeScript web apps. Use when adding navigator.ml checks, MLContext creation, MLGraphBuilder flows, device selection, tensor dispatch and readback, or explicit fallback paths to ONNX Runtime Web or other local runtimes. Don't use for model training, server-side ML inference, or cloud AI APIs."
 ```
 
 2. Re-check the updated skill against the checklist.

@@ -26,8 +26,8 @@ Rules for source reconciliation:
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before changing the skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/prompt-api](../../skills/prompt-api/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
 - Read any attached documents supplied for this run before fetching the built-in prompt URLs.
 
@@ -70,7 +70,7 @@ Validation:
 1. Re-run the metadata validator with the final `name` and `description`:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "prompt-api" --description "Implements and debugs browser Prompt API integrations in JavaScript or TypeScript web apps. Use when adding LanguageModel availability checks, session creation, prompt or promptStreaming flows, structured output, download progress UX, or iframe permission-policy handling. Don't use for server-side LLM SDKs, REST AI APIs, or non-browser providers."
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "prompt-api" --description "Implements and debugs browser Prompt API integrations in JavaScript or TypeScript web apps. Use when adding LanguageModel availability checks, session creation, prompt or promptStreaming flows, structured output, download progress UX, or iframe permission-policy handling. Don't use for server-side LLM SDKs, REST AI APIs, or non-browser providers."
 ```
 
 2. Re-check the updated skill against the checklist.

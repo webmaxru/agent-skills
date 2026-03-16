@@ -37,9 +37,9 @@ Mandatory phases for `step=all`:
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before drafting the skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
-- Read [skill template](../../.agents/skills/skill-creator/assets/SKILL.template.md) before drafting `SKILL.md`.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before drafting the skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
+- Read [skill template](../../.github/skills/skill-creator/assets/SKILL.template.md) before drafting `SKILL.md`.
 - Read [validate-skills prompt](./validate-skills.prompt.md), [remediate-skills prompt](./remediate-skills.prompt.md), [Prompt API update prompt](./prompt-api-skill-update.prompt.md), and [WebMCP demo prompt](./webmcp-create-demo-plain-html.prompt.md) as formatting references for the generated follow-up prompts.
 
 Interaction order for any run that includes phase 1:
@@ -74,7 +74,7 @@ Run this phase when `step=all` or `step=create`.
 7. Run the metadata validator with the exact final values before finalizing the scaffold:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "<skill-name>" --description "<final description>"
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "<skill-name>" --description "<final description>"
 ```
 
 8. If metadata validation fails, correct the metadata and re-run the validator until it passes.

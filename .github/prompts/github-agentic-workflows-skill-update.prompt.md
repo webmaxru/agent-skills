@@ -23,8 +23,8 @@ Rules for source reconciliation:
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before changing the skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/github-agentic-workflows](../../skills/github-agentic-workflows/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
 - Read any attached documents supplied for this run before using the built-in prompt URLs to fill gaps.
 
@@ -66,7 +66,7 @@ Validation:
 1. Re-run the metadata validator with the final `name` and `description`:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "github-agentic-workflows" --description "Authors, reviews, installs, and debugs GitHub Agentic Workflows in repositories, including workflow markdown, frontmatter, gh aw compile and run flows, safe outputs, security guardrails, and operational patterns. Use when creating or maintaining GH-AW automation. Don't use for standard deterministic GitHub Actions YAML, generic CI pipelines, or non-GitHub automation systems."
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "github-agentic-workflows" --description "Authors, reviews, installs, and debugs GitHub Agentic Workflows in repositories, including workflow markdown, frontmatter, gh aw compile and run flows, safe outputs, security guardrails, and operational patterns. Use when creating or maintaining GH-AW automation. Don't use for standard deterministic GitHub Actions YAML, generic CI pipelines, or non-GitHub automation systems."
 ```
 
 2. Re-check the updated skill against the checklist.

@@ -26,8 +26,8 @@ Rules for source reconciliation:
 
 Before editing:
 - Read [README.md](../../README.md) for repository conventions.
-- Read [skill creator](../../.agents/skills/skill-creator/SKILL.md) before changing the skill.
-- Read [skill checklist](../../.agents/skills/skill-creator/references/checklist.md) before final validation.
+- Read [skill creator](../../.github/skills/skill-creator/SKILL.md) before changing the skill.
+- Read [skill checklist](../../.github/skills/skill-creator/references/checklist.md) before final validation.
 - Read the current skill files under [skills/translator-api](../../skills/translator-api/), including `SKILL.md`, `references/`, `assets/`, and `scripts/`.
 - Read any attached documents supplied for this run before using the built-in prompt URLs to fill gaps.
 
@@ -68,7 +68,7 @@ Validation:
 1. Re-run the metadata validator with the final `name` and `description`:
 
 ```bash
-python .agents/skills/skill-creator/scripts/validate-metadata.py --name "translator-api" --description "Implements and debugs browser Translator API integrations in JavaScript or TypeScript web apps. Use when adding Translator support checks, language-pair availability flows, model download UX, session creation, translate() or translateStreaming() calls, input-usage measurement, or permissions-policy handling for on-device translation. Don't use for server-side translation SDKs, cloud translation services, or generic multilingual content pipelines."
+python .github/skills/skill-creator/scripts/validate-metadata.py --name "translator-api" --description "Implements and debugs browser Translator API integrations in JavaScript or TypeScript web apps. Use when adding Translator support checks, language-pair availability flows, model download UX, session creation, translate() or translateStreaming() calls, input-usage measurement, or permissions-policy handling for on-device translation. Don't use for server-side translation SDKs, cloud translation services, or generic multilingual content pipelines."
 ```
 
 2. Re-check the updated skill against the checklist.
