@@ -86,6 +86,19 @@ Choose `dispatch-workflow` when:
 2. The worker should outlive the parent run.
 3. `workflow_dispatch` inputs are the natural handoff boundary.
 
+## Dynamic Fan-Out Pattern
+
+Use a plain GitHub Actions wrapper plus a reusable GH-AW worker when the repository must discover a changing set of files and run one agentic task per item.
+
+Shape:
+
+1. Wrapper workflow discovers inputs deterministically.
+2. Wrapper expands a matrix from those discovered inputs.
+3. Each matrix entry calls one compiled worker lockfile with a single scoped input.
+4. The worker emits one safe output result, typically one PR or `noop`, for that single unit of work.
+
+Use this pattern for weekly maintenance jobs, prompt libraries, repository sweeps, and other recurring automation where compile-time GH-AW orchestration would be too static.
+
 ## Professional Review Areas
 
 Review existing workflows against these questions:

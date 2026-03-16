@@ -16,6 +16,15 @@ Then verify the extension is visible with:
 gh extension list
 ```
 
+If `gh extension upgrade gh-aw` or `gh extension install github/gh-aw --force` fails because the current token cannot query GitHub release metadata, install with an explicit version through the upstream installer instead:
+
+```bash
+curl -sL https://raw.githubusercontent.com/github/gh-aw/main/install-gh-aw.sh | bash -s -- v0.58.3 --skip-checksum
+gh aw version
+```
+
+Treat `gh aw version` as the source of truth after any fallback install path.
+
 ## Enterprise Or Organization Action Policies Block GH-AW
 
 If workflows fail because `github/gh-aw/actions/...` is not allowed, repository settings are not enough. The organization or enterprise policy must allow `github/gh-aw@*`.
@@ -52,6 +61,8 @@ gh aw fix --write
 gh aw validate --strict
 gh aw compile --verbose
 ```
+
+If the workflow used to compile under an older CLI, compare the generated warnings and frontmatter changes after `gh aw version` changes before assuming the docs or the workflow are wrong.
 
 ## Lock File Missing Or Stale
 
@@ -108,6 +119,8 @@ network:
 ```
 
 Then inspect logs or audit output for blocked domains.
+
+If strict mode plus the installed CLI still rejects a required domain, move the fetch into a deterministic setup step, write the fetched content to repository-local temporary files, and tell the agent to use those local copies.
 
 ## Public Repository Lockdown Hides Expected Content
 

@@ -38,6 +38,7 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 14. When a reusable GH-AW worker is called from a matrix, do not leave it on the default shared workflow-level concurrency group. Set an explicit concurrency group keyed by the matrix input or prompt identity so parallel legs are not cancelled by GitHub's one-running-one-pending concurrency behavior.
 15. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
 16. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
+17. Treat `.github/aw/` as transient GH-AW runtime and compiler scratch space during local compile, validate, or trial flows unless the workflow intentionally uses checked-in files from that path.
 
 **Step 4: Configure repository prerequisites and authentication**
 1. Read `references/authoring.md` before first-time repository setup.
@@ -45,10 +46,10 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 3. Configure engine secrets with `gh aw secrets bootstrap` or `gh aw secrets set`.
 4. Use `COPILOT_GITHUB_TOKEN` for Copilot engine authentication.
 5. For Copilot runs, use a fine-grained PAT in `COPILOT_GITHUB_TOKEN`; a general `gho_...` OAuth token may pass secret checks but still fail real Copilot execution.
-5. Re-check `gh aw version` after extension upgrades or reinstall paths so the repository guidance and compiler behavior stay aligned.
-6. If a deterministic wrapper calls a reusable worker, make the caller workflow permissions at least as broad as the nested worker's requested `actions`, `contents`, and `pull-requests` scopes or the run can fail before agent execution starts.
-7. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
-8. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
+6. Re-check `gh aw version` after extension upgrades or reinstall paths so the repository guidance and compiler behavior stay aligned.
+7. If a deterministic wrapper calls a reusable worker, make the caller workflow permissions at least as broad as the nested worker's requested `actions`, `contents`, and `pull-requests` scopes or the run can fail before agent execution starts.
+8. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
+9. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
 
 **Step 5: Validate, compile, and execute**
 1. Run `gh aw fix --write` when the workflow uses deprecated fields or the compiler points to codemod-able drift.
@@ -71,6 +72,7 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 * If a reusable worker succeeds in isolation but the wrapper run fails at startup, inspect caller-workflow `permissions:` inheritance before changing the worker logic.
 * If a matrix of reusable GH-AW workers cancels most legs immediately, inspect the called workflow's concurrency group first. A shared workflow-level group will cancel pending legs even when `cancel-in-progress` is `false`.
 * If the workflow prompt still shows unresolved runtime placeholders during execution, move those values into a generated local context file and have the agent read that file explicitly.
+* If local `gh aw compile`, `gh aw validate`, or `gh aw trial` commands create `.github/aw/` files such as `actions-lock.json` or logs, treat them as transient byproducts and remove them before commit unless the repository intentionally keeps them.
 * If safe outputs do nothing, verify that staged mode is intentional and that the prompt explicitly instructs the agent to call `noop` when no write action is needed.
 * If URLs are sanitized as `(redacted)` or tools cannot reach required services, tighten and expand `network.allowed` deliberately rather than disabling the firewall.
 * If Copilot inference fails with a configured token, verify that the PAT owner actually has Copilot license and inference access.
