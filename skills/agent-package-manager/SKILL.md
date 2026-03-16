@@ -51,9 +51,10 @@ description: Installs, configures, audits, and operates Agent Package Manager (A
 6. Recommend `apm-action` or a prebuilt bundle when repeated installs create avoidable CI cost or network risk.
 
 ## Error Handling
-* If `apm` is missing, install or update it first, then verify with `apm --version` before editing project files.
+* If `apm` is missing, install it with `curl -fsSL https://raw.githubusercontent.com/microsoft/apm/main/install.sh | sh` on macOS/Linux or `irm https://raw.githubusercontent.com/microsoft/apm/main/install.ps1 | iex` on Windows, then verify with `apm --version` before editing project files.
 * If `apm install` reports authentication failures, read `references/troubleshooting.md` and fix host authentication before retrying.
 * If `apm install` reports file collisions, inspect the diagnostic summary, retry with `--verbose` when needed, and use `--force` only when overwriting local files is clearly intended.
+* If `apm install` reports a supply chain security block, treat it as a hard stop; do not bypass with `--force` until the flagged package has been reviewed by the team.
 * If `apm compile` is unnecessary for the user’s toolchain, avoid adding it as busywork; prefer the lighter install-only path.
 * If `apm pack` fails because `apm.lock.yaml` is missing or deployed files are absent, rerun `apm install` before retrying.
 * If the repository depends on local path packages, do not recommend `apm pack` until those dependencies are replaced with remote references.

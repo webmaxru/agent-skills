@@ -34,8 +34,11 @@ compilation:
 Prefer these patterns:
 
 * Use `owner/repo` for GitHub-hosted repositories.
-* Use `host/group/repo` for non-GitHub hosts.
-* Use object form when `path`, `ref`, or `alias` is required.
+* Use `owner/repo/path/to/dir` for a single skill or subdirectory on GitHub.
+* Use `dev.azure.com/org/project/repo` for Azure DevOps repositories.
+* Use `host/group/repo` for other non-GitHub hosts such as GitLab or Bitbucket.
+* Append `#ref` to any shorthand form to pin a version inline, for example `owner/repo#v2.1.0`.
+* Use object form when `path`, `ref`, or `alias` is required and inline pinning is not sufficient.
 * Use pinned refs for team-critical dependencies that must not drift unexpectedly.
 * Use local paths only for short-lived development loops.
 
@@ -46,6 +49,8 @@ dependencies:
   apm:
     - microsoft/apm-sample-package
     - github/awesome-copilot/skills/review-and-refactor#v2.1.0
+    - anthropics/skills/skills/frontend-design
+    - dev.azure.com/myorg/myproject/myrepo
     - git: https://gitlab.com/acme/repo.git
       path: instructions/security
       ref: v2.0

@@ -2,6 +2,26 @@
 
 Use these command paths when an APM task needs exact CLI behavior instead of approximation.
 
+## Install APM
+
+macOS and Linux:
+
+```text
+curl -fsSL https://raw.githubusercontent.com/microsoft/apm/main/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```text
+irm https://raw.githubusercontent.com/microsoft/apm/main/install.ps1 | iex
+```
+
+Verify the install:
+
+```text
+apm --version
+```
+
 ## Bootstrap and inspection
 
 Create or initialize a project:
