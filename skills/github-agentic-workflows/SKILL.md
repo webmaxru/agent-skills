@@ -38,6 +38,7 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 14. When a reusable GH-AW worker is called from a matrix, do not leave it on the default shared workflow-level concurrency group. Set an explicit concurrency group keyed by the matrix input or prompt identity so parallel legs are not cancelled by GitHub's one-running-one-pending concurrency behavior.
 15. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
 16. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
+17. Treat `.github/aw/` as transient GH-AW runtime and compiler scratch space during local compile, validate, or trial flows unless the workflow intentionally uses checked-in files from that path.
 
 **Step 4: Configure repository prerequisites and authentication**
 1. Read `references/authoring.md` before first-time repository setup.
@@ -77,6 +78,7 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 * If a trial run fails on the activation step with `Validate COPILOT_GITHUB_TOKEN secret`, inspect the host repository with `gh secret list -R <host-repo>`. The source repository's secrets are not inherited by the trial host.
 * If `gh aw trial --force-delete-host-repo-before` fails, confirm you have admin rights on the host repository and that the current GitHub auth token includes `delete_repo` scope.
 * If the workflow prompt still shows unresolved runtime placeholders during execution, move those values into a generated local context file and have the agent read that file explicitly.
+* If local `gh aw compile`, `gh aw validate`, or `gh aw trial` commands create `.github/aw/` files such as `actions-lock.json` or logs, treat them as transient byproducts and remove them before commit unless the repository intentionally keeps them.
 * If safe outputs do nothing, verify that staged mode is intentional and that the prompt explicitly instructs the agent to call `noop` when no write action is needed.
 * If `gh aw mcp inspect` fails on a compiled scheduled workflow source with a fuzzy schedule parsing error, treat that as an inspection-path limitation first. Re-run `gh aw compile`, prefer installed-workflow or run-log based debugging, and do not assume the workflow itself is invalid if validation and compile already passed.
 * If the compiler rejects engine fields or tool entries that look valid from older examples, trust the installed schema. In `gh aw v0.58.3`, `engine.max-turns` is not supported for Copilot, `bash` must be `true`, `false`, or an allowlist, and bare `edit:` / `web-fetch:` keys are accepted where boolean values are not.
