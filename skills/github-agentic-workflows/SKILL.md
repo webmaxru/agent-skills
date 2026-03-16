@@ -45,18 +45,21 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 3. Configure engine secrets with `gh aw secrets bootstrap` or `gh aw secrets set`.
 4. Use `COPILOT_GITHUB_TOKEN` for Copilot engine authentication.
 5. For Copilot runs, use a fine-grained PAT in `COPILOT_GITHUB_TOKEN`; a general `gho_...` OAuth token may pass secret checks but still fail real Copilot execution.
-5. Re-check `gh aw version` after extension upgrades or reinstall paths so the repository guidance and compiler behavior stay aligned.
-6. If a deterministic wrapper calls a reusable worker, make the caller workflow permissions at least as broad as the nested worker's requested `actions`, `contents`, and `pull-requests` scopes or the run can fail before agent execution starts.
-7. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
-8. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
+6. When using `gh aw trial`, verify that the host repository also has the required engine secret. Secrets from the logical or source repository are not copied automatically into the temporary or reusable host repo.
+7. Re-check `gh aw version` after extension upgrades or reinstall paths so the repository guidance and compiler behavior stay aligned.
+8. If a deterministic wrapper calls a reusable worker, make the caller workflow permissions at least as broad as the nested worker's requested `actions`, `contents`, and `pull-requests` scopes or the run can fail before agent execution starts.
+9. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
+10. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
 
 **Step 5: Validate, compile, and execute**
 1. Run `gh aw fix --write` when the workflow uses deprecated fields or the compiler points to codemod-able drift.
 2. Run `gh aw validate --strict` before treating a workflow as ready.
 3. When the CLI version changed or a workflow depends on newer frontmatter behavior, run `gh aw compile --verbose` so warnings and generated-version changes are visible.
 4. Run `gh aw compile` after validation succeeds and commit both the `.md` source and the generated `.lock.yml` file.
-5. Use `gh aw run <workflow>` for direct execution and `gh aw trial <workflow>` when an isolated test flow is more appropriate.
-6. Use `gh aw status`, `gh aw logs`, `gh aw audit`, and `gh aw health` to review state, failures, cost, tool usage, and success trends after changes.
+5. Use `gh aw run <workflow> --dry-run` to validate remote dispatch behavior, especially when you suspect branch, trigger, or workflow-discovery problems.
+6. Use `gh aw trial ./.github/workflows/<workflow>.md` when you need to execute a local workflow source before pushing it. The explicit `./` path matters; without it, the CLI may parse the argument as a repository spec instead of a local file.
+7. Use `gh aw run <workflow>` for direct execution only after the workflow source or lockfile actually exists on the target branch.
+8. Use `gh aw status`, `gh aw logs`, `gh aw audit`, and `gh aw health` to review state, failures, cost, tool usage, and success trends after changes.
 
 **Step 6: Operate and improve professionally**
 1. Review whether the workflow can be simplified, split into smaller workflows, or converted into shared components.
@@ -68,10 +71,15 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 * If `gh extension install github/gh-aw` fails, use the standalone installer path documented in `references/troubleshooting.md`.
 * If compilation fails, fix frontmatter syntax, deprecated fields, imports, or permission mismatches before continuing.
 * If compiler behavior does not match the docs you are reading, trust the installed `gh aw version` and validate against that version before rewriting the workflow shape.
+* If `gh aw trial` rejects `.github/workflows/<name>.md` as an invalid repository spec, retry with an explicit local path such as `./.github/workflows/<name>.md`.
 * If a reusable worker succeeds in isolation but the wrapper run fails at startup, inspect caller-workflow `permissions:` inheritance before changing the worker logic.
 * If a matrix of reusable GH-AW workers cancels most legs immediately, inspect the called workflow's concurrency group first. A shared workflow-level group will cancel pending legs even when `cancel-in-progress` is `false`.
+* If a trial run fails on the activation step with `Validate COPILOT_GITHUB_TOKEN secret`, inspect the host repository with `gh secret list -R <host-repo>`. The source repository's secrets are not inherited by the trial host.
+* If `gh aw trial --force-delete-host-repo-before` fails, confirm you have admin rights on the host repository and that the current GitHub auth token includes `delete_repo` scope.
 * If the workflow prompt still shows unresolved runtime placeholders during execution, move those values into a generated local context file and have the agent read that file explicitly.
 * If safe outputs do nothing, verify that staged mode is intentional and that the prompt explicitly instructs the agent to call `noop` when no write action is needed.
+* If `gh aw mcp inspect` fails on a compiled scheduled workflow source with a fuzzy schedule parsing error, treat that as an inspection-path limitation first. Re-run `gh aw compile`, prefer installed-workflow or run-log based debugging, and do not assume the workflow itself is invalid if validation and compile already passed.
+* If the compiler rejects engine fields or tool entries that look valid from older examples, trust the installed schema. In `gh aw v0.58.3`, `engine.max-turns` is not supported for Copilot, `bash` must be `true`, `false`, or an allowlist, and bare `edit:` / `web-fetch:` keys are accepted where boolean values are not.
 * If URLs are sanitized as `(redacted)` or tools cannot reach required services, tighten and expand `network.allowed` deliberately rather than disabling the firewall.
 * If Copilot inference fails with a configured token, verify that the PAT owner actually has Copilot license and inference access.
 * If public-repository workflows miss external contributor content, confirm whether GitHub lockdown mode is blocking that content before changing workflow logic.
