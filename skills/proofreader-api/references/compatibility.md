@@ -19,9 +19,11 @@ Proofreader API support remains browser-specific, preview-sensitive, and hardwar
 ## Microsoft Edge preview notes
 
 * Microsoft Edge documents the Proofreader API as a developer preview in Canary or Dev starting with version `142`.
+* Edge uses the **Phi-4-mini** model (`microsoft/Phi-4-mini-instruct`) built into the browser.
 * Edge currently documents preview enablement through the `Proofreader API for Phi mini` flag.
 * Edge preview guidance currently targets Windows 10 or 11 and macOS 13.3+.
 * Edge preview guidance currently requires at least 20 GB free storage, at least 5.5 GB VRAM, and an unmetered connection for the initial model download.
+* If available storage drops below 10 GB after the model is downloaded, Edge will delete the model to preserve space for other browser features.
 * Edge exposes device-readiness details through `edge://on-device-internals`, where `Device performance class` should be `High` or greater.
 
 ## Chrome notes
@@ -29,8 +31,9 @@ Proofreader API support remains browser-specific, preview-sensitive, and hardwar
 * Chrome documents the Proofreader API as part of its built-in AI platform.
 * Chrome currently documents access through an origin trial running in milestones `141` through `145`, plus local testing on `localhost` with preview flags enabled.
 * Chrome's localhost guidance includes enabling `#optimization-guide-on-device-model`, `#prompt-api-for-gemini-nano-multimodal-input`, and `#proofreader-api-for-gemini-nano`.
-* Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices, but not on mobile browsers.
+* Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices (ChromeOS from Platform 16389.0.0 onwards), but not on Android, iOS, or non-Chromebook Plus ChromeOS devices.
 * Chrome documents minimum hardware requirements of more than 4 GB VRAM or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
+* If available storage falls below 10 GB after the model is downloaded, Chrome removes the model from the device. The model re-downloads once the storage requirement is met again.
 
 ## Secure context and frame rules
 
