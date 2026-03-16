@@ -42,6 +42,7 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 ## TypeScript and typings
 
 * Browser DOM typings for these APIs are not guaranteed in every TypeScript version.
+* Chrome documents the `@types/dom-chromium-ai` npm package as the recommended source of TypeScript typings for built-in AI APIs including Summarizer, Writer, and Rewriter.
 * Preserve local declaration files or project typings when a codebase already has them.
 * Add narrow, feature-specific typings instead of widening the whole global namespace with speculative fields.
 
@@ -50,3 +51,15 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 * Do not ship these APIs as the only path for critical workflows unless the supported browser matrix is intentionally narrow.
 * Keep a visible fallback for unsupported browsers, blocked frames, and devices that fail the preview hardware requirements.
 * Re-check compatibility when browser milestones, preview flags, or bundled model requirements change.
+
+## Summarizer type value discrepancy
+
+* The W3C specification and Chrome define the `"tldr"` summary type value as the string `"tldr"` (no semicolon).
+* Microsoft Edge documentation uses `"tl;dr"` (with semicolon) for the same type value, which conflicts with the spec.
+* Use `"tldr"` (the spec-defined value) in production code. If Edge rejects `"tldr"`, treat it as a browser-specific compatibility gap and file a report before working around it.
+
+## Additional Chrome built-in AI APIs
+
+* Chrome also ships a Proofreader API (for grammar and style correction) alongside Summarizer, Writer, and Rewriter.
+* The Proofreader API is not part of the W3C Writing Assistance APIs specification and is not covered by this skill.
+* Route Proofreader integration tasks to a skill or reference that covers Chrome's Proofreader API specifically.

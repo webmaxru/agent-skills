@@ -52,10 +52,10 @@ Treat `downloadable` and `downloading` as usable only after a real `create()` pa
 
 `Summarizer.create()` supports these extra options:
 
-* `type`: `tldr`, `teaser`, `key-points`, `headline`
-* `format`: `plain-text`, `markdown`
-* `length`: `short`, `medium`, `long`
-* `preference`: `auto`, `speed`, `capability`
+* `type`: `tldr`, `teaser`, `key-points`, `headline` (default: `key-points`)
+* `format`: `plain-text`, `markdown` (default: `markdown`)
+* `length`: `short`, `medium`, `long` (default: `short`)
+* `preference`: `auto`, `speed`, `capability` (default: `auto`)
 
 Session members:
 
@@ -78,9 +78,9 @@ Use `Summarizer` only when the task is to condense or restate existing content a
 
 `Writer.create()` supports these extra options:
 
-* `tone`: `formal`, `neutral`, `casual`
-* `format`: `plain-text`, `markdown`
-* `length`: `short`, `medium`, `long`
+* `tone`: `formal`, `neutral`, `casual` (default: `neutral`)
+* `format`: `plain-text`, `markdown` (default: `markdown`)
+* `length`: `short`, `medium`, `long` (default: `short`)
 
 Session members:
 
@@ -103,9 +103,9 @@ Use `Writer` when the input is a writing task or prompt for new text, not an exi
 
 `Rewriter.create()` supports these extra options:
 
-* `tone`: `as-is`, `more-formal`, `more-casual`
-* `format`: `as-is`, `plain-text`, `markdown`
-* `length`: `as-is`, `shorter`, `longer`
+* `tone`: `as-is`, `more-formal`, `more-casual` (default: `as-is`)
+* `format`: `as-is`, `plain-text`, `markdown` (default: `as-is`)
+* `length`: `as-is`, `shorter`, `longer` (default: `as-is`)
 
 Session members:
 
