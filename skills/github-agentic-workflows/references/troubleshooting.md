@@ -64,6 +64,12 @@ gh aw compile --verbose
 
 If the workflow used to compile under an older CLI, compare the generated warnings and frontmatter changes after `gh aw version` changes before assuming the docs or the workflow are wrong.
 
+Concrete schema mismatches seen in `gh aw v0.58.3`:
+
+1. `engine.max-turns` is not supported for Copilot workflows.
+2. `bash` must be `true`, `false`, or an allowlist such as `bash: ["git status"]`.
+3. `edit:` and `web-fetch:` accept bare-key or object syntax; boolean values can fail validation.
+
 ## Lock File Missing Or Stale
 
 If `.lock.yml` was not generated, fix compile errors first. If old lock files remain after source deletion, remove them with:
@@ -102,6 +108,8 @@ If expected tools are unavailable:
 1. Check `toolsets:` coverage.
 2. Inspect workflow MCP configuration with `gh aw mcp inspect <workflow>`.
 3. Verify required package installs, environment variables, or remote authentication.
+
+If `gh aw mcp inspect` fails on a scheduled markdown workflow with a fuzzy schedule parsing error even though `gh aw validate --strict` and `gh aw compile --verbose` already passed, treat that as an inspection-path limitation first. Compile again, prefer run logs or `gh aw audit`, and avoid assuming the workflow source is invalid solely from that inspection failure.
 
 ## Network Access Is Blocked
 
@@ -142,6 +150,15 @@ copilot -p "write a haiku"
 ```
 
 If that fails for the token owner, the workflow will not recover until licensing or access is fixed.
+
+## Trial Mode Fails Before The Agent Starts
+
+If `gh aw trial` fails before the agent job starts, check these trial-specific causes:
+
+1. Local workflow paths should be explicit, for example `./.github/workflows/my-workflow.md`. Without `./`, the CLI may interpret the argument as a repository spec.
+2. The host repository used by `gh aw trial` needs its own engine secret such as `COPILOT_GITHUB_TOKEN`. Source or logical repository secrets are not inherited automatically.
+3. If you reuse a persistent host repo, confirm the secret with `gh secret list -R <host-repo>` before blaming the workflow.
+4. If you force-delete the host repo before running the trial, the authenticated account needs admin rights on that repo and GitHub auth must include `delete_repo` scope.
 
 ## Workflow Run Failed And Root Cause Is Unclear
 
