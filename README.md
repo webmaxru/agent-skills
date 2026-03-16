@@ -1,14 +1,16 @@
 # Web AI Agent Skills
 
-This repository is a working collection of agent skills created and maintained by me, built around the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
+![Web AI Agent Skills banner](assets/repo-banner.svg)
 
-The primary focus of the collection is modern Web AI APIs for the browser, including surfaces such as the Prompt API, WebMCP, and WebNN. It also includes AI-native development skills for professional repository workflows such as Agent Package Manager (APM) operations and GitHub Agentic Workflows.
+This repository is a maintained collection of agent skills for modern browser Web AI APIs and adjacent AI-native development workflows. The Web AI skills cover Prompt API, Language Detector API, Translator API, Writing Assistance APIs, Proofreader API, WebMCP, and WebNN. The repository also includes workflow-oriented skills for Agent Package Manager (APM) and GitHub Agentic Workflows.
 
-For these APIs, staying close to the latest specification is not optional. The standards and preview implementations are still moving, browser behavior can differ across milestones, and ecosystem examples become stale quickly. These skills exist to reduce that ambiguity so generated or assisted code follows the newest public specification state as closely as possible instead of relying on outdated snippets or improvised assumptions.
+For these APIs, staying close to the latest specification matters. Standards and preview implementations still shift, browser behavior changes across milestones, and many ecosystem examples go stale quickly. These skills reduce that drift so generated or assisted code stays aligned with the current public specification state instead of relying on outdated snippets or guesswork.
 
-I actively maintain the skills in this repository against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
+I maintain the skills against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
-That maintenance also runs through GitHub Agentic Workflows on a weekly cadence. The repository schedules a GH-AW update pass that scans the saved `*-skill-update.prompt.md` prompts, ranges across the relevant specification and reference sources for each skill, and opens draft pull requests only when a run finds material updates worth proposing. Those workflow-generated changes are never treated as auto-mergeable output: every update still requires a mandatory human review before merging.
+Maintenance also runs through GitHub Agentic Workflows on a weekly cadence. The repository scans the saved `*-skill-update.prompt.md` prompts, checks the relevant specification and reference sources for each skill, and opens draft pull requests only when a run finds material updates worth proposing. Those workflow-generated changes are never auto-merged; every update still requires human review.
+
+The repository follows the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
 
 The repository has three practical roles:
 
@@ -35,7 +37,6 @@ The repository has three practical roles:
   - [`.github/prompts`](#githubprompts)
   - [GitHub Agentic Workflows Maintenance](#github-agentic-workflows-maintenance)
   - [Skill Creator](#skill-creator)
-  - [`.artifacts/`](#artifacts)
 - [Repository Conventions](#repository-conventions)
 - [Common Workflows](#common-workflows)
 
@@ -428,19 +429,6 @@ It includes:
 - `references/checklist.md` for final review
 
 Use it when creating or revising agent skills. Do not use it for generic repository documentation or other non-skill content.
-
-### `artifacts/`
-
-`artifacts/` is intentionally disposable and ignored by Git. Use it for temporary demos, experiments, and working reference files that should not become part of the persistent skill surface.
-
-Current workspace contents include:
-
-- `artifacts/prompt-api/` with a plain HTML Prompt API demo (`index.html`, `styles.css`, `app.js`)
-- `artifacts/webmcp/` with a plain HTML WebMCP demo surface and generated demo artifacts
-- `artifacts/webnn/` with a plain HTML WebNN demo (`index.html`, `styles.css`, `app.js`)
-- `artifacts/pr-submissions/` for disposable pull request submission material and related working state
-
-Do not move durable templates, references, or skill logic into `artifacts/`.
 
 ## Repository Conventions
 

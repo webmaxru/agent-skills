@@ -2,8 +2,9 @@ This repository contains a small working set of agent skills and support assets 
 
 Repository layout:
 
-- `skills/prompt-api/` is the main production-style example skill for browser Prompt API integrations in JavaScript or TypeScript web apps.
-- `.agents/skills/skill-creator/` is the local authoring skill used to create, validate, and review skills in this repository.
+- `skills/*` primary repository content: each subfolder is a standalone skill with its own `SKILL.md`, `scripts/`, `references/`, and `assets/`.
+- `.github/skills/` is the local supporting skills used to create, update, validate, and review skills in this repository.
+- `assets/` is for internal supporting materials only. Do not treat it as user-facing repository content and do not consider it for README updates.
 - `artifacts/*` might contain disposable demos for testing skills. Never use this folder for any persistent asset, because it is ignored by Git and may be deleted without warning.
 - `.github/prompts/` contains maintenance prompts for validating skills, remediating skill issues, updating the Prompt API skill, and recreating the demo artifact.
 
@@ -18,3 +19,4 @@ When working in this repo:
 7. Do not add per-skill human-oriented files such as `README.md` or `CHANGELOG.md`.
 8. When creating or revising a skill, use `.agents/skills/skill-creator/scripts/validate-metadata.py` and `.agents/skills/skill-creator/references/checklist.md` as the repository's validation path.
 9. For saved maintenance prompts that gather external information, request sources in this priority order unless the prompt explicitly says otherwise: supplied prompt text, supplied attached documents, then the built-in URLs already defined in the prompt. Higher-priority sources override lower-priority sources.
+10. Never consider contents of `artifacts/` as persistent or canonical. Never add description of it to the README or reference it from any skill. Always treat it as a scratch space that can be deleted without warning.
