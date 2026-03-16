@@ -23,7 +23,7 @@
 #
 # Run one saved skill-update prompt from .github/prompts with GitHub Copilot and create a pull request for its resulting repository changes.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"518bfe44a4d4885078ea6ede10e88a02b32eead98620ba9cc1f64eb4f9a06c69","compiler_version":"v0.58.3","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"f65e1060924f1bb96a49501a5b148ffae727a3c51517f79317d66f34707da286","compiler_version":"v0.58.3","strict":true}
 
 name: "Skill Update Worker"
 "on":
@@ -50,7 +50,8 @@ name: "Skill Update Worker"
 permissions: {}
 
 concurrency:
-  group: "gh-aw-${{ github.workflow }}"
+  cancel-in-progress: false
+  group: skill-update-worker-${{ github.repository }}-${{ inputs.prompt_path }}
 
 run-name: "Skill Update Worker"
 

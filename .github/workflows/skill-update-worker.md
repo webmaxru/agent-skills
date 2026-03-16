@@ -18,6 +18,9 @@ permissions:
   actions: read
   contents: read
   pull-requests: read
+concurrency:
+  group: skill-update-worker-${{ github.repository }}-${{ inputs.prompt_path }}
+  cancel-in-progress: false
 engine: copilot
 network:
   allowed:

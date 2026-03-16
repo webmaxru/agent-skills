@@ -35,8 +35,9 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 11. Do not rely on `${{ steps.<id>.outputs.* }}` placeholders reaching the agent-visible markdown body in real runs. If prompt instructions depend on runtime values, write them into a deterministic local file during setup and tell the agent to read that file.
 12. Use imported or reusable workflows only when the repository genuinely benefits from shared logic or orchestration.
 13. For recurring work across a dynamic set of inputs, prefer a reusable GH-AW worker plus a deterministic YAML wrapper for discovery and matrix fan-out.
-14. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
-15. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
+14. When a reusable GH-AW worker is called from a matrix, do not leave it on the default shared workflow-level concurrency group. Set an explicit concurrency group keyed by the matrix input or prompt identity so parallel legs are not cancelled by GitHub's one-running-one-pending concurrency behavior.
+15. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
+16. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
 
 **Step 4: Configure repository prerequisites and authentication**
 1. Read `references/authoring.md` before first-time repository setup.
@@ -68,6 +69,7 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 * If compilation fails, fix frontmatter syntax, deprecated fields, imports, or permission mismatches before continuing.
 * If compiler behavior does not match the docs you are reading, trust the installed `gh aw version` and validate against that version before rewriting the workflow shape.
 * If a reusable worker succeeds in isolation but the wrapper run fails at startup, inspect caller-workflow `permissions:` inheritance before changing the worker logic.
+* If a matrix of reusable GH-AW workers cancels most legs immediately, inspect the called workflow's concurrency group first. A shared workflow-level group will cancel pending legs even when `cancel-in-progress` is `false`.
 * If the workflow prompt still shows unresolved runtime placeholders during execution, move those values into a generated local context file and have the agent read that file explicitly.
 * If safe outputs do nothing, verify that staged mode is intentional and that the prompt explicitly instructs the agent to call `noop` when no write action is needed.
 * If URLs are sanitized as `(redacted)` or tools cannot reach required services, tighten and expand `network.allowed` deliberately rather than disabling the firewall.
