@@ -37,7 +37,7 @@ description: Installs, configures, audits, and operates Agent Package Manager (A
 1. Read `references/command-workflows.md` before changing compilation strategy or target selection.
 2. Use `apm compile --validate` to validate primitives when the goal is correctness rather than output generation.
 3. Use `apm compile --dry-run` before large compilation changes or when checking placement decisions.
-4. Explain that `apm install` already deploys prompts, agents, skills, hooks, and MCP integrations for supported tools; `apm compile` mainly exists to generate instruction files such as `AGENTS.md` or `CLAUDE.md`.
+4. Explain that `apm install` already deploys prompts, agents, skills, plugins, hooks, and MCP integrations for supported tools; `apm compile` mainly exists to generate instruction files such as `AGENTS.md` or `CLAUDE.md`.
 5. Use explicit targets when the repository serves more than one runtime or tool family.
 6. Keep `compilation.exclude` aligned with build and dependency directories so compilation does not re-scan generated output.
 7. If the project needs continuous regeneration during authoring, use `apm compile --watch` only after the one-shot validation path is clean.
@@ -51,7 +51,7 @@ description: Installs, configures, audits, and operates Agent Package Manager (A
 6. Recommend `apm-action` or a prebuilt bundle when repeated installs create avoidable CI cost or network risk.
 
 ## Error Handling
-* If `apm` is missing, install or update it first, then verify with `apm --version` before editing project files.
+* If `apm` is missing, read `references/command-workflows.md` for the installer commands, run the appropriate one for the platform, then verify with `apm --version` before editing project files.
 * If `apm install` reports authentication failures, read `references/troubleshooting.md` and fix host authentication before retrying.
 * If `apm install` reports file collisions, inspect the diagnostic summary, retry with `--verbose` when needed, and use `--force` only when overwriting local files is clearly intended.
 * If `apm compile` is unnecessary for the user’s toolchain, avoid adding it as busywork; prefer the lighter install-only path.

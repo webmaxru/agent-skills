@@ -44,12 +44,24 @@ Examples:
 ```yaml
 dependencies:
   apm:
+    # Skills from any GitHub repository
+    - anthropics/skills/skills/frontend-design
+    - microsoft/GitHub-Copilot-for-Azure/plugin/skills/azure-compliance
+    # Full packages (rules, skills, prompts, hooks, ...)
     - microsoft/apm-sample-package
+    # Skills with pinned ref
     - github/awesome-copilot/skills/review-and-refactor#v2.1.0
+    # Plugins
+    - github/awesome-copilot/plugins/context-engineering#v2.1
+    # Agents (direct file reference)
+    - github/awesome-copilot/agents/api-architect.agent.md
+    # Non-GitHub git host with path and version pinning
     - git: https://gitlab.com/acme/repo.git
       path: instructions/security
       ref: v2.0
       alias: acme-sec
+    - git: dev.azure.com/org/project/repo
+      path: prompts/review.prompt.md
   mcp:
     - io.github.github/github-mcp-server
     - name: internal-knowledge-base
