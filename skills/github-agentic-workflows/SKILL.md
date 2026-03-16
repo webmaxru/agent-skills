@@ -32,19 +32,22 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 8. Default to `engine: copilot` unless the task explicitly requires another engine and the repository is already prepared for that engine's authentication model.
 9. Configure `network:` with least privilege. Prefer ecosystem identifiers such as `node`, `python`, or `github` over individual registry domains when the compiler supports them.
 10. If strict mode and the installed CLI reject custom domains that the workflow still needs, prefetch external sources in deterministic setup steps and pass local files into the agent instead of broadly relaxing the firewall.
-11. Use imported or reusable workflows only when the repository genuinely benefits from shared logic or orchestration.
-12. For recurring work across a dynamic set of inputs, prefer a reusable GH-AW worker plus a deterministic YAML wrapper for discovery and matrix fan-out.
-13. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
-14. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
+11. Do not rely on `${{ steps.<id>.outputs.* }}` placeholders reaching the agent-visible markdown body in real runs. If prompt instructions depend on runtime values, write them into a deterministic local file during setup and tell the agent to read that file.
+12. Use imported or reusable workflows only when the repository genuinely benefits from shared logic or orchestration.
+13. For recurring work across a dynamic set of inputs, prefer a reusable GH-AW worker plus a deterministic YAML wrapper for discovery and matrix fan-out.
+14. Recompile the workflow after frontmatter, imports, or other compile-time configuration changes.
+15. If only the markdown body changed and the workflow is edited directly on GitHub.com, do not recompile solely for body text changes.
 
 **Step 4: Configure repository prerequisites and authentication**
 1. Read `references/authoring.md` before first-time repository setup.
 2. Run `gh aw init` when the repository is not configured for GH-AW authoring and the user wants persistent setup.
 3. Configure engine secrets with `gh aw secrets bootstrap` or `gh aw secrets set`.
 4. Use `COPILOT_GITHUB_TOKEN` for Copilot engine authentication.
+5. For Copilot runs, use a fine-grained PAT in `COPILOT_GITHUB_TOKEN`; a general `gho_...` OAuth token may pass secret checks but still fail real Copilot execution.
 5. Re-check `gh aw version` after extension upgrades or reinstall paths so the repository guidance and compiler behavior stay aligned.
-6. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
-7. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
+6. If a deterministic wrapper calls a reusable worker, make the caller workflow permissions at least as broad as the nested worker's requested `actions`, `contents`, and `pull-requests` scopes or the run can fail before agent execution starts.
+7. Use a GitHub App or custom GitHub token when the workflow needs cross-repository reads or writes, Projects access, remote GitHub tool mode, or advanced safe outputs.
+8. If the repository is public and the workflow will inspect untrusted external content, preserve lockdown and approval controls unless the task is explicitly a low-risk public workflow.
 
 **Step 5: Validate, compile, and execute**
 1. Run `gh aw fix --write` when the workflow uses deprecated fields or the compiler points to codemod-able drift.
@@ -64,6 +67,8 @@ description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in 
 * If `gh extension install github/gh-aw` fails, use the standalone installer path documented in `references/troubleshooting.md`.
 * If compilation fails, fix frontmatter syntax, deprecated fields, imports, or permission mismatches before continuing.
 * If compiler behavior does not match the docs you are reading, trust the installed `gh aw version` and validate against that version before rewriting the workflow shape.
+* If a reusable worker succeeds in isolation but the wrapper run fails at startup, inspect caller-workflow `permissions:` inheritance before changing the worker logic.
+* If the workflow prompt still shows unresolved runtime placeholders during execution, move those values into a generated local context file and have the agent read that file explicitly.
 * If safe outputs do nothing, verify that staged mode is intentional and that the prompt explicitly instructs the agent to call `noop` when no write action is needed.
 * If URLs are sanitized as `(redacted)` or tools cannot reach required services, tighten and expand `network.allowed` deliberately rather than disabling the firewall.
 * If Copilot inference fails with a configured token, verify that the PAT owner actually has Copilot license and inference access.
