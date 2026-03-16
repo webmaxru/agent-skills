@@ -59,6 +59,10 @@ Edit guidance:
 - Update `scripts/find-webmcp-targets.mjs` only if the existing detection logic is actually wrong for the skill workflow.
 - Do not add human-oriented files inside the skill directory.
 
+PR description rule:
+- If this run produces or updates a PR description, every single suggested update in that PR description must include its own supporting source URL with a fragment link to the exact section, heading, or anchored reference that justifies that specific update.
+- Do not use bare page-level URLs, one shared citation for multiple unrelated updates, or vague source lists. Each update item must be traceable to its exact source reference.
+
 Validation:
 1. Re-run the metadata validator with the final `name` and `description`:
 
