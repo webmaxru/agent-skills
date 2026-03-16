@@ -33,13 +33,14 @@ if (!support.supported) {
   const runtimeNavigator = (globalThis as typeof globalThis & {
     navigator: Navigator & {
       ml: {
-        createContext(options?: { deviceType?: "cpu" | "gpu" | "npu"; powerPreference?: "default" | "high-performance" | "low-power" }): Promise<MLContext>;
+        createContext(options?: { powerPreference?: "default" | "high-performance" | "low-power"; accelerated?: boolean }): Promise<MLContext>;
       };
     };
   }).navigator;
 
+  // accelerated: true (default) lets the browser prefer GPU/NPU based on powerPreference.
+  // Pass accelerated: false to request CPU inference.
   const context = await runtimeNavigator.ml.createContext({
-    deviceType: "gpu",
     powerPreference: "high-performance",
   });
 }
@@ -49,7 +50,8 @@ if (!support.supported) {
 
 ```ts
 const descriptor = { dataType: "float32", shape: [2, 2] } as const;
-const context = await navigator.ml.createContext({ deviceType: "gpu" });
+// powerPreference: "high-performance" lets the browser choose GPU or NPU acceleration.
+const context = await navigator.ml.createContext({ powerPreference: "high-performance" });
 const builder = new MLGraphBuilder(context);
 
 const scale = builder.constant(descriptor, new Float32Array(4).fill(0.2));

@@ -10,11 +10,12 @@ WebNN remains experimental. Treat browser support and backend behavior as an exp
 * `MLContext.dispatch()` and `opSupportLimits()` landed in milestone 128.
 * `MLContext.createTensor()`, `readTensor()`, and `writeTensor()` landed in milestone 129.
 * The scalar `builder.constant(type, value)` overload is listed from milestone 132.
+* The W3C WebNN spec (CR published January 2026) replaced `deviceType` with an `accelerated: boolean` flag and expanded Worker support to all worker types. Implementation rollout in Chromium is ongoing; check the target milestone before relying on these changes.
 
 ## Execution context requirements
 
 * Secure context is required.
-* `Window` and `DedicatedWorker` contexts are supported.
+* `Window` and all `Worker` contexts are supported (DedicatedWorker, SharedWorker, ServiceWorker).
 * Non-browser, server-side, or headless-only environments do not expose WebNN directly.
 
 ## Platform backend notes
@@ -28,11 +29,16 @@ WebNN remains experimental. Treat browser support and backend behavior as an exp
 
 ## Device selection guidance
 
-* `cpu` is the safest default when the feature must work broadly.
-* `gpu` is appropriate for throughput-oriented workloads.
-* `npu` is appropriate for supported hardware when the feature benefits from sustained local inference and power efficiency.
-* A requested device is not a guarantee that every operator will run on that device.
-* On some backends, the graph can be partitioned and unsupported pieces can still fall back to CPU.
+* The current spec uses two orthogonal options in `MLContextOptions`:
+  * `powerPreference`: `"default"` | `"high-performance"` | `"low-power"` — indicates speed vs. power consumption intent.
+  * `accelerated`: boolean (default `true`) — when `true`, the browser prefers massively parallel acceleration (GPU or NPU) guided by `powerPreference`; when `false`, the application prefers CPU inference.
+* Omit both to get the browser's default behavior.
+* Use `{ accelerated: false }` when CPU-only execution is required for broad reach or determinism.
+* Use `{ powerPreference: "high-performance" }` for throughput-oriented workloads; the browser selects the best accelerated device available.
+* Use `{ powerPreference: "low-power" }` when the feature benefits from sustained local inference with minimal battery impact.
+* If a `GPUDevice` is already held from WebGPU, pass it directly to `createContext(gpuDevice)` to share the GPU device.
+* Neither `accelerated` nor `powerPreference` guarantees that every operator will run on a specific device. Backends can partition graphs and fall back per operator.
+* Earlier Chromium builds used a now-removed `deviceType: "cpu" | "gpu" | "npu"` option. Treat any code using `deviceType` as targeting a legacy API surface that the spec has removed.
 
 ## Chromium preview notes
 

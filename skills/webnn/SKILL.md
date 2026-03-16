@@ -20,10 +20,10 @@ description: Implements and debugs browser Web Neural Network API integrations i
 2. Read `references/examples.md` when choosing between a direct WebNN graph flow and an adapter around an existing browser ML runtime.
 3. Read `references/compatibility.md` when native support, preview flags, device behavior, or backend differences matter.
 4. Read `references/troubleshooting.md` when context creation, graph build, tensor readback, or device selection fails.
-5. Verify that the feature runs in a secure context and in a `Window` or `DedicatedWorker` context.
+5. Verify that the feature runs in a secure context and in a `Window` or any `Worker` context (DedicatedWorker, SharedWorker, or ServiceWorker).
 6. If the feature must run on the server, train models, or depend on cloud inference, stop and explain the platform mismatch.
-7. Choose the device intent deliberately: `cpu` for maximum reach, `gpu` for throughput, or `npu` for power-efficient local acceleration when the target hardware supports it.
-8. Treat `deviceType` and `powerPreference` as preferences, not guarantees. Browser backends can still partition graphs or fall back per operator.
+7. Choose `powerPreference` deliberately: `"high-performance"` for throughput, `"low-power"` for efficiency, or omit both for browser-default behavior.
+8. Use `accelerated: false` only when the product explicitly requires CPU-only inference; the default (`true`) lets the browser select GPU or NPU based on `powerPreference`.
 9. Choose a direct `MLGraphBuilder` flow when the application owns graph construction or can keep a small deterministic graph path.
 10. Choose an adapter around an existing local runtime only when the application already loads models through that runtime and the task is to prefer WebNN acceleration without rewriting the full inference stack.
 11. If the project uses TypeScript, add or preserve typings for the WebNN surface used by the project.
@@ -32,7 +32,7 @@ description: Implements and debugs browser Web Neural Network API integrations i
 1. Read `assets/webnn-runtime.template.ts` and adapt it to the framework, state model, and file layout in the workspace.
 2. Centralize support detection around `window.isSecureContext`, `navigator.ml`, and the requested execution context instead of scattering checks through UI components.
 3. Create an `MLContext` only at the boundary where the app is ready to initialize local inference.
-4. Pass explicit `deviceType` and `powerPreference` values when the product has a real preference, and omit tuning that the product cannot justify.
+4. Pass explicit `powerPreference` and `accelerated` values when the product has a real preference, and omit tuning that the product cannot justify.
 5. Build the graph through `MLGraphBuilder` when the feature uses direct WebNN operations, or route existing model execution through the app's existing local runtime adapter when that runtime is already responsible for model loading and pre/post-processing.
 6. Reuse the compiled graph and reusable tensors when input and output shapes stay stable across requests.
 7. Use `context.writeTensor()`, `context.dispatch()`, and `await context.readTensor()` in that order for direct graph execution.
@@ -51,7 +51,7 @@ description: Implements and debugs browser Web Neural Network API integrations i
 1. Execute `node scripts/find-webnn-targets.mjs .` to confirm that the intended app boundary and WebNN markers still resolve to the edited integration surface.
 2. Verify secure-context and `navigator.ml` detection before debugging deeper runtime issues.
 3. For direct WebNN paths, run a smoke test that creates a context, builds a trivial graph, writes inputs, dispatches, and reads outputs.
-4. Test the intended device preferences and confirm that fallback behavior remains usable when `gpu` or `npu` creation fails.
+4. Test the intended device preferences and confirm that fallback behavior remains usable when accelerated context creation fails.
 5. Use `context.opSupportLimits()` when operator coverage or tensor data type support influences graph design.
 6. Confirm the app does not reuse destroyed tensors, graphs, or contexts.
 7. If the target environment depends on preview Chromium flags or milestone-specific behavior, confirm the required browser state from `references/compatibility.md` before treating runtime failures as application bugs.
@@ -59,7 +59,7 @@ description: Implements and debugs browser Web Neural Network API integrations i
 
 ## Error Handling
 * If `navigator.ml` is missing, confirm secure-context requirements and browser support from `references/compatibility.md` before changing application code.
-* If `createContext()` fails for `gpu` or `npu`, retry only through the product's approved fallback plan and surface the failure reason.
+* If `createContext()` fails, reduce the request to a plain `createContext()` call without options, or retry with `{ accelerated: false }` for CPU fallback, and surface the failure reason.
 * If `build()` or `dispatch()` fails, check `references/examples.md` and `references/troubleshooting.md` for operator, shape, and device mismatches before rewriting the feature.
 * If `context.lost` resolves, treat the current context, graph, and tensors as invalid and recreate them before the next inference attempt.
 * If the product only has a remote inference contract, stop and explain that this skill does not directly apply.
