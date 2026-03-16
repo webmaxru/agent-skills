@@ -8,6 +8,8 @@ For these APIs, staying close to the latest specification is not optional. The s
 
 I actively maintain the skills in this repository against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
+That maintenance also runs through GitHub Agentic Workflows on a weekly cadence. The repository schedules a GH-AW update pass that scans the saved `*-skill-update.prompt.md` prompts, ranges across the relevant specification and reference sources for each skill, and opens draft pull requests only when a run finds material updates worth proposing. Those workflow-generated changes are never treated as auto-mergeable output: every update still requires a mandatory human review before merging.
+
 The repository has three practical roles:
 
 1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN, plus AI-native development skills where durable workflow assets are useful.
@@ -30,7 +32,10 @@ The repository has three practical roles:
     - [Agent Package Manager Skill](#agent-package-manager-skill)
     - [GitHub Agentic Workflows Skill](#github-agentic-workflows-skill)
 - [Supporting Assets](#supporting-assets)
+  - [`.github/prompts`](#githubprompts)
+  - [GitHub Agentic Workflows Maintenance](#github-agentic-workflows-maintenance)
   - [Skill Creator](#skill-creator)
+  - [`.artifacts/`](#artifacts)
 - [Repository Conventions](#repository-conventions)
 - [Common Workflows](#common-workflows)
 
@@ -376,9 +381,11 @@ Its support files are split by purpose:
 
 These prompt files support maintenance workflows in this repo:
 
-- `create-skill.prompt.md` runs a five-phase workflow for a skill under `skills/`: creation, validation and remediation, supporting prompt creation, README update, and install verification; it also supports explicit single-phase execution through a `step=` selector
+- `create-web-ai-skill.prompt.md` runs a five-phase workflow for a skill under `skills/`: creation, validation and remediation, supporting prompt creation, README update, and install verification; it also supports explicit single-phase execution through a `step=` selector
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
+- `agent-package-manager-skill-update.prompt.md` refreshes the Agent Package Manager skill from current documentation and user-supplied updates
+- `github-agentic-workflows-skill-update.prompt.md` refreshes the GitHub Agentic Workflows skill from current GH-AW documentation, related references, and user-supplied updates
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
 - `proofreader-api-skill-update.prompt.md` refreshes the Proofreader API skill from user-supplied updates, attachments, and the current specification and browser guidance
 - `language-detector-api-skill-update.prompt.md` refreshes the Language Detector API skill from user-supplied updates, attachments, and the current specification and browser guidance
@@ -393,6 +400,21 @@ These prompt files support maintenance workflows in this repo:
 - `writing-assistance-apis-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Writing Assistance APIs demo under `artifacts/writing-assistance-apis/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
+
+### GitHub Agentic Workflows Maintenance
+
+GitHub Agentic Workflows are the repository's automation layer for recurring skill maintenance, especially weekly spec-alignment passes.
+
+In this repo they work as follows:
+
+- `.github/workflows/weekly-skill-updates.yml` runs every Monday at 08:00 UTC and can also be triggered manually for a single saved prompt
+- the workflow discovers every `.github/prompts/*-skill-update.prompt.md` file and fans out one run per selected prompt
+- each run executes the reusable worker compiled from `.github/workflows/skill-update-worker.md` via `.github/workflows/skill-update-worker.lock.yml`
+- the worker prefetches the external URLs referenced by the selected saved prompt into local runtime files under `.github/aw/`, then points the agent at those files so the run uses deterministic local inputs instead of ad hoc live browsing
+- the worker runs in `strict` mode with constrained tools and network access, and uses `safe-outputs` to create at most one draft pull request for that prompt or emit `noop` if no material update is justified
+- pull requests are intentionally created as drafts and are not merged by the workflow; a human review is required before any update is merged
+
+This is how the repository keeps skills updated weekly from multiple relevant sources without turning speculative agent output into unattended repository writes.
 
 ### Skill Creator
 
