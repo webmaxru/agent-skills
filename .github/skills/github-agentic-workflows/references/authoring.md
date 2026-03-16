@@ -79,6 +79,8 @@ Use this loop for professional changes:
 gh aw fix --write
 gh aw validate --strict
 gh aw compile --verbose
+gh aw run <workflow> --dry-run
+gh aw trial ./.github/workflows/<workflow>.md --dry-run -y -v
 gh aw run <workflow>
 gh aw status --ref main
 ```
@@ -86,6 +88,21 @@ gh aw status --ref main
 Use `gh aw trial` when isolated testing is safer than dispatching directly into the production repository.
 
 If the CLI version was just upgraded, this loop is also the fastest way to surface codemods, deprecated fields, generated lockfile drift, and new warnings.
+
+Practical notes from `gh aw v0.58.3` testing:
+
+1. `gh aw run <workflow> --dry-run` validates repository dispatch wiring, but it still uses the remote repository state. Unpushed local workflow edits are warned about and are not executed remotely.
+2. For local-source trials, prefer an explicit path such as `./.github/workflows/weekly-review.md`. A bare `.github/workflows/weekly-review.md` argument can be misparsed as a repository spec.
+3. Trial host repositories need their own engine secrets. A source repository secret such as `COPILOT_GITHUB_TOKEN` is not copied automatically into the temporary or reusable host repo.
+4. When using `--force-delete-host-repo-before`, the authenticated account needs admin rights on the host repository plus `delete_repo` scope.
+
+## Compiler-Sensitive Caveats
+
+If the installed CLI is `gh aw v0.58.3`, keep these schema details in mind:
+
+1. `engine.max-turns` is not supported for Copilot workflows.
+2. `bash` cannot use anonymous syntax. Use `bash: true`, `bash: false`, or an explicit allowlist.
+3. `edit:` and `web-fetch:` can be left as bare keys or configured as objects. Boolean values for those keys may fail schema validation.
 
 ## Reuse And Updates
 

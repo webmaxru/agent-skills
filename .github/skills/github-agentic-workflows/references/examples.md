@@ -57,6 +57,22 @@ gh aw compile
 
 Use `gh aw add-wizard` instead of `gh aw new` when starting from a remote, maintained workflow.
 
+## Local Workflow Trial Pattern
+
+Use this when the workflow source only exists locally or contains unpushed changes that `gh aw run` cannot exercise remotely yet.
+
+```bash
+gh aw validate --strict
+gh aw compile --verbose
+gh aw trial ./.github/workflows/my-workflow.md --dry-run -y -v
+```
+
+Notes:
+
+1. Keep the leading `./` on the workflow path.
+2. `gh aw run <workflow> --dry-run` validates remote dispatch wiring, but it does not execute unpushed local edits.
+3. If the real trial uses a reusable host repository, make sure that host repo has the required engine secret such as `COPILOT_GITHUB_TOKEN`.
+
 ## Safe Output Review Pattern
 
 Use `safe-outputs` for all write actions and keep the agent itself read-only.
