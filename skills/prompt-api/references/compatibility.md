@@ -11,8 +11,8 @@ Use this reference when the feature must support multiple Prompt API generations
 
 ## Browser Availability Snapshot
 
-1. Chrome documents the web Prompt API as an origin-trial feature in Chrome 138 and requires on-device model support on desktop-class hardware.
-2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices on supported ChromeOS builds.
+1. Chrome documents the web Prompt API as an origin-trial feature that has advanced to a broader availability stage in Chrome 138. Extension developers should remove the now-expired `aiLanguageModelOriginTrial` permission if still present.
+2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13 (Ventura)+, Linux, and Chromebook Plus devices on ChromeOS 16389+. Hardware requirements: GPU with >4 GB VRAM, or CPU with 16 GB RAM and 4+ cores. Storage: at least 22 GB free on the Chrome profile volume. Model inference can run on CPU when GPU requirements are not met.
 3. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
 4. Edge page integrations currently target the built-in Phi-4-mini model and require supported preview hardware.
 5. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
@@ -62,7 +62,7 @@ npm install prompt-api-polyfill built-in-ai-task-apis-polyfills
 | `LanguageModel.params()` | User-supplied override: treat as removed for current integrations, even if older spec snapshots or preview docs still mention extension-only support |
 | `topK` in `create()` | User-supplied override: treat as silently ignored and unavailable on sessions; never depend on it for browser-page or cross-browser code |
 | `temperature` in `create()` | User-supplied override: treat as silently ignored and unavailable on sessions; never depend on it for browser-page or cross-browser code |
-| `measureInputUsage()` | Prefer `measureContextUsage()`; fall back only for old implementations |
+| `measureInputUsage()` | Now formally deprecated (extension-only) in the current spec; prefer `measureContextUsage()`; fall back only for old builds |
 | `inputUsage` | Prefer `contextUsage`; fall back only for old implementations |
 | `inputQuota` | Current spec uses `contextWindow`; user-supplied override additionally calls out `contextWindowMeasure`, so compatibility helpers should probe both before falling back to `inputQuota` |
 | `onquotaoverflow` | Current spec uses `oncontextoverflow`; user-supplied override additionally calls out `contextOverflow`, so compatibility helpers should probe both before falling back to `onquotaoverflow` |

@@ -52,7 +52,8 @@ export interface PromptLanguageModel {
     },
   ): ReadableStream<string>;
   append(input: PromptInput, options?: { signal?: AbortSignal }): Promise<void>;
-  measureContextUsage?(
+  // Required per the current spec; may be absent in pre-spec browser builds — guard before calling in compatibility wrappers.
+  measureContextUsage(
     input: PromptInput,
     options?: {
       signal?: AbortSignal;
@@ -60,6 +61,7 @@ export interface PromptLanguageModel {
       omitResponseConstraintInput?: boolean;
     },
   ): Promise<number>;
+  // DEPRECATED: extension-only in the current spec; kept here as a fallback for older browser builds only.
   measureInputUsage?(
     input: PromptInput,
     options?: {
@@ -70,12 +72,14 @@ export interface PromptLanguageModel {
   ): Promise<number>;
   clone(options?: { signal?: AbortSignal }): Promise<PromptLanguageModel>;
   destroy(): void;
+  // Current spec attributes:
   readonly contextUsage?: number;
+  readonly contextWindow?: number;
+  oncontextoverflow?: ((event: Event) => void) | null;
+  // DEPRECATED (extension-only in current spec) — kept as fallbacks for older browser builds:
   readonly inputUsage?: number;
   readonly contextWindowMeasure?: number;
-  readonly contextWindow?: number;
   readonly inputQuota?: number;
-  oncontextoverflow?: ((event: Event) => void) | null;
   contextOverflow?: ((event: Event) => void) | null;
   onquotaoverflow?: ((event: Event) => void) | null;
 }
@@ -334,6 +338,7 @@ export async function measurePromptContextUsage(
 ): Promise<number> {
   assertValidPromptInput(input, { allowSystemRole: false });
 
+  // measureContextUsage is required per the current spec; guard only for older pre-spec builds.
   if (typeof session.measureContextUsage === "function") {
     return session.measureContextUsage(input, {
       signal: options.signal,
@@ -342,6 +347,7 @@ export async function measurePromptContextUsage(
     });
   }
 
+  // Fallback for extension-context builds that only expose the deprecated measureInputUsage.
   if (typeof session.measureInputUsage === "function") {
     return session.measureInputUsage(input, {
       signal: options.signal,

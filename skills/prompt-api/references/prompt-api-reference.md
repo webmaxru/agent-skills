@@ -9,7 +9,7 @@ Use this reference when planning or implementing browser-side Prompt API integra
 3. Use `session.prompt(input, options)` for request-response flows.
 4. Use `session.promptStreaming(input, options)` for incremental rendering.
 5. Use `session.append(messages)` to preload context after the session already exists.
-6. Use `session.measureContextUsage(input, options)` when available to estimate context cost before appending or prompting.
+6. Use `session.measureContextUsage(input, options)` to estimate context cost before appending or prompting. This method is required per the current spec; guard with a typeof check only when supporting older pre-spec browser builds.
 7. Use `session.clone()` to fork an existing session while preserving its setup context and current conversation state.
 8. Use `session.destroy()` to release resources when the feature is done.
 9. Track context metrics and overflow hooks through a compatibility layer instead of hardcoding a single browser-generation field name.
@@ -56,17 +56,17 @@ Use this reference when planning or implementing browser-side Prompt API integra
 2. TypeScript projects should keep their local Prompt API type declarations aligned with the implementation they target.
 3. Use `AbortController` for prompt cancellation and teardown.
 4. Keep a non-AI fallback path for unsupported browsers or blocked execution contexts.
-5. User-supplied override for this skill: treat `params()` as removed and treat `topK` and `temperature` as silently ignored, so application logic must not depend on them even when preview docs mention them.
+5. User-supplied override for this skill: treat `params()` as removed and treat `topK` and `temperature` as silently ignored; application logic must not depend on them even when preview docs mention them. The current spec formally marks these as DEPRECATED extension-only items alongside `measureInputUsage()`, `inputUsage`, `inputQuota`, and `onquotaoverflow`.
 6. Reuse `references/examples.md` when the feature needs a known-good prompt shape or tool-enabled session pattern.
 7. An `availability()` result of `downloading` is still a passive state check. Browser-page code should not infer that its own UI has started the download until it actually calls `LanguageModel.create()`.
 
 ## Compatibility Notes
 
-1. The current spec still shows deprecated extension-only remnants for `params()`, `topK`, and `temperature`, but the higher-priority skill update says to treat `params()` as removed and `topK` or `temperature` as ignored for present-day integrations.
+1. The current spec marks `params()`, `topK`, and `temperature` (as create options and session attributes), `measureInputUsage()`, `inputUsage`, `inputQuota`, and `onquotaoverflow` as DEPRECATED extension-only. The higher-priority skill update says to treat `params()` as removed and `topK` or `temperature` as ignored for present-day page integrations.
 2. Chrome documentation matches the non-portable interpretation for page integrations, while some Edge preview guidance still documents `topK` and `temperature`; treat those as browser-specific preview behavior instead of portable API guidance.
 3. Browser implementation docs may document only a subset of languages even though the spec models languages as BCP 47 tags.
 4. Edge preview guidance also documents a regular-expression form for `responseConstraint`, but the current spec IDL defines `responseConstraint` as object-valued; keep portable code aligned to the spec and treat regex constraints as implementation-specific preview guidance.
-5. Context-related naming has changed over time, and the current spec still uses `contextWindow` and `oncontextoverflow`; compatibility code should check those alongside the user-supplied `contextWindowMeasure` and `contextOverflow` aliases before older quota-era fallbacks.
+5. `measureContextUsage()` is required per the current spec; `contextWindow` and `oncontextoverflow` are the canonical context-related attributes. Compatibility code should also check the user-supplied `contextWindowMeasure` and `contextOverflow` aliases before falling back to the quota-era deprecated names (`inputQuota`, `onquotaoverflow`).
 6. Prompt API polyfills are a valid progressive-enhancement strategy when native support is missing. The current npm package is `prompt-api-polyfill`.
 7. Built-in AI Task API polyfills are available as `built-in-ai-task-apis-polyfills`, with subpath imports such as `built-in-ai-task-apis-polyfills/summarizer` and `built-in-ai-task-apis-polyfills/writer`.
 8. If a polyfill requires a cloud backend, use the project-approved backend and security posture for production; the latest guidance favors secure backend-backed configurations over embedding raw secrets in client code.
