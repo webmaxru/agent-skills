@@ -1,4 +1,3 @@
-export type WebNNDeviceType = "cpu" | "gpu" | "npu";
 export type WebNNPowerPreference = "default" | "high-performance" | "low-power";
 
 export type WebNNAvailability = {
@@ -7,8 +6,8 @@ export type WebNNAvailability = {
 };
 
 export type WebNNContextOptions = {
-  deviceType?: WebNNDeviceType;
   powerPreference?: WebNNPowerPreference;
+  accelerated?: boolean;
 };
 
 export type PreparedWebNNRuntime =
@@ -76,8 +75,8 @@ export async function prepareWebNNRuntime(
   options: WebNNContextOptions = {},
 ): Promise<PreparedWebNNRuntime> {
   const normalizedOptions: Required<WebNNContextOptions> = {
-    deviceType: options.deviceType ?? "cpu",
     powerPreference: options.powerPreference ?? "default",
+    accelerated: options.accelerated ?? true,
   };
 
   const support = detectWebNN();

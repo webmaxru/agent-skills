@@ -28,11 +28,15 @@ WebNN remains experimental. Treat browser support and backend behavior as an exp
 
 ## Device selection guidance
 
-* `cpu` is the safest default when the feature must work broadly.
-* `gpu` is appropriate for throughput-oriented workloads.
-* `npu` is appropriate for supported hardware when the feature benefits from sustained local inference and power efficiency.
-* A requested device is not a guarantee that every operator will run on that device.
+* `powerPreference: "default"` is the safest starting point for broad compatibility.
+* `powerPreference: "high-performance"` targets throughput-oriented workloads.
+* `powerPreference: "low-power"` targets power-efficient local acceleration.
+* `accelerated: true` (the default) allows the platform to use GPU or NPU hardware.
+* `accelerated: false` explicitly requests CPU-based inference.
+* Requested preferences are not guarantees that every operator will run on the preferred device.
 * On some backends, the graph can be partitioned and unsupported pieces can still fall back to CPU.
+
+Note: `MLDeviceType` (`"cpu"` / `"gpu"` / `"npu"`) was removed from the specification in PR [#809](https://github.com/webmachinelearning/webnn/pull/809). Code that passed `deviceType` must migrate to `accelerated` and `powerPreference`.
 
 ## Chromium preview notes
 
