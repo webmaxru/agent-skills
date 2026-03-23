@@ -95,7 +95,7 @@ Use `translateStreaming()` when the UI should render partial translated output a
 The specification explicitly calls out these implementation-defined error names for translation failures:
 
 * `NotAllowedError`: use is blocked by user choice or policy.
-* `NotReadableError`: the user agent filtered the translation output.
+* `NotReadableError`: the user agent filtered the translation output, for example because it was detected to be harmful, inaccurate, or nonsensical.
 * `UnknownError`: an implementation-defined translation failure.
 
 Additional failures can still surface through shared infrastructure, such as:
