@@ -31,13 +31,13 @@ Use this file for the core contract before editing code.
 1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set.
 2. Use `navigator.modelContext.unregisterTool(name)` to remove a specific registered tool.
 3. The `ModelContextTool` contract includes:
-   `name`: unique tool identifier.
-   `description`: natural-language description of what the tool does and when to use it.
-   `inputSchema`: JSON Schema-like object describing the expected input.
-   `execute`: callback invoked with the input object and a `ModelContextClient`.
-   `annotations.readOnlyHint`: optional boolean indicating that the tool does not modify state.
-4. The `ToolExecuteCallback` can be asynchronous.
-5. The `ModelContextClient` exposes `requestUserInteraction(callback)` for tool flows that need explicit user interaction.
+   `name`: unique tool identifier (required).
+   `description`: natural-language description of what the tool does and when to use it (required).
+   `inputSchema`: optional JSON Schema object describing the expected input; omit when the tool takes no structured input.
+   `execute`: callback invoked with the input object and a `ModelContextClient` (required).
+   `annotations.readOnlyHint`: optional boolean, defaulting to false, indicating that the tool does not modify state.
+4. The `ToolExecuteCallback` signature is `(input: object, client: ModelContextClient) => Promise<any>` and may be asynchronous.
+5. The `ModelContextClient` exposes `requestUserInteraction(callback)` for tool flows that need explicit user interaction. The `callback` argument is a zero-argument async function `() => Promise<any>` that performs the user-facing step and resolves with the interaction result.
 6. Imperative tools can return structured tool output after the page has updated, including content-oriented payloads that the agent can read.
 
 ## Registration Semantics
