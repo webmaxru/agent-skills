@@ -22,6 +22,7 @@ Proofreader API support remains browser-specific, preview-sensitive, and hardwar
 * Edge currently documents preview enablement through the `Proofreader API for Phi mini` flag.
 * Edge preview guidance currently targets Windows 10 or 11 and macOS 13.3+.
 * Edge preview guidance currently requires at least 20 GB free storage, at least 5.5 GB VRAM, and an unmetered connection for the initial model download.
+* If available storage drops below 10 GB after the initial download, Edge deletes the model to free space for other browser features; the model must be re-downloaded when space is restored.
 * Edge exposes device-readiness details through `edge://on-device-internals`, where `Device performance class` should be `High` or greater.
 
 ## Chrome notes
@@ -29,8 +30,9 @@ Proofreader API support remains browser-specific, preview-sensitive, and hardwar
 * Chrome documents the Proofreader API as part of its built-in AI platform.
 * Chrome currently documents access through an origin trial running in milestones `141` through `145`, plus local testing on `localhost` with preview flags enabled.
 * Chrome's localhost guidance includes enabling `#optimization-guide-on-device-model`, `#prompt-api-for-gemini-nano-multimodal-input`, and `#proofreader-api-for-gemini-nano`.
-* Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices, but not on mobile browsers.
+* Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and ChromeOS on Chromebook Plus devices (from ChromeOS Platform 16389.0.0 onwards), but not on Chrome for Android, iOS, or ChromeOS on non-Chromebook Plus devices.
 * Chrome documents minimum hardware requirements of more than 4 GB VRAM or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
+* If available storage drops below 10 GB after the initial download, Chrome removes the model; it redownloads automatically once the requirements are met.
 
 ## Secure context and frame rules
 
