@@ -38,6 +38,7 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 * A first successful `create()` can require user activation if it needs to initiate a download.
 * The initial model download can take noticeable time and should be surfaced in the UI when the feature depends on immediate readiness.
 * Browsers can preserve download progress even if a create call is aborted.
+* If available storage drops below 10 GB after a model download, the browser removes the model; a subsequent `create()` will require another download when storage is available again.
 
 ## TypeScript and typings
 
