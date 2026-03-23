@@ -13,17 +13,19 @@ Use this reference when the feature must support multiple Prompt API generations
 
 1. Chrome documents the web Prompt API as an origin-trial feature in Chrome 138 and requires on-device model support on desktop-class hardware.
 2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices on supported ChromeOS builds.
-3. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
-4. Edge page integrations currently target the built-in Phi-4-mini model and require supported preview hardware.
-5. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
+3. Chrome hardware requirements: at least 22 GB of free storage on the Chrome profile volume, and either a GPU with strictly more than 4 GB of VRAM or a CPU with 16 GB or more of RAM and 4 or more CPU cores.
+4. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
+5. Edge page integrations currently target the built-in Phi-4-mini model and require supported preview hardware.
+6. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
 
 ## Browser Setup Notes
 
 1. Chrome documents `chrome://flags/#optimization-guide-on-device-model` and `chrome://flags/#prompt-api-for-gemini-nano-multimodal-input` for localhost testing.
-2. Edge documents enabling the `Prompt API for Phi mini` flag in `edge://flags/` and checking `edge://on-device-internals` for a device performance class of `High` or greater.
-3. Chrome and Edge both document download progress monitoring through the `monitor` callback on `LanguageModel.create()`.
-4. The Prompt API remains unavailable in workers, and cross-origin iframes still require `allow="language-model"`.
-5. User-supplied update for this skill: extension pages and offscreen pages can expose the native Prompt API even when a page integration still needs polyfill or preview handling.
+2. Chrome documents `chrome://on-device-internals` for checking the current downloaded model size.
+3. Edge documents enabling the `Prompt API for Phi mini` flag in `edge://flags/` and checking `edge://on-device-internals` for a device performance class of `High` or greater.
+4. Chrome and Edge both document download progress monitoring through the `monitor` callback on `LanguageModel.create()`.
+5. The Prompt API remains unavailable in workers, and cross-origin iframes still require `allow="language-model"`.
+6. User-supplied update for this skill: extension pages and offscreen pages can expose the native Prompt API even when a page integration still needs polyfill or preview handling.
 
 ## Typings
 

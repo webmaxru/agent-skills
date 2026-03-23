@@ -76,3 +76,4 @@
 1. If a web page lacks `LanguageModel` but an extension page or offscreen page exposes it, keep the page integration on progressive enhancement instead of assuming extension-only behavior is portable.
 2. If Task APIs are polyfilled but Prompt API is native in the current execution context, preserve the native Prompt API and only load the missing Task API polyfills.
 3. If the polyfill backend needs production credentials, prefer the approved backend posture instead of embedding raw provider secrets in page code.
+4. Chrome extension developers should remove the now-expired `"aiLanguageModelOriginTrial"` entry from the `"permissions"` array in their extension manifest if it is still present.
