@@ -33,9 +33,12 @@ compilation:
 
 Prefer these patterns:
 
-* Use `owner/repo` for GitHub-hosted repositories.
-* Use `host/group/repo` for non-GitHub hosts.
-* Use object form when `path`, `ref`, or `alias` is required.
+* Use `owner/repo` for a full GitHub-hosted package with rules, skills, prompts, hooks, and MCP config.
+* Use `owner/repo/path/to/skill` for a single skill, plugin, or agent stored in a repo subdirectory.
+* Reference individual agent files directly with their full path including the file extension, e.g. `owner/repo/agents/name.agent.md`.
+* Append `#ref` to any GitHub path form when you need a pinned tag or branch, e.g. `owner/repo/plugins/name#v2.1`.
+* Use the `git:` object form for non-GitHub hosts — GitLab, Bitbucket, Azure DevOps, or self-hosted git.
+* For Azure DevOps, use `git: dev.azure.com/org/project/repo` (no `https://` prefix required).
 * Use pinned refs for team-critical dependencies that must not drift unexpectedly.
 * Use local paths only for short-lived development loops.
 
@@ -44,12 +47,22 @@ Examples:
 ```yaml
 dependencies:
   apm:
+    # Full package (rules, skills, prompts, hooks)
     - microsoft/apm-sample-package
-    - github/awesome-copilot/skills/review-and-refactor#v2.1.0
+    # Single skill by subdirectory path
+    - anthropics/skills/skills/frontend-design
+    # Plugin with a pinned tag
+    - github/awesome-copilot/plugins/context-engineering#v2.1
+    # Individual agent file
+    - github/awesome-copilot/agents/api-architect.agent.md
+    # GitLab with explicit path, ref, and alias
     - git: https://gitlab.com/acme/repo.git
       path: instructions/security
       ref: v2.0
       alias: acme-sec
+    # Azure DevOps shorthand (no https:// prefix needed)
+    - git: dev.azure.com/org/project/repo
+      path: prompts/review.prompt.md
   mcp:
     - io.github.github/github-mcp-server
     - name: internal-knowledge-base
