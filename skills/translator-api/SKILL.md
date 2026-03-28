@@ -1,6 +1,10 @@
 ---
 name: translator-api
 description: Implements and debugs browser Translator API integrations in JavaScript or TypeScript web apps. Use when adding Translator support checks, language-pair availability flows, model download UX, session creation, translate() or translateStreaming() calls, input-usage measurement, or permissions-policy handling for on-device translation. Don't use for server-side translation SDKs, cloud translation services, or generic multilingual content pipelines.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # Translator API

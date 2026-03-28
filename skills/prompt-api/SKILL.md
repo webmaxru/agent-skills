@@ -1,6 +1,10 @@
 ---
 name: prompt-api
 description: Implements and debugs browser Prompt API integrations in JavaScript or TypeScript web apps. Use when adding LanguageModel availability checks, session creation, prompt or promptStreaming flows, structured output, download progress UX, or iframe permission-policy handling. Don't use for server-side LLM SDKs, REST AI APIs, or non-browser providers.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # Prompt API

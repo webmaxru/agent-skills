@@ -1,6 +1,10 @@
 ---
 name: github-agentic-workflows
 description: Authors, reviews, installs, and debugs GitHub Agentic Workflows in repositories, including workflow markdown, frontmatter, gh aw compile and run flows, safe outputs, security guardrails, and operational patterns. Use when creating or maintaining GH-AW automation. Don't use for standard deterministic GitHub Actions YAML, generic CI pipelines, or non-GitHub automation systems.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # GitHub Agentic Workflows

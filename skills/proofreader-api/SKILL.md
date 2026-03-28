@@ -1,6 +1,10 @@
 ---
 name: proofreader-api
 description: Implements and debugs browser Proofreader API integrations in JavaScript or TypeScript web apps. Use when adding Proofreader availability checks, monitored model downloads, proofread flows, correction metadata handling, or permissions-policy checks for built-in proofreading. Don't use for generic prompt engineering, server-side LLM SDKs, or cloud AI services.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # Proofreader API

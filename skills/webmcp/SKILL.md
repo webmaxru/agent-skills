@@ -1,6 +1,10 @@
 ---
 name: webmcp
 description: Implements and debugs browser WebMCP integrations in JavaScript or TypeScript web apps. Use when exposing imperative tools through navigator.modelContext, annotating HTML forms for declarative tools, handling agent-invoked form flows, or validating WebMCP behavior in the current Chrome preview. Don't use for server-side MCP servers, REST tool backends, or non-browser providers.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # WebMCP

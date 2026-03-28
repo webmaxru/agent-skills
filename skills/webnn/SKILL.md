@@ -1,6 +1,10 @@
 ---
 name: webnn
 description: Implements and debugs browser Web Neural Network API integrations in JavaScript or TypeScript web apps. Use when adding navigator.ml checks, MLContext creation, MLGraphBuilder flows, device selection, tensor dispatch and readback, or explicit fallback paths to ONNX Runtime Web or other local runtimes. Don't use for model training, server-side ML inference, or cloud AI APIs.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # WebNN

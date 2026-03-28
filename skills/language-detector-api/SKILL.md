@@ -1,6 +1,10 @@
 ---
 name: language-detector-api
 description: Implements and debugs browser Language Detector API integrations in JavaScript or TypeScript web apps. Use when adding LanguageDetector support checks, availability and model download flows, session creation, detect() calls, input-usage measurement, permissions-policy handling, or compatibility fallbacks for built-in language detection. Don't use for server-side language detection SDKs, cloud translation services, or generic NLP pipelines.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # Language Detector API

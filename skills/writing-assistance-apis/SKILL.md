@@ -1,6 +1,10 @@
 ---
 name: writing-assistance-apis
 description: Implements and debugs browser Summarizer, Writer, and Rewriter integrations in JavaScript or TypeScript web apps. Use when adding availability checks, model download UX, session creation, summarize or write or rewrite flows, streaming output, abort handling, or permissions-policy constraints for built-in writing assistance APIs. Don't use for generic prompt engineering, server-side LLM SDKs, or cloud AI services.
+license: MIT
+metadata:
+  author: webmaxru
+  version: "1.0"
 ---
 
 # Writing Assistance APIs
