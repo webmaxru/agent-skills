@@ -18,6 +18,34 @@ The repository has three practical roles:
 2. Provide a local authoring workflow for creating, validating, and reviewing additional skills.
 3. Keep disposable demos and research artifacts separate from persistent skill assets while the durable skill content tracks evolving specifications.
 
+## Quick Install as Plugin
+
+Install all skills at once as a single agent plugin. Pick your environment:
+
+**Claude Code**
+
+```bash
+/plugin marketplace add webmaxru/agent-skills
+/plugin install web-ai-skills@webmaxru-agent-skills
+```
+
+**VS Code (GitHub Copilot)**
+
+Run **Chat: Install Plugin From Source** from the Command Palette and enter:
+
+```text
+https://github.com/webmaxru/agent-skills
+```
+
+**GitHub Copilot CLI**
+
+```bash
+copilot plugin marketplace add webmaxru/agent-skills
+copilot plugin install web-ai-skills
+```
+
+For per-skill installs, local testing, and advanced options see [Install Skills](#install-skills) and [Agent Plugin Distribution](#agent-plugin-distribution).
+
 ## Contents
 
 - [Install Skills](#install-skills)
@@ -33,6 +61,11 @@ The repository has three practical roles:
   - [AI-Native Development Skills](#ai-native-development-skills)
     - [Agent Package Manager Skill](#agent-package-manager-skill)
     - [GitHub Agentic Workflows Skill](#github-agentic-workflows-skill)
+- [Agent Plugin Distribution](#agent-plugin-distribution)
+  - [Claude Code](#claude-code)
+  - [VS Code (GitHub Copilot)](#vs-code-github-copilot)
+  - [GitHub Copilot CLI](#github-copilot-cli)
+  - [Plugin Structure](#plugin-structure)
 - [Supporting Assets](#supporting-assets)
   - [`.github/prompts`](#githubprompts)
   - [GitHub Agentic Workflows Maintenance](#github-agentic-workflows-maintenance)
@@ -376,6 +409,207 @@ Its support files are split by purpose:
 - `assets/workflow.template.md` for a reusable markdown workflow starter
 - `scripts/find-gh-aw-targets.mjs` for deterministic scanning of workflow files and GH-AW markers
 
+## Agent Plugin Distribution
+
+All skills in this repository are also available as a single agent plugin. Installing the plugin gives you every skill at once. The plugin format is shared between Claude Code, VS Code (GitHub Copilot), and GitHub Copilot CLI, so the same `plugin.json` manifest and `skills/` directory work across all three environments.
+
+### Claude Code
+
+#### Test locally
+
+Clone the repository and point Claude Code at it:
+
+```bash
+git clone https://github.com/webmaxru/agent-skills.git
+claude --plugin-dir ./agent-skills
+```
+
+Once Claude Code starts, available skills appear behind the `web-ai-skills:` namespace:
+
+```text
+/web-ai-skills:prompt-api
+/web-ai-skills:webmcp
+/web-ai-skills:webnn
+```
+
+Run `/reload-plugins` after any local edits to pick up changes without restarting.
+
+#### Install from the Claude Code marketplace
+
+If the plugin has been published to a marketplace, install it with:
+
+```bash
+/plugin install web-ai-skills@<marketplace-name>
+```
+
+Replace `<marketplace-name>` with the marketplace that hosts the plugin (for example, `claude-plugins-official` for the official Anthropic marketplace).
+
+To submit the plugin to the official Anthropic marketplace, use one of the in-app submission forms:
+
+- Claude.ai: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
+- Console: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+#### Install from this GitHub repository as a marketplace
+
+This repository can also act as its own marketplace. Add it with:
+
+```bash
+/plugin marketplace add webmaxru/agent-skills
+```
+
+Then install the plugin:
+
+```bash
+/plugin install web-ai-skills@webmaxru-agent-skills
+```
+
+### VS Code (GitHub Copilot)
+
+> **Note:** Agent plugins in VS Code are currently in preview. Enable support with the `chat.plugins.enabled` setting.
+
+#### Test locally
+
+Clone the repository and register its path in your VS Code settings:
+
+```jsonc
+// settings.json
+"chat.pluginLocations": {
+    "/path/to/agent-skills": true
+}
+```
+
+After reloading the window, the skills appear in **Chat: Configure Skills** and can be invoked in any Copilot chat session.
+
+#### Install from source
+
+Run **Chat: Install Plugin From Source** from the Command Palette and enter the repository URL:
+
+```text
+https://github.com/webmaxru/agent-skills
+```
+
+VS Code clones the repository and installs the plugin automatically.
+
+#### Install from a marketplace
+
+Add this repository as a marketplace in your VS Code settings:
+
+```jsonc
+// settings.json
+"chat.plugins.marketplaces": [
+    "webmaxru/agent-skills"
+]
+```
+
+Then open the Extensions view, search `@agentPlugins`, and install **web-ai-skills** from the list.
+
+#### Workspace recommendation
+
+Projects can recommend the plugin for team members by adding it to `.vscode/settings.json`:
+
+```jsonc
+// .vscode/settings.json
+{
+    "extraKnownMarketplaces": {
+        "webmaxru-agent-skills": {
+            "source": {
+                "source": "github",
+                "repo": "webmaxru/agent-skills"
+            }
+        }
+    },
+    "enabledPlugins": {
+        "web-ai-skills@webmaxru-agent-skills": true
+    }
+}
+```
+
+VS Code notifies team members about the recommended plugin the first time they send a chat message.
+
+### GitHub Copilot CLI
+
+#### Install locally
+
+Clone the repository and install the plugin with the `copilot` CLI:
+
+```bash
+git clone https://github.com/webmaxru/agent-skills.git
+copilot plugin install ./agent-skills
+```
+
+Verify the plugin loaded:
+
+```bash
+copilot plugin list
+```
+
+Inside an interactive session, check that skills are available:
+
+```text
+/skills list
+```
+
+After making changes to a local plugin, reinstall it to refresh the cache:
+
+```bash
+copilot plugin install ./agent-skills
+```
+
+#### Install from this GitHub repository as a marketplace
+
+Add this repository as a marketplace:
+
+```bash
+copilot plugin marketplace add webmaxru/agent-skills
+```
+
+Then install the plugin:
+
+```bash
+copilot plugin install web-ai-skills
+```
+
+#### Uninstall
+
+```bash
+copilot plugin uninstall web-ai-skills
+```
+
+### Plugin structure
+
+The plugin is defined by the manifest at `.claude-plugin/plugin.json` and reuses the existing `skills/` directory:
+
+```
+agent-skills/                        (plugin root)
+├── .claude-plugin/
+│   ├── plugin.json                  # Plugin manifest
+│   └── marketplace.json             # Marketplace catalog (Claude Code / VS Code)
+├── .github/
+│   └── plugin/
+│       └── marketplace.json         # Marketplace catalog (Copilot CLI)
+└── skills/                          # All skills
+    ├── prompt-api/
+    │   └── SKILL.md
+    ├── language-detector-api/
+    │   └── SKILL.md
+    ├── translator-api/
+    │   └── SKILL.md
+    ├── writing-assistance-apis/
+    │   └── SKILL.md
+    ├── proofreader-api/
+    │   └── SKILL.md
+    ├── webmcp/
+    │   └── SKILL.md
+    ├── webnn/
+    │   └── SKILL.md
+    ├── agent-package-manager/
+    │   └── SKILL.md
+    └── github-agentic-workflows/
+        └── SKILL.md
+```
+
+Each skill directory includes its own `references/`, `assets/`, and `scripts/` supporting files, which are bundled with the plugin automatically.
+
 ## Supporting Assets
 
 ### `.github/prompts`
@@ -401,6 +635,7 @@ These prompt files support maintenance workflows in this repo:
 - `writing-assistance-apis-create-demo-plain-html.prompt.md` creates or recreates a plain HTML Writing Assistance APIs demo under `artifacts/writing-assistance-apis/`
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
+- `add-agent-plugin-distribution.prompt.md` adds Claude Code, VS Code (GitHub Copilot), and Copilot CLI plugin distribution to any agent skills repository — creates manifests, marketplace catalogs, and README documentation
 
 ### GitHub Agentic Workflows Maintenance
 

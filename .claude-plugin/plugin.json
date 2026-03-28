@@ -1,0 +1,25 @@
+{
+  "name": "web-ai-skills",
+  "version": "1.0.0",
+  "description": "Agent skills for browser Web AI APIs (Prompt API, Language Detector, Translator, Writing Assistance, Proofreader, WebMCP, WebNN) and AI-native development workflows (Agent Package Manager, GitHub Agentic Workflows)",
+  "author": {
+    "name": "Maxim Salnikov"
+  },
+  "homepage": "https://github.com/webmaxru/agent-skills",
+  "repository": "https://github.com/webmaxru/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "web-ai",
+    "prompt-api",
+    "language-detector",
+    "translator",
+    "writing-assistance",
+    "proofreader",
+    "webmcp",
+    "webnn",
+    "apm",
+    "github-agentic-workflows",
+    "browser-ai",
+    "agent-skills"
+  ]
+}
