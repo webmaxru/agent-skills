@@ -1,16 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "agent-package-manager": {
-      "source": "webmaxru/agent-skills",
-      "sourceType": "github",
-      "computedHash": "8855cb263c33d59c6b4e25230b8b57cb0259ad17cd3ed07b1911b61285d30357"
-    },
-    "github-agentic-workflows": {
-      "source": "webmaxru/agent-skills",
-      "sourceType": "github",
-      "computedHash": "ac6fe50100dc65528ef29d0d59da0b94259b29a9221d58c1bf2173edde189a2d"
-    },
     "language-detector-api": {
       "source": "webmaxru/agent-skills",
       "sourceType": "github",

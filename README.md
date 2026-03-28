@@ -2,19 +2,17 @@
 
 ![Web AI Agent Skills banner](assets/repo-banner.svg)
 
-This repository is a maintained collection of agent skills for modern browser Web AI APIs and adjacent AI-native development workflows. The Web AI skills cover Prompt API, Language Detector API, Translator API, Writing Assistance APIs, Proofreader API, WebMCP, and WebNN. The repository also includes workflow-oriented skills for Agent Package Manager (APM) and GitHub Agentic Workflows.
+This repository is a maintained collection of agent skills for modern browser Web AI APIs. The skills cover Prompt API, Language Detector API, Translator API, Writing Assistance APIs, Proofreader API, WebMCP, and WebNN.
 
 For these APIs, staying close to the latest specification matters. Standards and preview implementations still shift, browser behavior changes across milestones, and many ecosystem examples go stale quickly. These skills reduce that drift so generated or assisted code stays aligned with the current public specification state instead of relying on outdated snippets or guesswork.
 
 I maintain the skills against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
-Maintenance also runs through GitHub Agentic Workflows on a weekly cadence. The repository scans the saved `*-skill-update.prompt.md` prompts, checks the relevant specification and reference sources for each skill, and opens draft pull requests only when a run finds material updates worth proposing. Those workflow-generated changes are never auto-merged; every update still requires human review.
-
 The repository follows the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
 
 The repository has three practical roles:
 
-1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN, plus AI-native development skills where durable workflow assets are useful.
+1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN.
 2. Provide a local authoring workflow for creating, validating, and reviewing additional skills.
 3. Keep disposable demos and research artifacts separate from persistent skill assets while the durable skill content tracks evolving specifications.
 
@@ -58,9 +56,6 @@ For per-skill installs, local testing, and advanced options see [Install Skills]
     - [Proofreader API Skill](#proofreader-api-skill)
     - [WebMCP Skill](#webmcp-skill)
     - [WebNN Skill](#webnn-skill)
-  - [AI-Native Development Skills](#ai-native-development-skills)
-    - [Agent Package Manager Skill](#agent-package-manager-skill)
-    - [GitHub Agentic Workflows Skill](#github-agentic-workflows-skill)
 - [Agent Plugin Distribution](#agent-plugin-distribution)
   - [Claude Code](#claude-code)
   - [VS Code (GitHub Copilot)](#vs-code-github-copilot)
@@ -68,7 +63,6 @@ For per-skill installs, local testing, and advanced options see [Install Skills]
   - [Plugin Structure](#plugin-structure)
 - [Supporting Assets](#supporting-assets)
   - [`.github/prompts`](#githubprompts)
-  - [GitHub Agentic Workflows Maintenance](#github-agentic-workflows-maintenance)
   - [Skill Creator](#skill-creator)
 - [Repository Conventions](#repository-conventions)
 - [Common Workflows](#common-workflows)
@@ -343,72 +337,6 @@ Its support files are split by purpose:
 - `assets/webnn-runtime.template.ts` for a reusable runtime wrapper template
 - `scripts/find-webnn-targets.mjs` for deterministic scanning of likely web entry points and WebNN markers
 
-### AI-Native Development Skills
-
-#### Agent Package Manager Skill
-
-`skills/agent-package-manager` is scoped to installing, configuring, auditing, and operating Agent Package Manager (APM) in repositories that use agent instructions, skills, prompts, or MCP integrations.
-
-Install with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/agent-package-manager
-```
-
-Install with npm:
-
-```bash
-npx skills add webmaxru/agent-skills --skill agent-package-manager
-```
-
-It covers:
-
-- assessing existing APM state across `apm.yml`, `apm.lock.yaml`, tool config folders, and installed modules before making changes
-- shaping or repairing `apm.yml` deliberately, including package dependencies, MCP servers, scripts, and reproducible dependency forms
-- using `apm install`, `apm deps`, and dry-run flows to manage packages and lockfiles without guesswork
-- validating when `apm compile` is useful, when install-only flows are sufficient, and how explicit targets affect generation
-- operating scripts, runtimes, pack and unpack workflows, and CI-oriented distribution paths professionally
-
-Its support files are split by purpose:
-
-- `references/manifest-and-lockfile.md` for manifest structure, dependency forms, lockfile expectations, and configuration guidance
-- `references/command-workflows.md` for install, update, prune, compile, preview, runtime, and bundle workflows
-- `references/troubleshooting.md` for authentication issues, collisions, compile confusion, pack failures, and related recovery paths
-- `assets/apm.yml.template` for a reusable manifest starter or repair template
-
-#### GitHub Agentic Workflows Skill
-
-`skills/github-agentic-workflows` is scoped to professional authoring, review, installation, debugging, and day-two operation of GitHub Agentic Workflows repositories.
-
-Install with APM:
-
-```bash
-apm install webmaxru/agent-skills/skills/github-agentic-workflows
-```
-
-Install with npm:
-
-```bash
-npx skills add webmaxru/agent-skills --skill github-agentic-workflows
-```
-
-It covers:
-
-- identifying whether a repository already uses GH-AW and locating its active workflow surfaces
-- creating or revising workflow markdown, frontmatter, and compile-time configuration professionally
-- choosing safe outputs, network policy, authentication, and lockdown settings with least privilege
-- validating, compiling, running, and auditing workflows with the `gh aw` CLI
-- diagnosing common setup, compilation, permissions, network, and engine failures
-
-Its support files are split by purpose:
-
-- `references/authoring.md` for repository setup, workflow structure, frontmatter priorities, and validation loops
-- `references/examples.md` for proven workflow shapes, creation prompts, orchestration decisions, and production review areas
-- `references/security-and-operations.md` for safe outputs, network policy, authentication, lockdown, and observability guidance
-- `references/troubleshooting.md` for installation failures, enterprise policy blockers, compile issues, safe-output failures, and runtime debugging
-- `assets/workflow.template.md` for a reusable markdown workflow starter
-- `scripts/find-gh-aw-targets.mjs` for deterministic scanning of workflow files and GH-AW markers
-
 ## Agent Plugin Distribution
 
 All skills in this repository are also available as a single agent plugin. Installing the plugin gives you every skill at once. The plugin format is shared between Claude Code, VS Code (GitHub Copilot), and GitHub Copilot CLI, so the same `plugin.json` manifest and `skills/` directory work across all three environments.
@@ -602,9 +530,7 @@ agent-skills/                        (plugin root)
     │   └── SKILL.md
     ├── webnn/
     │   └── SKILL.md
-    ├── agent-package-manager/
-    │   └── SKILL.md
-    └── github-agentic-workflows/
+    └── webnn/
         └── SKILL.md
 ```
 
@@ -619,8 +545,6 @@ These prompt files support maintenance workflows in this repo:
 - `create-web-ai-skill.prompt.md` runs a five-phase workflow for a skill under `skills/`: creation, validation and remediation, supporting prompt creation, README update, and install verification; it also supports explicit single-phase execution through a `step=` selector
 - `validate-skills.prompt.md` reviews skills against the local authoring workflow
 - `remediate-skills.prompt.md` applies targeted fixes to skills
-- `agent-package-manager-skill-update.prompt.md` refreshes the Agent Package Manager skill from current documentation and user-supplied updates
-- `github-agentic-workflows-skill-update.prompt.md` refreshes the GitHub Agentic Workflows skill from current GH-AW documentation, related references, and user-supplied updates
 - `prompt-api-skill-update.prompt.md` refreshes the Prompt API skill from current docs and user-supplied updates
 - `proofreader-api-skill-update.prompt.md` refreshes the Proofreader API skill from user-supplied updates, attachments, and the current specification and browser guidance
 - `language-detector-api-skill-update.prompt.md` refreshes the Language Detector API skill from user-supplied updates, attachments, and the current specification and browser guidance
@@ -636,21 +560,6 @@ These prompt files support maintenance workflows in this repo:
 - `webmcp-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebMCP demo under `artifacts/webmcp/`
 - `webnn-create-demo-plain-html.prompt.md` creates or recreates a plain HTML WebNN demo under `artifacts/webnn/`
 - `add-agent-plugin-distribution.prompt.md` adds Claude Code, VS Code (GitHub Copilot), and Copilot CLI plugin distribution to any agent skills repository — creates manifests, marketplace catalogs, and README documentation
-
-### GitHub Agentic Workflows Maintenance
-
-GitHub Agentic Workflows are the repository's automation layer for recurring skill maintenance, especially weekly spec-alignment passes.
-
-In this repo they work as follows:
-
-- `.github/workflows/weekly-skill-updates.yml` runs every Monday at 08:00 UTC and can also be triggered manually for a single saved prompt
-- the workflow discovers every `.github/prompts/*-skill-update.prompt.md` file and fans out one run per selected prompt
-- each run executes the reusable worker compiled from `.github/workflows/skill-update-worker.md` via `.github/workflows/skill-update-worker.lock.yml`
-- the worker prefetches the external URLs referenced by the selected saved prompt into local runtime files under `.github/aw/`, then points the agent at those files so the run uses deterministic local inputs instead of ad hoc live browsing
-- the worker runs in `strict` mode with constrained tools and network access, and uses `safe-outputs` to create at most one draft pull request for that prompt or emit `noop` if no material update is justified
-- pull requests are intentionally created as drafts and are not merged by the workflow; a human review is required before any update is merged
-
-This is how the repository keeps skills updated weekly from multiple relevant sources without turning speculative agent output into unattended repository writes.
 
 ### Skill Creator
 
@@ -697,14 +606,6 @@ node skills/prompt-api/scripts/find-frontend-targets.mjs .
 ```
 
 The scanner prioritizes common web entry points such as `package.json`, `index.html`, and framework bootstrap files while ignoring transient directories such as `node_modules`, `dist`, `build`, `.next`, `.nuxt`, `coverage`, `out`, and `target`.
-
-### Scan a Workspace for GitHub Agentic Workflow Targets
-
-```bash
-node skills/github-agentic-workflows/scripts/find-gh-aw-targets.mjs .
-```
-
-The scanner inventories `.github/workflows/` files, highlights repository setup surfaces such as `.github/agents/agentic-workflows.agent.md`, and reports GH-AW markers including `gh aw`, `safe-outputs:`, `network:`, and orchestration fields.
 
 ### Scan a Workspace for Writing Assistance Targets
 
