@@ -2,110 +2,79 @@
 
 ![Web AI Agent Skills banner](assets/repo-banner.svg)
 
-This repository is a maintained collection of agent skills for modern browser Web AI APIs. The skills cover Prompt API, Language Detector API, Translator API, Writing Assistance APIs, Proofreader API, WebMCP, and WebNN.
+A maintained collection of agent skills for modern browser Web AI APIs: Prompt API, Language Detector API, Translator API, Writing Assistance APIs, Proofreader API, WebMCP, and WebNN.
 
-For these APIs, staying close to the latest specification matters. Standards and preview implementations still shift, browser behavior changes across milestones, and many ecosystem examples go stale quickly. These skills reduce that drift so generated or assisted code stays aligned with the current public specification state instead of relying on outdated snippets or guesswork.
+Standards and preview implementations still shift, browser behavior changes across milestones, and many ecosystem examples go stale quickly. These skills reduce that drift so generated or assisted code stays aligned with the current public specification state instead of relying on outdated snippets or guesswork.
 
 I maintain the skills against current specification and platform changes. That work is informed by participation in the [W3C Web Machine Learning Community Group](https://www.w3.org/groups/cg/webmachinelearning/), where several of these APIs are discussed in the open, and by my work as a [Google Developer Expert in Web Technologies](https://developers.google.com/community/experts).
 
 The repository follows the agentskills.io style: lean `SKILL.md` files, progressive disclosure through `references/` and `assets/`, and deterministic helper scripts where guessing would be brittle.
 
-The repository has three practical roles:
-
-1. Provide production-style skills for browser Web AI integrations such as Prompt API, WebMCP, and WebNN.
-2. Provide a local authoring workflow for creating, validating, and reviewing additional skills.
-3. Keep disposable demos and research artifacts separate from persistent skill assets while the durable skill content tracks evolving specifications.
-
-## Quick Install as Plugin
-
-Install all skills at once as a single agent plugin. Pick your environment:
-
-**Claude Code**
-
-```bash
-/plugin marketplace add webmaxru/agent-skills
-/plugin install web-ai-skills@webmaxru-agent-skills
-```
-
-**VS Code (GitHub Copilot)**
-
-Run **Chat: Install Plugin From Source** from the Command Palette and enter:
-
-```text
-https://github.com/webmaxru/agent-skills
-```
-
-**GitHub Copilot CLI**
-
-```bash
-copilot plugin marketplace add webmaxru/agent-skills
-copilot plugin install web-ai-skills
-```
-
-For per-skill installs, local testing, and advanced options see [Install Skills](#install-skills) and [Agent Plugin Distribution](#agent-plugin-distribution).
-
 ## Contents
 
-- [Install Skills](#install-skills)
-- [Included Skills](#included-skills)
-  - [Web AI API Skills](#web-ai-api-skills)
-    - [Prompt API Skill](#prompt-api-skill)
-    - [Language Detector API Skill](#language-detector-api-skill)
-    - [Translator API Skill](#translator-api-skill)
-    - [Writing Assistance APIs Skill](#writing-assistance-apis-skill)
-    - [Proofreader API Skill](#proofreader-api-skill)
-    - [WebMCP Skill](#webmcp-skill)
-    - [WebNN Skill](#webnn-skill)
-- [Agent Plugin Distribution](#agent-plugin-distribution)
-  - [Claude Code](#claude-code)
-  - [VS Code (GitHub Copilot)](#vs-code-github-copilot)
-  - [GitHub Copilot CLI](#github-copilot-cli)
-  - [Plugin Structure](#plugin-structure)
+- [Install](#install)
+  - [Install via Plugin Marketplace (recommended)](#install-via-plugin-marketplace-recommended)
+  - [Install Individual Skills](#install-individual-skills)
+- [Skills in This Repository](#skills-in-this-repository)
+  - [Prompt API Skill](#prompt-api-skill)
+  - [Language Detector API Skill](#language-detector-api-skill)
+  - [Translator API Skill](#translator-api-skill)
+  - [Writing Assistance APIs Skill](#writing-assistance-apis-skill)
+  - [Proofreader API Skill](#proofreader-api-skill)
+  - [WebMCP Skill](#webmcp-skill)
+  - [WebNN Skill](#webnn-skill)
 - [Supporting Assets](#supporting-assets)
   - [`.github/prompts`](#githubprompts)
   - [Skill Creator](#skill-creator)
 - [Repository Conventions](#repository-conventions)
 - [Common Workflows](#common-workflows)
 
-## Install Skills
+## Install
 
-Primary installation path: use [Agent Package Manager (APM)](https://github.com/microsoft/apm), a package manager for agent instructions, prompts, skills, and related configuration.
+### Install via Plugin Marketplace (recommended)
 
-If the target repository does not already use APM, initialize it first:
+All skills are available as a single agent plugin (`web-ai-skills`) through the [AI-Native Dev](https://github.com/webmaxru/ai-native-dev) plugin marketplace.
 
-```bash
-apm init
-```
-
-Then install any skill from this repository with the repository and skill placeholders replaced as needed:
+**GitHub Copilot CLI**
 
 ```bash
-apm install OWNER/REPO/skills/SKILL_NAME
+copilot plugin marketplace add webmaxru/ai-native-dev
+copilot plugin install web-ai-skills
 ```
 
-Secondary installation path: use the `skills` package from npm for direct per-skill installs.
+**VS Code (GitHub Copilot)**
+
+Add the marketplace to your `settings.json`:
+
+```jsonc
+"chat.plugins.marketplaces": [
+    "webmaxru/ai-native-dev"
+]
+```
+
+Then open the Extensions sidebar, search `@agentPlugins`, and install **web-ai-skills**.
+
+Alternatively, run **Chat: Install Plugin From Source** from the Command Palette and enter `https://github.com/webmaxru/ai-native-dev`.
+
+**Claude Code**
 
 ```bash
-npx skills add OWNER/REPO --skill SKILL_NAME
+/plugin marketplace add webmaxru/ai-native-dev
+/plugin install web-ai-skills
 ```
 
-For this repository, `OWNER/REPO` is `webmaxru/agent-skills`. The concrete install commands for each available skill are listed in the relevant skill sections below.
+### Install Individual Skills
 
-For example, the Proofreader API skill installs with:
+Use [Agent Package Manager (APM)](https://github.com/microsoft/apm) for per-skill installs:
 
 ```bash
-apm install webmaxru/agent-skills/skills/proofreader-api
+apm init                                                   # once per project
+apm install webmaxru/agent-skills/skills/SKILL_NAME
 ```
 
-```bash
-npx skills add webmaxru/agent-skills --skill proofreader-api
-```
+## Skills in This Repository
 
-## Included Skills
-
-### Web AI API Skills
-
-#### Prompt API Skill
+### Prompt API Skill
 
 `skills/prompt-api` is the main production-style example skill in the repository. It is scoped to browser Prompt API work in JavaScript or TypeScript web apps.
 
@@ -139,7 +108,7 @@ Its support files are split by purpose:
 - `assets/language-model-service.template.ts` for a reusable wrapper template
 - `scripts/find-frontend-targets.mjs` for deterministic scanning of likely web entry points and Prompt API markers
 
-#### Language Detector API Skill
+### Language Detector API Skill
 
 `skills/language-detector-api` is scoped to browser Language Detector API integrations in JavaScript or TypeScript web apps.
 
@@ -172,7 +141,7 @@ Its support files are split by purpose:
 - `assets/language-detector-session.template.ts` for a reusable typed session wrapper template
 - `scripts/find-language-detector-targets.mjs` for deterministic scanning of likely web entry points and Language Detector API markers
 
-#### Translator API Skill
+### Translator API Skill
 
 `skills/translator-api` is scoped to browser Translator API integrations in JavaScript or TypeScript web apps.
 
@@ -205,7 +174,7 @@ Its support files are split by purpose:
 - `assets/translator-session.template.ts` for a reusable typed session wrapper template
 - `scripts/find-translator-targets.mjs` for deterministic scanning of likely web entry points and Translator API markers
 
-#### Writing Assistance APIs Skill
+### Writing Assistance APIs Skill
 
 `skills/writing-assistance-apis` is scoped to browser Summarizer, Writer, and Rewriter integrations in JavaScript or TypeScript web apps.
 
@@ -238,7 +207,7 @@ Its support files are split by purpose:
 - `assets/writing-assistance-session.template.ts` for a reusable typed wrapper template
 - `scripts/find-writing-assistance-targets.mjs` for deterministic scanning of likely web entry points and Writing Assistance API markers
 
-#### Proofreader API Skill
+### Proofreader API Skill
 
 `skills/proofreader-api` is scoped to browser Proofreader API integrations in JavaScript or TypeScript web apps.
 
@@ -271,7 +240,7 @@ Its support files are split by purpose:
 - `assets/proofreader-session.template.ts` for a reusable typed session wrapper template
 - `scripts/find-proofreader-targets.mjs` for deterministic scanning of likely web entry points and Proofreader API markers
 
-#### WebMCP Skill
+### WebMCP Skill
 
 `skills/webmcp` is scoped to browser WebMCP integrations in JavaScript or TypeScript web apps.
 
@@ -304,7 +273,7 @@ Its support files are split by purpose:
 - `assets/model-context-registry.template.ts` for a reusable imperative registration helper
 - `scripts/find-webmcp-targets.mjs` for deterministic scanning of likely web entry points and WebMCP markers
 
-#### WebNN Skill
+### WebNN Skill
 
 `skills/webnn` is scoped to browser Web Neural Network API integrations in JavaScript or TypeScript web apps.
 
@@ -336,205 +305,6 @@ Its support files are split by purpose:
 - `references/troubleshooting.md` for context creation failures, dispatch issues, readback problems, and device fallback behavior
 - `assets/webnn-runtime.template.ts` for a reusable runtime wrapper template
 - `scripts/find-webnn-targets.mjs` for deterministic scanning of likely web entry points and WebNN markers
-
-## Agent Plugin Distribution
-
-All skills in this repository are also available as a single agent plugin. Installing the plugin gives you every skill at once. The plugin format is shared between Claude Code, VS Code (GitHub Copilot), and GitHub Copilot CLI, so the same `plugin.json` manifest and `skills/` directory work across all three environments.
-
-### Claude Code
-
-#### Test locally
-
-Clone the repository and point Claude Code at it:
-
-```bash
-git clone https://github.com/webmaxru/agent-skills.git
-claude --plugin-dir ./agent-skills
-```
-
-Once Claude Code starts, available skills appear behind the `web-ai-skills:` namespace:
-
-```text
-/web-ai-skills:prompt-api
-/web-ai-skills:webmcp
-/web-ai-skills:webnn
-```
-
-Run `/reload-plugins` after any local edits to pick up changes without restarting.
-
-#### Install from the Claude Code marketplace
-
-If the plugin has been published to a marketplace, install it with:
-
-```bash
-/plugin install web-ai-skills@<marketplace-name>
-```
-
-Replace `<marketplace-name>` with the marketplace that hosts the plugin (for example, `claude-plugins-official` for the official Anthropic marketplace).
-
-To submit the plugin to the official Anthropic marketplace, use one of the in-app submission forms:
-
-- Claude.ai: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-- Console: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-#### Install from this GitHub repository as a marketplace
-
-This repository can also act as its own marketplace. Add it with:
-
-```bash
-/plugin marketplace add webmaxru/agent-skills
-```
-
-Then install the plugin:
-
-```bash
-/plugin install web-ai-skills@webmaxru-agent-skills
-```
-
-### VS Code (GitHub Copilot)
-
-> **Note:** Agent plugins in VS Code are currently in preview. Enable support with the `chat.plugins.enabled` setting.
-
-#### Test locally
-
-Clone the repository and register its path in your VS Code settings:
-
-```jsonc
-// settings.json
-"chat.pluginLocations": {
-    "/path/to/agent-skills": true
-}
-```
-
-After reloading the window, the skills appear in **Chat: Configure Skills** and can be invoked in any Copilot chat session.
-
-#### Install from source
-
-Run **Chat: Install Plugin From Source** from the Command Palette and enter the repository URL:
-
-```text
-https://github.com/webmaxru/agent-skills
-```
-
-VS Code clones the repository and installs the plugin automatically.
-
-#### Install from a marketplace
-
-Add this repository as a marketplace in your VS Code settings:
-
-```jsonc
-// settings.json
-"chat.plugins.marketplaces": [
-    "webmaxru/agent-skills"
-]
-```
-
-Then open the Extensions view, search `@agentPlugins`, and install **web-ai-skills** from the list.
-
-#### Workspace recommendation
-
-Projects can recommend the plugin for team members by adding it to `.vscode/settings.json`:
-
-```jsonc
-// .vscode/settings.json
-{
-    "extraKnownMarketplaces": {
-        "webmaxru-agent-skills": {
-            "source": {
-                "source": "github",
-                "repo": "webmaxru/agent-skills"
-            }
-        }
-    },
-    "enabledPlugins": {
-        "web-ai-skills@webmaxru-agent-skills": true
-    }
-}
-```
-
-VS Code notifies team members about the recommended plugin the first time they send a chat message.
-
-### GitHub Copilot CLI
-
-#### Install locally
-
-Clone the repository and install the plugin with the `copilot` CLI:
-
-```bash
-git clone https://github.com/webmaxru/agent-skills.git
-copilot plugin install ./agent-skills
-```
-
-Verify the plugin loaded:
-
-```bash
-copilot plugin list
-```
-
-Inside an interactive session, check that skills are available:
-
-```text
-/skills list
-```
-
-After making changes to a local plugin, reinstall it to refresh the cache:
-
-```bash
-copilot plugin install ./agent-skills
-```
-
-#### Install from this GitHub repository as a marketplace
-
-Add this repository as a marketplace:
-
-```bash
-copilot plugin marketplace add webmaxru/agent-skills
-```
-
-Then install the plugin:
-
-```bash
-copilot plugin install web-ai-skills
-```
-
-#### Uninstall
-
-```bash
-copilot plugin uninstall web-ai-skills
-```
-
-### Plugin structure
-
-The plugin is defined by the manifest at `.claude-plugin/plugin.json` and reuses the existing `skills/` directory:
-
-```
-agent-skills/                        (plugin root)
-├── .claude-plugin/
-│   ├── plugin.json                  # Plugin manifest
-│   └── marketplace.json             # Marketplace catalog (Claude Code / VS Code)
-├── .github/
-│   └── plugin/
-│       └── marketplace.json         # Marketplace catalog (Copilot CLI)
-└── skills/                          # All skills
-    ├── prompt-api/
-    │   └── SKILL.md
-    ├── language-detector-api/
-    │   └── SKILL.md
-    ├── translator-api/
-    │   └── SKILL.md
-    ├── writing-assistance-apis/
-    │   └── SKILL.md
-    ├── proofreader-api/
-    │   └── SKILL.md
-    ├── webmcp/
-    │   └── SKILL.md
-    ├── webnn/
-    │   └── SKILL.md
-    └── webnn/
-        └── SKILL.md
-```
-
-Each skill directory includes its own `references/`, `assets/`, and `scripts/` supporting files, which are bundled with the plugin automatically.
 
 ## Supporting Assets
 
