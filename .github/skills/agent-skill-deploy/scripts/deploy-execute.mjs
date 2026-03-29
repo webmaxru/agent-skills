@@ -6,13 +6,16 @@
 // Cross-platform: works on Windows and macOS.
 //
 // Usage:
-//   node deploy-execute.mjs <version> --surfaces <s1,s2,...> [--dry-run] [--bump-only] [--push]
+//   node deploy-execute.mjs <version> --surfaces <s1,s2,...> [--dry-run] [--bump-only] [--push] [--notes-file <path>]
 //
 // Surfaces: github, claude-code, vscode, copilot-cli
+// Version bumps ALWAYS apply to every detected config file regardless of --surfaces.
+// The --surfaces flag controls which deployment actions run (GitHub release, etc.).
 // Examples:
 //   node deploy-execute.mjs 1.2.0 --surfaces github,claude-code --dry-run
 //   node deploy-execute.mjs 1.2.0 --surfaces claude-code,vscode --bump-only
 //   node deploy-execute.mjs 1.2.0 --surfaces github,claude-code,vscode,copilot-cli --push
+//   node deploy-execute.mjs 1.2.0 --surfaces github --push --notes-file changelog.md
 
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -29,6 +32,7 @@ let surfaces = [];
 let dryRun = false;
 let bumpOnly = false;
 let pushMode = false;
+let notesFile = null;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--surfaces" && args[i + 1]) {
@@ -40,6 +44,9 @@ for (let i = 0; i < args.length; i++) {
     bumpOnly = true;
   } else if (args[i] === "--push") {
     pushMode = true;
+  } else if (args[i] === "--notes-file" && args[i + 1]) {
+    notesFile = args[i + 1];
+    i++;
   } else if (!args[i].startsWith("--") && !version) {
     version = args[i];
   }
@@ -116,7 +123,10 @@ console.log(`=== Deploy ${modeLabel}: v${version} ===`);
 console.log(`Surfaces: ${surfaces.join(", ")}`);
 console.log("");
 
-// --- Collect files to update ---
+// --- Collect ALL config files to update ---
+// Version bumps always apply to every detected config file regardless of --surfaces.
+// This ensures versions stay in sync across all surfaces. The --surfaces flag only
+// controls which deployment actions run in --push mode.
 
 const updates = [];
 
@@ -132,106 +142,113 @@ function writeJsonSafe(filePath, data) {
   writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
 }
 
-// Claude Code surface
-// plugin.json is sufficient. marketplace.json is optional — if absent, the plugin
-// is assumed to be listed by a marketplace defined in another repository.
-if (surfaces.includes("claude-code")) {
-  const pluginPath = join(root, ".claude-plugin", "plugin.json");
-  const marketplacePath = join(root, ".claude-plugin", "marketplace.json");
+// Claude Code config files (always detected)
+const pluginPath = join(root, ".claude-plugin", "plugin.json");
+const marketplacePath = join(root, ".claude-plugin", "marketplace.json");
 
-  if (existsSync(pluginPath)) {
-    const data = readJsonSafe(pluginPath);
-    if (data) {
-      const oldVersion = data.version || "unset";
-      updates.push({
-        surface: "claude-code",
-        file: ".claude-plugin/plugin.json",
-        path: pluginPath,
-        field: "version",
-        oldValue: oldVersion,
-        apply: () => {
-          data.version = version;
-          writeJsonSafe(pluginPath, data);
-        },
-      });
-    }
-  } else {
-    console.error("WARNING: .claude-plugin/plugin.json not found — skipping claude-code surface");
+if (existsSync(pluginPath)) {
+  const data = readJsonSafe(pluginPath);
+  if (data) {
+    const oldVersion = data.version || "unset";
+    updates.push({
+      surface: "claude-code",
+      file: ".claude-plugin/plugin.json",
+      path: pluginPath,
+      field: "version",
+      oldValue: oldVersion,
+      apply: () => {
+        data.version = version;
+        writeJsonSafe(pluginPath, data);
+      },
+    });
   }
+}
 
-  if (existsSync(marketplacePath)) {
-    const data = readJsonSafe(marketplacePath);
-    if (data) {
-      const oldVersion = (data.plugins && data.plugins[0] && data.plugins[0].version) || data.version || "unset";
+if (existsSync(marketplacePath)) {
+  const data = readJsonSafe(marketplacePath);
+  if (data) {
+    // Only bump the local plugin version (source="."), never the marketplace metadata.version.
+    // Marketplace versions are independent from plugin versions and managed separately.
+    const localPlugin = data.plugins && data.plugins.find((p) => p.source === "." || p.source === "./");
+    if (localPlugin) {
+      const oldVersion = localPlugin.version || "unset";
       updates.push({
         surface: "claude-code",
         file: ".claude-plugin/marketplace.json",
         path: marketplacePath,
-        field: "plugins[0].version or version",
+        field: "plugins[local].version",
         oldValue: oldVersion,
         apply: () => {
-          if (data.plugins && data.plugins[0]) {
-            data.plugins[0].version = version;
-          }
-          if (data.version !== undefined) {
-            data.version = version;
-          }
+          localPlugin.version = version;
           writeJsonSafe(marketplacePath, data);
         },
       });
     }
-  } else {
-    logAction("claude-code: marketplace.json absent — external marketplace assumed, bumping plugin.json only");
   }
 }
 
-// VS Code surface
-if (surfaces.includes("vscode")) {
-  const pkgPath = join(root, "package.json");
-  if (existsSync(pkgPath)) {
-    const data = readJsonSafe(pkgPath);
-    if (data) {
-      const oldVersion = data.version || "unset";
-      updates.push({
-        surface: "vscode",
-        file: "package.json",
-        path: pkgPath,
-        field: "version",
-        oldValue: oldVersion,
-        apply: () => {
-          data.version = version;
-          writeJsonSafe(pkgPath, data);
-        },
-      });
-    }
-  } else {
-    console.error("WARNING: package.json not found — skipping VS Code surface");
+// package.json (used by vscode and copilot-cli surfaces, always detected)
+const pkgPath = join(root, "package.json");
+if (existsSync(pkgPath)) {
+  const data = readJsonSafe(pkgPath);
+  if (data && data.version !== undefined) {
+    const oldVersion = data.version || "unset";
+    updates.push({
+      surface: "vscode/copilot-cli",
+      file: "package.json",
+      path: pkgPath,
+      field: "version",
+      oldValue: oldVersion,
+      apply: () => {
+        data.version = version;
+        writeJsonSafe(pkgPath, data);
+      },
+    });
   }
 }
 
-// Copilot CLI surface (also uses package.json, deduplicate if vscode already covers it)
-if (surfaces.includes("copilot-cli")) {
-  const pkgPath = join(root, "package.json");
-  const alreadyHasPkgUpdate = updates.some((u) => u.file === "package.json");
+// Copilot CLI plugin.json (at .github/plugin/plugin.json)
+const copilotCliPluginPath = join(root, ".github", "plugin", "plugin.json");
+if (existsSync(copilotCliPluginPath)) {
+  const data = readJsonSafe(copilotCliPluginPath);
+  if (data) {
+    const oldVersion = data.version || "unset";
+    updates.push({
+      surface: "copilot-cli",
+      file: ".github/plugin/plugin.json",
+      path: copilotCliPluginPath,
+      field: "version",
+      oldValue: oldVersion,
+      apply: () => {
+        data.version = version;
+        writeJsonSafe(copilotCliPluginPath, data);
+      },
+    });
+  }
+}
 
-  if (!alreadyHasPkgUpdate && existsSync(pkgPath)) {
-    const data = readJsonSafe(pkgPath);
-    if (data) {
-      const oldVersion = data.version || "unset";
+// Copilot CLI marketplace.json (at .github/plugin/marketplace.json)
+const copilotCliMarketplacePath = join(root, ".github", "plugin", "marketplace.json");
+if (existsSync(copilotCliMarketplacePath)) {
+  const data = readJsonSafe(copilotCliMarketplacePath);
+  if (data) {
+    // Only bump the local plugin version (source="."), never the marketplace metadata.version.
+    // Marketplace versions are independent from plugin versions and managed separately.
+    const localPlugin = data.plugins && data.plugins.find((p) => p.source === "." || p.source === "./");
+    if (localPlugin) {
+      const oldVersion = localPlugin.version || "unset";
       updates.push({
         surface: "copilot-cli",
-        file: "package.json",
-        path: pkgPath,
-        field: "version",
+        file: ".github/plugin/marketplace.json",
+        path: copilotCliMarketplacePath,
+        field: "plugins[local].version",
         oldValue: oldVersion,
         apply: () => {
-          data.version = version;
-          writeJsonSafe(pkgPath, data);
+          localPlugin.version = version;
+          writeJsonSafe(copilotCliMarketplacePath, data);
         },
       });
     }
-  } else if (alreadyHasPkgUpdate) {
-    logAction("copilot-cli: package.json already covered by vscode surface");
   }
 }
 
@@ -258,8 +275,9 @@ if (!dryRun && (bumpOnly || !pushMode)) {
   for (const u of updates) {
     const data = readJsonSafe(u.path);
     let actual = null;
-    if (u.file === ".claude-plugin/marketplace.json") {
-      actual = (data.plugins && data.plugins[0] && data.plugins[0].version) || data.version;
+    if (u.file === ".claude-plugin/marketplace.json" || u.file === ".github/plugin/marketplace.json") {
+      const localPlugin = data.plugins && data.plugins.find((p) => p.source === "." || p.source === "./");
+      actual = localPlugin ? localPlugin.version : null;
     } else {
       actual = data.version;
     }
@@ -298,19 +316,18 @@ if (dryRun) {
   if (surfaces.includes("github")) {
     const hasGh = !!run("gh --version");
     if (hasGh) {
-      logAction(`gh release create ${tagName} --generate-notes`);
+      if (notesFile) {
+        logAction(`gh release create ${tagName} --title "${tagName}" --notes-file "${notesFile}"`);
+      } else {
+        logAction(`gh release create ${tagName} --generate-notes`);
+      }
     } else {
       logAction("GitHub release: gh CLI not available — manual release creation needed");
     }
   }
 
   if (surfaces.includes("vscode")) {
-    const hasVsce = !!run("vsce --version");
-    if (hasVsce) {
-      logAction("vsce publish (if user opts in)");
-    } else {
-      logAction("VS Code marketplace: vsce not available — push-based deploy only");
-    }
+    logAction("VS Code plugin: push-based — install via 'Chat: Install Plugin From Source'");
   }
 
   if (surfaces.includes("claude-code")) {
@@ -379,13 +396,16 @@ if (pushMode) {
     console.log("=== GitHub Release ===");
     const hasGh = !!run("gh --version");
     if (hasGh) {
-      const releaseResult = run(`gh release create ${tagName} --generate-notes`);
+      const ghCmd = notesFile && existsSync(notesFile)
+        ? `gh release create ${tagName} --title "${tagName}" --notes-file "${notesFile}"`
+        : `gh release create ${tagName} --generate-notes`;
+      const releaseResult = run(ghCmd);
       if (releaseResult !== null) {
         console.log(`SUCCESS: GitHub release ${tagName} created`);
       } else {
         // gh release might output to stderr on success
         try {
-          execSync(`gh release create ${tagName} --generate-notes`, { encoding: "utf8", stdio: "pipe" });
+          execSync(ghCmd, { encoding: "utf8", stdio: "pipe" });
           console.log(`SUCCESS: GitHub release ${tagName} created`);
         } catch {
           console.error(`ERROR: Failed to create GitHub release ${tagName}`);
@@ -398,14 +418,8 @@ if (pushMode) {
   }
 
   if (surfaces.includes("vscode")) {
-    console.log("=== VS Code Marketplace ===");
-    const hasVsce = !!run("vsce --version");
-    if (hasVsce) {
-      console.log("INFO: Run 'vsce publish' manually to publish to VS Code marketplace");
-      console.log("      (Automated vsce publish requires PAT and publisher configuration)");
-    } else {
-      console.log("INFO: Push-based deploy complete. Install via 'Chat: Install Plugin From Source'");
-    }
+    console.log("=== VS Code Plugin ===");
+    console.log("INFO: Push-based deploy complete. Install via 'Chat: Install Plugin From Source'");
   }
 
   if (surfaces.includes("claude-code")) {

@@ -14,7 +14,7 @@ compatibility: Claude Code, VS Code Copilot, Copilot CLI
 allowed-tools: Bash Read Glob Task AskUserQuestion
 metadata:
   author: webmaxru
-  version: "1.2"
+  version: "1.4"
 ---
 
 # Agent Skill Collection Deploy
@@ -46,17 +46,17 @@ Use this skill when the user:
 | Surface          | Config Files                                                       | Deploy Action                    | Tool Required       |
 | ---------------- | ------------------------------------------------------------------ | -------------------------------- | ------------------- |
 | **github**       | Git remote URL                                                     | Create tag + GitHub release      | `gh`                |
-| **claude-code**  | `.claude-plugin/plugin.json` (required), `.claude-plugin/marketplace.json` (optional) | Bump version, commit, push       | `git`               |
-| **vscode**       | `package.json`                                                     | Bump version, optionally `vsce publish` | `vsce` (optional) |
-| **copilot-cli**  | `package.json`                                                     | Bump version, commit, push       | `git`               |
+| **claude-code**  | `.claude-plugin/plugin.json` (required), `.claude-plugin/marketplace.json` (optional) | Bump plugin version, commit, push  | `git`               |
+| **vscode**       | `package.json`                                                     | Bump version, commit, push       | `git`               |
+| **copilot-cli**  | `package.json`, `.github/plugin/plugin.json`, `.github/plugin/marketplace.json` (optional) | Bump plugin version, commit, push  | `git`               |
 
 ## Bundled Scripts
 
 This skill includes three Node.js helper scripts in `scripts/` for cross-platform operation (Windows and macOS):
 
-1. **deploy-preflight.mjs** — Validates git state, discovers surfaces, checks tool availability, verifies version consistency
+1. **deploy-preflight.mjs** — Validates git state, discovers surfaces, checks tool availability, verifies version consistency (including git tag version)
 2. **deploy-analyze.mjs** — Inventories skills, analyzes commits since last tag, recommends version bump
-3. **deploy-execute.mjs** — Bumps versions in config files, commits, tags, and deploys to selected surfaces
+3. **deploy-execute.mjs** — Bumps versions in **all** detected config files (regardless of selected surfaces), commits, tags, and deploys to selected surfaces
 
 Run scripts from the skill directory:
 
@@ -65,6 +65,18 @@ node scripts/deploy-preflight.mjs
 node scripts/deploy-analyze.mjs
 node scripts/deploy-execute.mjs 1.2.0 --surfaces github,claude-code --dry-run
 ```
+
+## Version Handling Rules
+
+Marketplace.json files contain two distinct version fields with different semantics:
+
+- **`plugins[].version`** (plugin version) — Tracks the version of each listed plugin. Bumped during releases for local plugins (where `source` is `"."`).
+- **`metadata.version`** (marketplace version) — Tracks the version of the marketplace collection itself. **Never bumped during skill/plugin releases.** Managed independently.
+
+**Cross-file sync rules:**
+
+- All plugin versions must stay consistent: `plugin.json`, `package.json`, `plugins[].version` in marketplace files, and the git tag.
+- All `metadata.version` values across marketplace.json files (`.claude-plugin/marketplace.json` and `.github/plugin/marketplace.json`) must stay in sync with each other.
 
 ## Deploy Workflow
 
@@ -86,7 +98,7 @@ This checks:
 - `/skills` directory exists and contains at least one skill
 - Detects which surfaces are configured based on existing config files
 - Verifies required tools are available for each surface
-- Reports version consistency across all surface configs
+- Reports version consistency across all surface configs, **including git tag version**
 
 If checks fail, report the problem and suggest a fix. Do not proceed.
 
@@ -216,17 +228,21 @@ If the dry run reveals issues, address them before proceeding.
 
 ### Step 5: Bump Versions
 
-Execute the version bump across all selected surfaces:
+Execute the version bump across all detected surface configs:
 
 ```bash
 node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --bump-only
 ```
+
+**IMPORTANT — version sync invariant:** The script always bumps **every** detected config file (plugin.json, marketplace.json, package.json) regardless of which surfaces were selected via `--surfaces`. This prevents version drift between surfaces. The `--surfaces` flag only controls which deployment actions run in `--push` mode.
 
 This updates version fields in:
 
 - `.claude-plugin/plugin.json` → `.version` (claude-code surface)
 - `.claude-plugin/marketplace.json` → `.plugins[0].version` (claude-code surface, only if the file exists)
 - `package.json` → `.version` (vscode and copilot-cli surfaces)
+- `.github/plugin/plugin.json` → `.version` (copilot-cli surface, only if the file exists)
+- `.github/plugin/marketplace.json` → `.plugins[0].version` and `.metadata.version` (copilot-cli surface, only if the file exists)
 
 If `marketplace.json` is absent, the plugin is assumed to be listed by a marketplace defined in another repository. Only `plugin.json` is bumped.
 
@@ -279,19 +295,23 @@ If user selects **No**, inform them:
 
 Only after user approves:
 
-```bash
-node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --push
-```
+1. Save the per-skill changelog from Step 2b to a temporary file:
+   ```bash
+   echo '{{CHANGELOG}}' > /tmp/release-notes.md
+   ```
+2. Run the push and deploy:
+   ```bash
+   node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --push --notes-file /tmp/release-notes.md
+   ```
 
 This performs:
 
 1. `git push && git push --tags` for all surfaces
 2. For **github** surface: create the release using the per-skill changelog from Step 2b:
    ```bash
-   gh release create v{{VERSION}} --title "v{{VERSION}}" --notes "{{CHANGELOG}}"
+   gh release create v{{VERSION}} --title "v{{VERSION}}" --notes-file /tmp/release-notes.md
    ```
-   where `{{CHANGELOG}}` is the Markdown text assembled in Step 2b. Do **not** use `--generate-notes`; the per-skill changelog is always preferred.
-3. For **vscode** surface: `vsce publish` (if `vsce` is available and user opted in)
+   If `--notes-file` is not provided, the script falls back to `--generate-notes`. Always prefer providing the per-skill changelog.
 
 After pushing, print the remote URL and relevant marketplace links.
 

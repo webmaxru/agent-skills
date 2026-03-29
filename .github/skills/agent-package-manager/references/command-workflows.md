@@ -71,6 +71,14 @@ apm deps update
 apm deps update apm-sample-package
 ```
 
+Force a clean update when the cache serves stale content:
+
+```text
+apm deps clean
+# delete apm.lock.yaml manually
+apm install --update
+```
+
 ## Compilation and validation
 
 Use compilation for instruction outputs and validation, not for prompt or skill deployment.

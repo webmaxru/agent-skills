@@ -74,6 +74,37 @@ Actions:
 2. Use `apm compile` for instruction outputs such as `AGENTS.md` or `CLAUDE.md`, plus validation and placement analysis.
 3. Prefer `apm compile --validate` or `apm compile --dry-run` before changing compilation config.
 
+## Stale packages after update
+
+Symptoms:
+
+* `apm install --update` or `apm deps update` reports success but the lockfile `resolved_commit` does not change.
+* Installed files in `.github/skills/` or other deploy targets still contain the old version.
+* `apm install --update --verbose` shows packages served from cache despite a newer commit on the remote.
+
+Actions:
+
+1. Run `apm deps clean` to remove the local `apm_modules/` directory.
+2. Delete `apm.lock.yaml` to remove the stale lockfile.
+3. Run `apm install --update` to force a fresh resolution from the remote.
+4. Verify the lockfile `resolved_commit` matches the remote HEAD with `git ls-remote <repo-url> HEAD`.
+5. Confirm deployed files contain the expected version.
+
+## Self-referencing dependencies not reflecting local changes
+
+Symptoms:
+
+* A repository lists itself as a dependency (e.g., `owner/repo/skills/my-skill` consumed from `owner/repo`).
+* Local edits to the skill source are not picked up after `apm install --update`.
+* The installed version in `.github/skills/` lags behind the version in the local `skills/` directory.
+
+Actions:
+
+1. Understand that APM always fetches from the **remote** Git repository, not the local working tree.
+2. Commit and push local changes before running `apm install --update` or `apm deps update`.
+3. Verify the remote HEAD includes the expected changes with `git ls-remote <repo-url> HEAD`.
+4. If the cache still serves old content after pushing, follow the "Stale packages after update" workflow above.
+
 ## Local dependency pitfalls
 
 Symptoms:
