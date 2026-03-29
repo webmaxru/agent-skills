@@ -26,22 +26,26 @@ function assertModelContext(): Navigator["modelContext"] {
 
 export function registerWebMcpTools(tools: ToolDefinition[]) {
   const modelContext = assertModelContext();
+  const controller = new AbortController();
   const registeredNames: string[] = [];
 
   for (const tool of tools) {
-    modelContext.registerTool(tool);
+    modelContext.registerTool(tool, { signal: controller.signal });
     registeredNames.push(tool.name);
   }
 
   return {
     dispose() {
+      // Transitional: unregisterTool is removed in Chrome 148+; signal abort handles unregistration.
+      // Call both during the transition window for cross-version compatibility.
       for (const name of registeredNames.splice(0).reverse()) {
         try {
-          modelContext.unregisterTool(name);
+          modelContext.unregisterTool?.(name);
         } catch {
           // Ignore stale cleanup during route transitions.
         }
       }
+      controller.abort();
     },
   };
 }
