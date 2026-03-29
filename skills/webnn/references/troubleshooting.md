@@ -10,7 +10,7 @@
 ## `createContext()` fails
 
 * Reduce the request to a simple `createContext()` call without optional preferences and retry.
-* If `gpu` or `npu` fails, retry the product's approved fallback path rather than retrying indefinitely.
+* If an accelerated or high-performance context fails, retry the product's approved fallback path rather than retrying indefinitely.
 * Re-check browser compatibility notes for the target platform.
 
 ## `build()` fails
