@@ -2,6 +2,25 @@
 
 Use these checks before improvising a workaround.
 
+## APM not installed
+
+Symptoms:
+
+* `apm: command not found` or equivalent shell error.
+* `apm --version` fails.
+
+Actions:
+
+1. On macOS or Linux, run:
+   ```bash
+   curl -sSL https://aka.ms/apm-unix | sh
+   ```
+2. On Windows (PowerShell), run:
+   ```powershell
+   irm https://aka.ms/apm-windows | iex
+   ```
+3. Verify with `apm --version` before editing any project files.
+
 ## Authentication failures during install
 
 Symptoms:

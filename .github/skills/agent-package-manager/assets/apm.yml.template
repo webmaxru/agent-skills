@@ -10,7 +10,14 @@ scripts:
 
 dependencies:
   apm:
+    # Full package (rules, skills, prompts, hooks, agents)
     - microsoft/apm-sample-package
+    # Single skill by subdirectory path
+    - anthropics/skills/skills/frontend-design
+    # Plugin with a pinned tag
+    - github/awesome-copilot/plugins/context-engineering#v2.1
+    # Individual agent file
+    - github/awesome-copilot/agents/api-architect.agent.md
   mcp:
     - io.github.github/github-mcp-server
 

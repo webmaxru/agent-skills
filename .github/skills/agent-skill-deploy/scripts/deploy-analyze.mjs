@@ -205,11 +205,7 @@ console.log("=== Recommendation ===");
 if (breakingCount > 0) {
   console.log("MAJOR bump (breaking changes detected)");
 } else if (types.feat > 0) {
-  console.log("MINOR bump (new features added)");
-} else if (types.fix > 0 || types.refactor > 0) {
-  console.log("PATCH bump (fixes or refactoring)");
-} else if (types.docs > 0 || types.chore > 0 || types.style > 0 || types.ci > 0 || types.test > 0) {
-  console.log("PATCH bump (maintenance changes)");
+  console.log("MINOR bump (new features)");
 } else {
-  console.log("MANUAL review needed (no conventional commits found)");
+  console.log("PATCH bump (fixes or refactoring)");
 }

@@ -8,7 +8,7 @@ Detailed configuration requirements and deployment mechanics for each supported 
 
 **Config files:** None required beyond the git repository itself.
 
-**Deploy action:** Create a git tag and GitHub release with auto-generated notes.
+**Deploy action:** Create a git tag and GitHub release with a per-skill changelog. The changelog is built by diffing each changed skill directory against the previous release tag and summarizing user-visible changes as a concise bullet list grouped by skill name. Do not use `gh release create --generate-notes`; always provide an explicit `--notes` body with the per-skill changelog.
 
 **Required tools:**
 - `git` — always required
@@ -118,31 +118,13 @@ https://github.com/OWNER/REPO
 
 **Detection:** `package.json` exists in repository root.
 
-**Config files:** Same as VS Code — uses `package.json` for version tracking.
+**Config files:** Same as VS Code surface — `package.json` with `version` field.
 
-**Deploy action:** Bump version in `package.json`, commit, push. The Copilot CLI reads plugin metadata from GitHub.
+**Deploy action:** Bump version, commit, push. The Copilot CLI marketplace reads from GitHub directly.
 
 **Required tools:** `git`
 
 **Install command for consumers:**
 ```bash
 copilot plugin marketplace add OWNER/REPO
-copilot plugin install PLUGIN_NAME
 ```
-
----
-
-## Version Synchronization
-
-When multiple surfaces are active, all their config files must stay in sync. The deploy scripts handle this by:
-
-1. Detecting all active surfaces during preflight
-2. Collecting version fields from all config files
-3. Reporting mismatches as warnings
-4. Bumping all detected config files to the same target version during execution
-
-**Priority order for reading current version:**
-1. `.claude-plugin/plugin.json` → `.version`
-2. `package.json` → `.version`
-
-If versions disagree across files, the preflight script reports a warning and the bump step synchronizes them all.

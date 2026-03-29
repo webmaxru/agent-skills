@@ -14,7 +14,7 @@ compatibility: Claude Code, VS Code Copilot, Copilot CLI
 allowed-tools: Bash Read Glob Task AskUserQuestion
 metadata:
   author: webmaxru
-  version: "1.0"
+  version: "1.2"
 ---
 
 # Agent Skill Collection Deploy
@@ -115,6 +115,43 @@ This will:
 | **Major** | Breaking changes — `type!:` prefix or `BREAKING CHANGE` body   |
 | **Minor** | New features — any `feat:` commits                              |
 | **Patch** | Everything else — `fix:`, `docs:`, `refactor:`, `chore:`, etc. |
+
+### Step 2b: Build Per-Skill Changelog
+
+When the **github** surface is selected, build a concise, human-readable changelog grouped by skill. This replaces GitHub's auto-generated notes.
+
+**Procedure:**
+
+1. Identify the previous release tag from `deploy-analyze.mjs` output (the `Last release tag` line). If this is the first release, compare against the root commit.
+2. For each skill listed in the `Skills Changed` output, run:
+   ```bash
+   git diff v{{PREVIOUS}}..HEAD -- skills/{{SKILL_NAME}}/
+   ```
+3. Analyze each diff and produce a concise bullet list summarizing **user-visible changes** per skill. Guidelines:
+   - Write each bullet as a short, action-oriented statement (e.g., "Added X", "Fixed Y", "Removed Z").
+   - Group by skill as a level-2 heading (`## skill-name`).
+   - Omit internal-only changes (whitespace, line-ending normalization) unless they are the only change.
+   - Mention version bumps within skill metadata only if no other substantive changes exist for that skill.
+   - Cap at roughly 5–7 bullets per skill; combine minor items if needed.
+4. Store the assembled Markdown changelog text for use in Step 9.
+
+**Example output format:**
+
+```markdown
+## agent-package-manager
+- Added subdirectory path and pinned tag dependency examples to template
+- Expanded manifest reference with Azure DevOps and GitLab guidance
+- Added "APM not installed" troubleshooting section
+
+## agent-skill-deploy
+- Made marketplace.json optional for Claude Code surface detection
+- Simplified version bump recommendation logic
+
+## github-agentic-workflows
+- Added install.md URL reference for agent-assisted setup
+```
+
+If only a single skill changed, omit the heading and use a flat bullet list.
 
 ### Step 3: Confirm Version and Surfaces with User
 
@@ -249,7 +286,11 @@ node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --push
 This performs:
 
 1. `git push && git push --tags` for all surfaces
-2. For **github** surface: `gh release create v{{VERSION}} --generate-notes`
+2. For **github** surface: create the release using the per-skill changelog from Step 2b:
+   ```bash
+   gh release create v{{VERSION}} --title "v{{VERSION}}" --notes "{{CHANGELOG}}"
+   ```
+   where `{{CHANGELOG}}` is the Markdown text assembled in Step 2b. Do **not** use `--generate-notes`; the per-skill changelog is always preferred.
 3. For **vscode** surface: `vsce publish` (if `vsce` is available and user opted in)
 
 After pushing, print the remote URL and relevant marketplace links.
