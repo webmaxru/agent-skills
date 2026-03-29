@@ -4,7 +4,7 @@ description: Implements and debugs browser Translator API integrations in JavaSc
 license: MIT
 metadata:
   author: webmaxru
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Translator API

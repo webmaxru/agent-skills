@@ -4,7 +4,7 @@ description: Implements and debugs browser WebMCP integrations in JavaScript or 
 license: MIT
 metadata:
   author: webmaxru
-  version: "1.0"
+  version: "1.1"
 ---
 
 # WebMCP
