@@ -24,7 +24,7 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 
 * Microsoft Edge documents the API as a developer preview in Dev or Canary starting with version `143.0.3636.0`.
 * Edge currently requires enabling `#edge-translation-api`.
-* Edge also documents `#edge-translation-api-streaming-by-sentence` for sentence-based streaming behavior.
+* Edge also documents `#edge-translation-api-streaming-by-sentence` for sentence-level streaming: when enabled, the translation API splits text by sentence and streams each translated sentence as it completes, providing better responsiveness for long texts.
 * Edge documents an on-device model download on first use and supports `monitor` for surfacing download progress.
 * Edge documentation emphasizes that downloaded models are shared across websites in the browser after download.
 
@@ -41,6 +41,7 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 * A first successful `create()` can require user activation if it needs to initiate a download.
 * The initial download can take noticeable time and should be surfaced in the UI when the feature depends on immediate readiness.
 * Browsers can continue or preserve model download state independently from any one page.
+* After the initial model download, translation operates entirely on-device with no network requests, so translation can succeed even when the device is offline.
 
 ## TypeScript and typings
 
