@@ -1,15 +1,11 @@
-name: agent-skills
+name: web-ai-agent-skills
 version: 1.0.0
-description: APM project for agent-skills
+description: APM project for web-ai-agent-skills
 author: Maxim Salnikov
 dependencies:
   apm:
-  - webmaxru/agent-skills/skills/prompt-api
-  - webmaxru/agent-skills/skills/webmcp
-  - webmaxru/agent-skills/skills/webnn
-  - webmaxru/agent-skills/skills/language-detector-api
-  - webmaxru/agent-skills/skills/translator-api
-  - webmaxru/agent-skills/skills/writing-assistance-apis
-  - webmaxru/agent-skills/skills/proofreader-api
+  - webmaxru/ai-native-dev/skills/agent-package-manager
+  - webmaxru/ai-native-dev/skills/github-agentic-workflows
+  - webmaxru/ai-native-dev/skills/agent-skill-deploy
   mcp: []
 scripts: {}
