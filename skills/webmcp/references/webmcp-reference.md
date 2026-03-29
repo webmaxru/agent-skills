@@ -29,7 +29,7 @@ Use this file for the core contract before editing code.
 ## Imperative API
 
 1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set. Starting in Chrome 148, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument; aborting the signal unregisters the tool.
-2. To unregister a tool, abort the `AbortController` whose signal was passed to `registerTool()`. During the transition period, also call `navigator.modelContext.unregisterTool?.(name)` with optional chaining for backward compatibility with browsers that do not yet support the signal option.
+2. To unregister a tool, first call `navigator.modelContext.unregisterTool?.(name)` with optional chaining (for browsers that still support it), then abort the `AbortController` whose signal was passed to `registerTool()`. This order ensures cleanup across both old and new browsers during the transition period.
 3. The `ModelContextTool` contract includes:
    `name`: unique tool identifier (required).
    `description`: natural-language description of what the tool does and when to use it (required).

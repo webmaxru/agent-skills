@@ -14,7 +14,7 @@ Use this file when setup, browser support, or preview-only behaviors affect impl
 3. The `chrome://flags/#enable-webmcp-testing` flag must be enabled for preview testing.
 4. The current early preview is Chrome-only.
 5. WebMCP is still an evolving Community Group specification rather than a standards-track recommendation.
-6. Starting in Chrome `148.0.7757.0`, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument and `unregisterTool()` is removed; use `AbortController` to manage tool lifetime on Chrome 148 and later.
+6. Starting in Chrome `148.0.7757.0`, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument and `unregisterTool()` is removed; use `AbortController` to manage tool lifetime on Chrome `148` and later.
 
 ## Execution Context Limits
 
