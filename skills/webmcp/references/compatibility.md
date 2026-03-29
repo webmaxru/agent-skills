@@ -14,6 +14,7 @@ Use this file when setup, browser support, or preview-only behaviors affect impl
 3. The `chrome://flags/#enable-webmcp-testing` flag must be enabled for preview testing.
 4. The current early preview is Chrome-only.
 5. WebMCP is still an evolving Community Group specification rather than a standards-track recommendation.
+6. Starting in Chrome `148.0.7757.0`, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument and `unregisterTool()` is removed; use `AbortController` to manage tool lifetime on Chrome `148` and later.
 
 ## Execution Context Limits
 
@@ -23,7 +24,7 @@ Use this file when setup, browser support, or preview-only behaviors affect impl
 
 ## Draft Versus Preview Differences
 
-1. The imperative API surface around `navigator.modelContext`, `registerTool()`, `unregisterTool()`, and `ModelContextClient.requestUserInteraction()` is more stable than the declarative surface.
+1. The imperative API surface around `navigator.modelContext`, `registerTool()`, and `ModelContextClient.requestUserInteraction()` is more stable than the declarative surface. Note that `unregisterTool()` is removed in Chrome 148 in favour of the `AbortSignal` option.
 2. Declarative WebMCP is not yet fully specified.
 3. Current preview implementations include additional declarative details for form attributes, submit interception, events, and CSS pseudo-classes.
 4. Keep imperative integrations aligned to the stable API shape, but treat declarative behaviors as compatibility-sensitive features until the spec stabilizes.
@@ -33,7 +34,8 @@ Use this file when setup, browser support, or preview-only behaviors affect impl
 
 1. `provideContext` and `clearContext` are obsolete and should not be used.
 2. `toolparamtitle` is obsolete and should not be used.
-3. If an older demo or article still references those names, do not add them to current implementations.
+3. `unregisterTool()` is removed starting Chrome `148.0.7757.0`; use the `AbortSignal` option of `registerTool()` to unregister tools. During the transition window, call `unregisterTool?.()` with optional chaining before aborting the controller.
+4. If an older demo or article still references those names, do not add them to current implementations.
 
 ## Testing Tooling
 

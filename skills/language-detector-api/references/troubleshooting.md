@@ -37,6 +37,17 @@ Checks:
 2. Confirm iframe delegation for `language-detector`.
 3. Confirm browser policy or enterprise restrictions are not blocking access.
 
+## `create()` throws `OperationError`
+
+Likely causes:
+
+* model initialization failed after a successful download
+
+Remediation:
+
+1. Retry `create()` after a brief delay or on the next user interaction.
+2. Keep the fallback path active if initialization continues to fail.
+
 ## `create()` or `detect()` throws `AbortError`
 
 Likely causes:

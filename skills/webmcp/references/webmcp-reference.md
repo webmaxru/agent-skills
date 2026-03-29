@@ -28,16 +28,16 @@ Use this file for the core contract before editing code.
 
 ## Imperative API
 
-1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set.
-2. Use `navigator.modelContext.unregisterTool(name)` to remove a specific registered tool.
+1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set. Starting in Chrome 148, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument; aborting the signal unregisters the tool.
+2. To unregister a tool, first call `navigator.modelContext.unregisterTool?.(name)` with optional chaining (for browsers that still support it), then abort the `AbortController` whose signal was passed to `registerTool()`. This order ensures cleanup across both old and new browsers during the transition period.
 3. The `ModelContextTool` contract includes:
-   `name`: unique tool identifier.
-   `description`: natural-language description of what the tool does and when to use it.
-   `inputSchema`: JSON Schema-like object describing the expected input.
-   `execute`: callback invoked with the input object and a `ModelContextClient`.
-   `annotations.readOnlyHint`: optional boolean indicating that the tool does not modify state.
-4. The `ToolExecuteCallback` can be asynchronous.
-5. The `ModelContextClient` exposes `requestUserInteraction(callback)` for tool flows that need explicit user interaction.
+   `name`: unique tool identifier (required).
+   `description`: natural-language description of what the tool does and when to use it (required).
+   `inputSchema`: optional JSON Schema object describing the expected input; omit when the tool takes no structured input.
+   `execute`: callback invoked with the input object and a `ModelContextClient` (required).
+   `annotations.readOnlyHint`: optional boolean, defaulting to false, indicating that the tool does not modify state.
+4. The `ToolExecuteCallback` signature is `(input: object, client: ModelContextClient) => Promise<any>` and may be asynchronous.
+5. The `ModelContextClient` exposes `requestUserInteraction(callback)` for tool flows that need explicit user interaction. The `callback` argument is a zero-argument async function `() => Promise<any>` that performs the user-facing step and resolves with the interaction result.
 6. Imperative tools can return structured tool output after the page has updated, including content-oriented payloads that the agent can read.
 
 ## Registration Semantics
@@ -47,7 +47,7 @@ Use this file for the core contract before editing code.
 3. `registerTool()` also throws `InvalidStateError` if `name` or `description` is the empty string.
 4. When `inputSchema` exists, the current draft serializes it with JSON stringification semantics.
 5. Non-serializable or circular `inputSchema` values can throw `TypeError` or re-throw JSON serialization errors.
-6. `unregisterTool()` throws `InvalidStateError` if the named tool is not registered.
+6. `unregisterTool()` is removed starting Chrome 148; use the `AbortSignal` passed to `registerTool()` to control tool lifetime. During the transition window, call `unregisterTool?.()` with optional chaining before aborting the controller so both old and new browsers handle the cleanup.
 
 ## Declarative API
 
