@@ -46,7 +46,7 @@ Use this skill when the user:
 | Surface          | Config Files                                                       | Deploy Action                    | Tool Required       |
 | ---------------- | ------------------------------------------------------------------ | -------------------------------- | ------------------- |
 | **github**       | Git remote URL                                                     | Create tag + GitHub release      | `gh`                |
-| **claude-code**  | `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`    | Bump version, commit, push       | `git`               |
+| **claude-code**  | `.claude-plugin/plugin.json` (required), `.claude-plugin/marketplace.json` (optional) | Bump version, commit, push       | `git`               |
 | **vscode**       | `package.json`                                                     | Bump version, optionally `vsce publish` | `vsce` (optional) |
 | **copilot-cli**  | `package.json`                                                     | Bump version, commit, push       | `git`               |
 
@@ -188,8 +188,10 @@ node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --bump-only
 This updates version fields in:
 
 - `.claude-plugin/plugin.json` → `.version` (claude-code surface)
-- `.claude-plugin/marketplace.json` → `.plugins[0].version` (claude-code surface)
+- `.claude-plugin/marketplace.json` → `.plugins[0].version` (claude-code surface, only if the file exists)
 - `package.json` → `.version` (vscode and copilot-cli surfaces)
+
+If `marketplace.json` is absent, the plugin is assumed to be listed by a marketplace defined in another repository. Only `plugin.json` is bumped.
 
 Verify all files were updated correctly by reading them back.
 

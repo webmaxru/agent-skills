@@ -27,11 +27,11 @@ apm install OWNER/REPO/skills/SKILL_NAME
 
 ## Claude Code Marketplace
 
-**Detection:** Both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` exist.
+**Detection:** `.claude-plugin/plugin.json` exists. `.claude-plugin/marketplace.json` is optional.
 
 **Config files:**
 
-1. `.claude-plugin/plugin.json` — Plugin metadata with `version` field at root level:
+1. `.claude-plugin/plugin.json` (required) — Plugin metadata with `version` field at root level:
    ```json
    {
      "name": "my-skills",
@@ -44,7 +44,7 @@ apm install OWNER/REPO/skills/SKILL_NAME
    }
    ```
 
-2. `.claude-plugin/marketplace.json` — Marketplace listing with version in `plugins[0].version` or root `version`:
+2. `.claude-plugin/marketplace.json` (optional) — Marketplace listing with version in `plugins[0].version` or root `version`. If absent, the plugin is assumed to be listed by a marketplace defined in another repository. Only `plugin.json` is version-bumped in that case.
    ```json
    {
      "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
@@ -63,7 +63,7 @@ apm install OWNER/REPO/skills/SKILL_NAME
    }
    ```
 
-**Deploy action:** Bump version in both JSON files, commit, push. The marketplace reads from GitHub directly.
+**Deploy action:** Bump version in `plugin.json` (and `marketplace.json` if present), commit, push. The marketplace reads from GitHub directly.
 
 **Required tools:** `git`
 

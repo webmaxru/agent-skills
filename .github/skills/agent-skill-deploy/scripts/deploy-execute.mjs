@@ -133,6 +133,8 @@ function writeJsonSafe(filePath, data) {
 }
 
 // Claude Code surface
+// plugin.json is sufficient. marketplace.json is optional — if absent, the plugin
+// is assumed to be listed by a marketplace defined in another repository.
 if (surfaces.includes("claude-code")) {
   const pluginPath = join(root, ".claude-plugin", "plugin.json");
   const marketplacePath = join(root, ".claude-plugin", "marketplace.json");
@@ -154,7 +156,7 @@ if (surfaces.includes("claude-code")) {
       });
     }
   } else {
-    console.error("WARNING: .claude-plugin/plugin.json not found — skipping");
+    console.error("WARNING: .claude-plugin/plugin.json not found — skipping claude-code surface");
   }
 
   if (existsSync(marketplacePath)) {
@@ -179,7 +181,7 @@ if (surfaces.includes("claude-code")) {
       });
     }
   } else {
-    console.error("WARNING: .claude-plugin/marketplace.json not found — skipping");
+    logAction("claude-code: marketplace.json absent — external marketplace assumed, bumping plugin.json only");
   }
 }
 

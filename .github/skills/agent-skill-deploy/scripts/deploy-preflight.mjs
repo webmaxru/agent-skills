@@ -112,31 +112,31 @@ if (remoteUrl) {
 }
 
 // Claude Code surface
+// plugin.json is sufficient to detect the surface. If marketplace.json is absent,
+// the plugin is assumed to be listed by a marketplace defined in another repository.
 const pluginJson = join(root, ".claude-plugin", "plugin.json");
 const marketplaceJson = join(root, ".claude-plugin", "marketplace.json");
 
-if (existsSync(pluginJson) && existsSync(marketplaceJson)) {
+if (existsSync(pluginJson)) {
   surfaces.push("claude-code");
   try {
     const plugin = JSON.parse(readFileSync(pluginJson, "utf8"));
-    const marketplace = JSON.parse(readFileSync(marketplaceJson, "utf8"));
     const pv = plugin.version || null;
-    const mv = marketplace.version || (marketplace.plugins && marketplace.plugins[0] && marketplace.plugins[0].version) || null;
-
     if (pv) versions["claude-code:plugin.json"] = pv;
-    if (mv) versions["claude-code:marketplace.json"] = mv;
 
-    ok(`Claude Code surface detected (plugin: ${pv || "unset"}, marketplace: ${mv || "unset"})`);
-
-    if (pv && mv && pv !== mv) {
-      warn(`Claude Code version mismatch: plugin.json=${pv}, marketplace.json=${mv}`);
+    if (existsSync(marketplaceJson)) {
+      const marketplace = JSON.parse(readFileSync(marketplaceJson, "utf8"));
+      const mv = marketplace.version || (marketplace.plugins && marketplace.plugins[0] && marketplace.plugins[0].version) || null;
+      if (mv) versions["claude-code:marketplace.json"] = mv;
+      ok(`Claude Code surface detected (plugin: ${pv || "unset"}, marketplace: ${mv || "unset"})`);
+      if (pv && mv && pv !== mv) {
+        warn(`Claude Code version mismatch: plugin.json=${pv}, marketplace.json=${mv}`);
+      }
+    } else {
+      ok(`Claude Code surface detected (plugin: ${pv || "unset"}, marketplace.json absent — external marketplace assumed)`);
     }
   } catch (e) {
     warn(`Claude Code config parse error: ${e.message}`);
-  }
-} else {
-  if (existsSync(pluginJson) || existsSync(marketplaceJson)) {
-    warn("Partial Claude Code config — both plugin.json and marketplace.json are required");
   }
 }
 
