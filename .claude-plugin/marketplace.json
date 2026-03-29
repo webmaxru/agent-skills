@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "webmaxru-agent-skills",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Agent skills for browser Web AI APIs (Prompt API, Language Detector, Translator, Writing Assistance, Proofreader, WebMCP, WebNN)",
   "owner": {
     "name": "Maxim Salnikov"
@@ -11,7 +11,8 @@
       "name": "web-ai-skills",
       "description": "Agent skills for browser Web AI APIs",
       "source": ".",
-      "category": "development"
+      "category": "development",
+      "version": "1.1.1"
     }
   ]
 }
