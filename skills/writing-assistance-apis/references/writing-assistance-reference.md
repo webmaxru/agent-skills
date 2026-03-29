@@ -50,12 +50,15 @@ Treat `downloadable` and `downloading` as usable only after a real `create()` pa
 
 ## Summarizer specifics
 
-`Summarizer.create()` supports these extra options:
+`Summarizer.create()` supports these extra options (defaults noted):
 
-* `type`: `tldr`, `teaser`, `key-points`, `headline`
-* `format`: `plain-text`, `markdown`
-* `length`: `short`, `medium`, `long`
-* `preference`: `auto`, `speed`, `capability`
+* `type`: `tldr`, `teaser`, `key-points` (default), `headline`
+* `format`: `plain-text`, `markdown` (default)
+* `length`: `short` (default), `medium`, `long`
+* `preference`: `auto` (default), `speed`, `capability`
+  * `auto`: implementation-defined balance between speed and capability; may adapt to system constraints.
+  * `speed`: prioritize low latency and fast execution; may produce less nuanced summaries.
+  * `capability`: prioritize comprehensiveness and coherence; may increase latency.
 
 Session members:
 
@@ -76,11 +79,11 @@ Use `Summarizer` only when the task is to condense or restate existing content a
 
 ## Writer specifics
 
-`Writer.create()` supports these extra options:
+`Writer.create()` supports these extra options (defaults noted):
 
-* `tone`: `formal`, `neutral`, `casual`
-* `format`: `plain-text`, `markdown`
-* `length`: `short`, `medium`, `long`
+* `tone`: `formal`, `neutral` (default), `casual`
+* `format`: `plain-text`, `markdown` (default)
+* `length`: `short` (default), `medium`, `long`
 
 Session members:
 
@@ -101,11 +104,11 @@ Use `Writer` when the input is a writing task or prompt for new text, not an exi
 
 ## Rewriter specifics
 
-`Rewriter.create()` supports these extra options:
+`Rewriter.create()` supports these extra options (defaults noted):
 
-* `tone`: `as-is`, `more-formal`, `more-casual`
-* `format`: `as-is`, `plain-text`, `markdown`
-* `length`: `as-is`, `shorter`, `longer`
+* `tone`: `as-is` (default), `more-formal`, `more-casual`
+* `format`: `as-is` (default), `plain-text`, `markdown`
+* `length`: `as-is` (default), `shorter`, `longer`
 
 Session members:
 
