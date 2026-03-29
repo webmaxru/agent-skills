@@ -28,8 +28,8 @@ Use this file for the core contract before editing code.
 
 ## Imperative API
 
-1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set.
-2. Use `navigator.modelContext.unregisterTool(name)` to remove a specific registered tool.
+1. Use `navigator.modelContext.registerTool(tool)` to add one tool without clearing the existing set. Starting in Chrome 148, `registerTool()` accepts an optional `{ signal: AbortSignal }` second argument; aborting the signal unregisters the tool.
+2. To unregister a tool, abort the `AbortController` whose signal was passed to `registerTool()`. During the transition period, also call `navigator.modelContext.unregisterTool?.(name)` with optional chaining for backward compatibility with browsers that do not yet support the signal option.
 3. The `ModelContextTool` contract includes:
    `name`: unique tool identifier (required).
    `description`: natural-language description of what the tool does and when to use it (required).
@@ -47,7 +47,7 @@ Use this file for the core contract before editing code.
 3. `registerTool()` also throws `InvalidStateError` if `name` or `description` is the empty string.
 4. When `inputSchema` exists, the current draft serializes it with JSON stringification semantics.
 5. Non-serializable or circular `inputSchema` values can throw `TypeError` or re-throw JSON serialization errors.
-6. `unregisterTool()` throws `InvalidStateError` if the named tool is not registered.
+6. `unregisterTool()` is removed starting Chrome 148; use the `AbortSignal` passed to `registerTool()` to control tool lifetime. During the transition window, call `unregisterTool?.()` with optional chaining before aborting the controller so both old and new browsers handle the cleanup.
 
 ## Declarative API
 
