@@ -18,8 +18,8 @@
 //   node deploy-execute.mjs 1.2.0 --surfaces github --push --notes-file changelog.md
 
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 
 const VALID_SURFACES = ["github", "claude-code", "vscode", "copilot-cli"];
 const root = resolve(".");
@@ -142,9 +142,67 @@ function writeJsonSafe(filePath, data) {
   writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
 }
 
-// Claude Code config files (always detected)
+// --- Path constants for all surface config files ---
 const pluginPath = join(root, ".claude-plugin", "plugin.json");
 const marketplacePath = join(root, ".claude-plugin", "marketplace.json");
+const pkgPath = join(root, "package.json");
+const copilotCliPluginPath = join(root, ".github", "plugin", "plugin.json");
+const copilotCliMarketplacePath = join(root, ".github", "plugin", "marketplace.json");
+
+// --- Auto-create missing plugin.json files ---
+// Both .claude-plugin/plugin.json (claude-code) and .github/plugin/plugin.json (copilot-cli)
+// must exist for a release. If either is missing, derive it from the sibling plugin.json
+// (preferred) or from package.json metadata as a fallback.
+
+function ensurePluginJson(targetPath, label, extraFields) {
+  if (existsSync(targetPath)) return false;
+
+  const sibling = targetPath === pluginPath ? copilotCliPluginPath : pluginPath;
+  let pluginData;
+  let source;
+
+  if (existsSync(sibling)) {
+    pluginData = { ...readJsonSafe(sibling) };
+    delete pluginData.skills; // remove surface-specific field; re-added via extraFields if needed
+    source = sibling === pluginPath ? ".claude-plugin/plugin.json" : ".github/plugin/plugin.json";
+  } else {
+    const pkg = existsSync(pkgPath) ? readJsonSafe(pkgPath) : null;
+    if (!pkg) {
+      console.error(`ERROR: Cannot create ${label} — no sibling plugin.json or package.json found`);
+      process.exit(1);
+    }
+    pluginData = {
+      name: pkg.name || "unknown",
+      description: pkg.description || "",
+      version: pkg.version || "0.0.0",
+    };
+    if (pkg.author) pluginData.author = typeof pkg.author === "string" ? { name: pkg.author } : pkg.author;
+    if (pkg.repository) pluginData.repository = typeof pkg.repository === "string" ? pkg.repository : (pkg.repository.url || "");
+    if (pkg.license) pluginData.license = pkg.license;
+    if (pkg.keywords) pluginData.keywords = pkg.keywords;
+    if (pkg.homepage) pluginData.homepage = pkg.homepage;
+    source = "package.json";
+  }
+
+  Object.assign(pluginData, extraFields);
+
+  const dir = dirname(targetPath);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+  if (dryRun) {
+    logAction(`Create ${label} (derived from ${source})`);
+    return false;
+  }
+
+  writeJsonSafe(targetPath, pluginData);
+  console.log(`CREATED: ${label} (derived from ${source})`);
+  return true;
+}
+
+ensurePluginJson(pluginPath, ".claude-plugin/plugin.json", {});
+ensurePluginJson(copilotCliPluginPath, ".github/plugin/plugin.json", { skills: "skills/" });
+
+// Claude Code config files
 
 if (existsSync(pluginPath)) {
   const data = readJsonSafe(pluginPath);
@@ -188,7 +246,6 @@ if (existsSync(marketplacePath)) {
 }
 
 // package.json (used by vscode and copilot-cli surfaces, always detected)
-const pkgPath = join(root, "package.json");
 if (existsSync(pkgPath)) {
   const data = readJsonSafe(pkgPath);
   if (data && data.version !== undefined) {
@@ -208,7 +265,6 @@ if (existsSync(pkgPath)) {
 }
 
 // Copilot CLI plugin.json (at .github/plugin/plugin.json)
-const copilotCliPluginPath = join(root, ".github", "plugin", "plugin.json");
 if (existsSync(copilotCliPluginPath)) {
   const data = readJsonSafe(copilotCliPluginPath);
   if (data) {
@@ -228,7 +284,6 @@ if (existsSync(copilotCliPluginPath)) {
 }
 
 // Copilot CLI marketplace.json (at .github/plugin/marketplace.json)
-const copilotCliMarketplacePath = join(root, ".github", "plugin", "marketplace.json");
 if (existsSync(copilotCliMarketplacePath)) {
   const data = readJsonSafe(copilotCliMarketplacePath);
   if (data) {

@@ -27,7 +27,7 @@ apm install OWNER/REPO/skills/SKILL_NAME
 
 ## Claude Code Marketplace
 
-**Detection:** `.claude-plugin/plugin.json` exists. `.claude-plugin/marketplace.json` is optional.
+**Detection:** `.claude-plugin/plugin.json` exists. `.claude-plugin/marketplace.json` is optional. If `.claude-plugin/plugin.json` is missing at deploy time, it is auto-created from the sibling `.github/plugin/plugin.json` or from `package.json` metadata.
 
 **Config files:**
 
@@ -118,7 +118,7 @@ apm install OWNER/REPO/skills/SKILL_NAME
 
 ## Copilot CLI Plugin Marketplace
 
-**Detection:** `package.json` exists in repository root, and/or `.github/plugin/plugin.json` exists.
+**Detection:** `package.json` exists in repository root, and/or `.github/plugin/plugin.json` exists. If `.github/plugin/plugin.json` is missing at deploy time, it is auto-created from the sibling `.claude-plugin/plugin.json` or from `package.json` metadata, with an additional `skills` field.
 
 **Config files:**
 

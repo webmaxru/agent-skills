@@ -214,6 +214,23 @@ if (existsSync(copilotCliPluginJson)) {
   }
 }
 
+// --- Missing plugin.json check ---
+// Both .claude-plugin/plugin.json and .github/plugin/plugin.json should exist for a release.
+console.log("");
+console.log("=== Plugin Config Coverage ===");
+const missingPluginConfigs = [];
+if (!existsSync(pluginJson)) {
+  missingPluginConfigs.push(".claude-plugin/plugin.json");
+}
+if (!existsSync(copilotCliPluginJson)) {
+  missingPluginConfigs.push(".github/plugin/plugin.json");
+}
+if (missingPluginConfigs.length > 0) {
+  warn(`Missing plugin.json file(s): ${missingPluginConfigs.join(", ")} \u2014 will be auto-created during deploy from sibling plugin.json or package.json metadata`);
+} else {
+  ok("Both plugin.json files present (.claude-plugin/ and .github/plugin/)");
+}
+
 // --- Tool availability ---
 
 const tools = {

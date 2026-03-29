@@ -14,7 +14,7 @@ compatibility: Claude Code, VS Code Copilot, Copilot CLI
 allowed-tools: Bash Read Glob Task AskUserQuestion
 metadata:
   author: webmaxru
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Agent Skill Collection Deploy
@@ -98,6 +98,7 @@ This checks:
 - `/skills` directory exists and contains at least one skill
 - Detects which surfaces are configured based on existing config files
 - Verifies required tools are available for each surface
+- Checks that both `.claude-plugin/plugin.json` and `.github/plugin/plugin.json` exist; warns if either is missing (auto-created during deploy)
 - Reports version consistency across all surface configs, **including git tag version**
 
 If checks fail, report the problem and suggest a fix. Do not proceed.
@@ -235,6 +236,8 @@ node scripts/deploy-execute.mjs {{VERSION}} --surfaces {{SURFACES}} --bump-only
 ```
 
 **IMPORTANT — version sync invariant:** The script always bumps **every** detected config file (plugin.json, marketplace.json, package.json) regardless of which surfaces were selected via `--surfaces`. This prevents version drift between surfaces. The `--surfaces` flag only controls which deployment actions run in `--push` mode.
+
+**Auto-creation of missing plugin.json:** Before bumping, the script checks that both `.claude-plugin/plugin.json` (claude-code surface) and `.github/plugin/plugin.json` (copilot-cli surface) exist. If either file is missing, it is automatically created from the sibling plugin.json (preferred) or from `package.json` metadata (name, description, version, author, repository, license, keywords) as a fallback. The copilot-cli variant also gets `"skills": "skills/"`.
 
 This updates version fields in:
 
