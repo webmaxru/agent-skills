@@ -38,8 +38,8 @@ All skills are available as a single agent plugin (`web-ai-skills`) through the 
 **GitHub Copilot CLI**
 
 ```bash
-copilot plugin marketplace add webmaxru/ai-native-dev
-copilot plugin install web-ai-skills
+> /plugin marketplace add webmaxru/ai-native-dev
+> /plugin install web-ai-skills@webmaxru/ai-native-dev
 ```
 
 **VS Code (GitHub Copilot)**
@@ -59,8 +59,8 @@ Alternatively, run **Chat: Install Plugin From Source** from the Command Palette
 **Claude Code**
 
 ```bash
-/plugin marketplace add webmaxru/ai-native-dev
-/plugin install web-ai-skills
+> /plugin marketplace add webmaxru/ai-native-dev
+> /plugin install web-ai-skills@webmaxru/ai-native-dev
 ```
 
 ### Install Individual Skills
