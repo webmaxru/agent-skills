@@ -14,7 +14,7 @@ WebNN remains experimental. Treat browser support and backend behavior as an exp
 ## Execution context requirements
 
 * Secure context is required.
-* `Window` and `DedicatedWorker` contexts are supported.
+* `Window` and all `Worker` contexts are supported: `DedicatedWorker`, `SharedWorker`, and `ServiceWorker`.
 * Non-browser, server-side, or headless-only environments do not expose WebNN directly.
 
 ## Platform backend notes
