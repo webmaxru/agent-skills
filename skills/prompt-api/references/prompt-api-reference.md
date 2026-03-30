@@ -56,14 +56,14 @@ Use this reference when planning or implementing browser-side Prompt API integra
 2. TypeScript projects should keep their local Prompt API type declarations aligned with the implementation they target.
 3. Use `AbortController` for prompt cancellation and teardown.
 4. Keep a non-AI fallback path for unsupported browsers or blocked execution contexts.
-5. User-supplied override for this skill: treat `params()` as removed and treat `topK` and `temperature` as silently ignored, so application logic must not depend on them even when preview docs mention them.
+5. The spec now officially marks `params()` as EXPERIMENTAL (extension and experimental contexts only) and `topK`/`temperature` as EXPERIMENTAL (extension and experimental contexts only), so application logic must not depend on them for portable web page integrations.
 6. Reuse `references/examples.md` when the feature needs a known-good prompt shape or tool-enabled session pattern.
 7. An `availability()` result of `downloading` is still a passive state check. Browser-page code should not infer that its own UI has started the download until it actually calls `LanguageModel.create()`.
 
 ## Compatibility Notes
 
-1. The current spec still shows deprecated extension-only remnants for `params()`, `topK`, and `temperature`, but the higher-priority skill update says to treat `params()` as removed and `topK` or `temperature` as ignored for present-day integrations.
-2. Both Chrome and Edge documentation document `topK` and `temperature` as supported sampling parameters in `create()`; treat them as browser-specific options that application code should not require for portable behavior, given the previous user-supplied override still in effect for this skill.
+1. The spec now explicitly marks `params()`, `topK`, and `temperature` as EXPERIMENTAL (extension and experimental contexts only), and `measureInputUsage()`, `inputUsage`, `inputQuota`, and `onquotaoverflow` as DEPRECATED (extension contexts only). Application code targeting web pages must not use any of these members.
+2. Chrome docs confirm that `params()`, `topK`, and `temperature` are available "only when using the Prompt API for Chrome Extensions", consistent with the spec. Edge docs still document `topK` and `temperature` as web page options, but the spec's EXPERIMENTAL/extension-only classification takes precedence for cross-browser portable code.
 3. Browser implementation docs may document only a subset of languages even though the spec models languages as BCP 47 tags.
 4. Both Chrome and Edge now document a regular-expression form for `responseConstraint` alongside JSON Schema. The spec IDL defines `responseConstraint` as `object`-typed, which accommodates `RegExp` values as JavaScript objects; regex constraints are a documented implementation extension in both browsers. Prefer JSON Schema when targeting cross-browser structured output, and note that regex support is a browser-implemented feature rather than a spec-normative constraint type.
 5. Context-related naming has changed over time, and the current spec still uses `contextWindow` and `oncontextoverflow`; compatibility code should check those alongside the user-supplied `contextWindowMeasure` and `contextOverflow` aliases before older quota-era fallbacks.
