@@ -19,6 +19,7 @@ Proofreader API support remains browser-specific, preview-sensitive, and hardwar
 ## Microsoft Edge preview notes
 
 * Microsoft Edge documents the Proofreader API as a developer preview in Canary or Dev starting with version `142`.
+* Edge uses the Phi-4-mini model (Microsoft) for the Proofreader API preview.
 * Edge currently documents preview enablement through the `Proofreader API for Phi mini` flag.
 * Edge preview guidance currently targets Windows 10 or 11 and macOS 13.3+.
 * Edge preview guidance currently requires at least 20 GB free storage, at least 5.5 GB VRAM, and an unmetered connection for the initial model download.
