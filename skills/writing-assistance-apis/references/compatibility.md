@@ -22,8 +22,9 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 * The supplied Chrome documentation explicitly covers `Summarizer` and points to the same built-in AI platform family for Writer and Rewriter.
 * Chrome documents stable support for built-in AI APIs on supported desktop platforms beginning in milestone 138 for the covered rollout.
 * Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices, but not on mobile browsers.
-* Chrome documents minimum hardware requirements of more than 4 GB VRAM or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
+* Chrome documents minimum hardware requirements of at least 4 GB VRAM or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
 * Validate the exact Chrome rollout status for Writer and Rewriter against current browser docs before promising stable availability in product requirements.
+* Chrome's built-in AI family now also includes a `Proofreader API` listed alongside `Summarizer`, `Writer`, and `Rewriter` in hardware requirement documentation. The Proofreader API is out of scope for this skill; route Proofreader tasks to a separate skill or the raw browser API directly.
 
 ## Secure context and frame rules
 
@@ -39,6 +40,10 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 * The initial model download can take noticeable time and should be surfaced in the UI when the feature depends on immediate readiness.
 * Browsers can preserve download progress even if a create call is aborted.
 * If available storage drops below 10 GB after a model download, the browser removes the model; a subsequent `create()` will require another download when storage is available again.
+
+## Known browser-spec discrepancies
+
+* Microsoft Edge documentation (as of version 138+) uses `"tl;dr"` (with semicolon) for the Summarizer `type` option while the W3C Community Group specification uses `"tldr"` (no semicolon). The spec value `"tldr"` is authoritative for cross-browser code; test against the target browser if using the Edge Phi-4-mini preview.
 
 ## TypeScript and typings
 
