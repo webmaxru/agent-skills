@@ -40,7 +40,7 @@ Important behaviors:
 
 * `availability()` is the preflight check for whether a translator can likely be created for a language pair.
 * A return value other than `unavailable` does not guarantee instant readiness; the browser can still need download time or user approval.
-* Some browsers can privacy-mask per-pair model state, so a pair may still appear `downloadable` until creation is attempted.
+* Browsers can privacy-mask per-pair model state; Chrome reports all language pairs as `downloadable` until a translator is first created for that specific pair, so the real download state is only revealed after the first creation attempt.
 * Identity translation is always a valid outcome for same-language or best-fit equivalent language pairs, so those cases should not be treated as unsupported.
 
 ## Creation and monitoring
