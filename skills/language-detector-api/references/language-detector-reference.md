@@ -72,6 +72,7 @@ Product guidance:
 * Do not assume only one language will be returned.
 * Do not strip `und` unless the product has a deliberate replacement for uncertainty.
 * Short text and single-word inputs can be materially less reliable.
+* For multilingual input the browser apportions confidence values proportionate to how much of the input is in each detected language; treat the resulting distribution as meaningful, not as an error.
 
 ## Quota and measurement
 
@@ -107,6 +108,7 @@ Rules:
 The spec explicitly calls out:
 
 * `NotAllowedError` when language detection is blocked by user choice or browser policy.
+* `OperationError` when model initialization fails after a download (thrown by `create()`).
 * `UnknownError` for other implementation-defined failures.
 
 Other failures can still surface through shared infrastructure, including lifecycle, quota, and abort-related exceptions.
