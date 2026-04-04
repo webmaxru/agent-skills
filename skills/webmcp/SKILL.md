@@ -36,7 +36,7 @@ metadata:
 3. Set `annotations.readOnlyHint` to `true` only for tools that do not modify state.
 4. Validate business rules inside the tool implementation even when the schema is strict, and return descriptive errors that help the agent retry with corrected input.
 5. Return tool results only after the UI and application state reflect the tool's effect.
-6. If tool availability depends on route, selection, or page state, register tools only while they are valid and unregister stale tools with `navigator.modelContext.unregisterTool()`.
+6. If tool availability depends on route, selection, or page state, register tools only while they are valid and unregister stale tools by aborting the `AbortController` whose signal was passed to `registerTool()`; during the Chrome 148 transition window, also call `navigator.modelContext.unregisterTool?.()` with optional chaining before aborting.
 7. For declarative tools, annotate the target `<form>` with `toolname` and `tooldescription`, and let form controls define the parameter surface.
 8. Use labels or `toolparamdescription` to produce clear parameter descriptions for declarative fields.
 9. Use `toolautosubmit` only when the page should submit automatically after the agent populates the form.

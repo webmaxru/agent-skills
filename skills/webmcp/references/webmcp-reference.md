@@ -48,6 +48,7 @@ Use this file for the core contract before editing code.
 4. When `inputSchema` exists, the current draft serializes it with JSON stringification semantics.
 5. Non-serializable or circular `inputSchema` values can throw `TypeError` or re-throw JSON serialization errors.
 6. `unregisterTool()` is removed starting Chrome 148; use the `AbortSignal` passed to `registerTool()` to control tool lifetime. During the transition window, call `unregisterTool?.()` with optional chaining before aborting the controller so both old and new browsers handle the cleanup.
+7. If the `AbortSignal` passed to `registerTool()` is already aborted at the time of the call, the browser silently skips registration and returns without throwing an error; it may optionally log a warning to the console. The tool will not appear in the registered tool set.
 
 ## Declarative API
 

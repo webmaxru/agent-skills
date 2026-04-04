@@ -15,6 +15,12 @@
 3. Check whether `description` is an empty string.
 4. If the route or page state changes, unregister stale tools before registering replacements.
 
+## Tool registered with `AbortSignal` does not appear
+
+1. Check that the `AbortController` has not been aborted before `registerTool()` is called.
+2. When the signal is already aborted at registration time, the browser silently skips registration without throwing an error; the tool will not appear in the registered tool set.
+3. Create a fresh `AbortController` after any prior cleanup, and only abort it when removing the tool, not before registration.
+
 ## `registerTool()` throws `TypeError` or serialization errors
 
 1. Check that `inputSchema` is plain JSON-compatible data.
