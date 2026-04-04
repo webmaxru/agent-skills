@@ -4,9 +4,9 @@ Use this reference when the feature must support multiple Prompt API generations
 
 ## Source Priority
 
-1. Treat the Prompt API specification as authoritative for API contract, validation rules, roles, and permissions-policy behavior.
+1. The current Prompt API specification explicitly marks `params()`, `topK`, and `temperature` as EXPERIMENTAL (extension and experimental contexts only), making the spec the source of authority for treating them as unavailable for portable web page code.
 2. Treat Chrome and Edge documentation as implementation guidance for availability, flags, preview status, typings, and device requirements.
-3. Treat explicit skill-update overrides as higher priority than the published docs when they conflict, and preserve the override in compatibility guidance instead of changing the skill's routing scope.
+3. Where browser docs diverge from the spec on extension-only APIs, keep application logic aligned to the spec.
 4. If browser docs differ on core semantics, keep application logic aligned to the spec and isolate the divergence behind compatibility code or troubleshooting notes unless an explicit override for this skill update says otherwise.
 
 ## Browser Availability Snapshot
@@ -15,7 +15,7 @@ Use this reference when the feature must support multiple Prompt API generations
 2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices on supported ChromeOS builds.
 3. Chrome hardware requirements: at least 22 GB of free storage on the Chrome profile volume, and either a GPU with strictly more than 4 GB of VRAM or a CPU with 16 GB or more of RAM and 4 or more CPU cores.
 4. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
-5. Edge page integrations currently target the built-in Phi-4-mini model and require supported preview hardware.
+5. Edge page integrations currently target the built-in Phi-4-mini model and require Windows 10 or 11 or macOS 13.3 or later, at least 20 GB of free storage on the Edge profile volume (model deleted if drops below 10 GB), and at least 5.5 GB of VRAM.
 6. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
 
 ## Browser Setup Notes
@@ -61,13 +61,13 @@ npm install prompt-api-polyfill built-in-ai-task-apis-polyfills
 
 | Older or non-portable surface | Current guidance |
 | --- | --- |
-| `LanguageModel.params()` | User-supplied override: treat as removed for current integrations, even if older spec snapshots or preview docs still mention extension-only support |
-| `topK` in `create()` | User-supplied override: treat as silently ignored and unavailable on sessions; never depend on it for browser-page or cross-browser code |
-| `temperature` in `create()` | User-supplied override: treat as silently ignored and unavailable on sessions; never depend on it for browser-page or cross-browser code |
-| `measureInputUsage()` | Prefer `measureContextUsage()`; fall back only for old implementations |
-| `inputUsage` | Prefer `contextUsage`; fall back only for old implementations |
-| `inputQuota` | Current spec uses `contextWindow`; user-supplied override additionally calls out `contextWindowMeasure`, so compatibility helpers should probe both before falling back to `inputQuota` |
-| `onquotaoverflow` | Current spec uses `oncontextoverflow`; user-supplied override additionally calls out `contextOverflow`, so compatibility helpers should probe both before falling back to `onquotaoverflow` |
+| `LanguageModel.params()` | Spec-normatively marked EXPERIMENTAL: extension and experimental contexts only. Chrome docs confirm it is extension-only. Do not use for web page integrations. |
+| `topK` in `create()` | Spec-normatively marked EXPERIMENTAL: extension and experimental contexts only. Chrome docs confirm it is extension-only. Edge still documents it for web pages, but spec takes precedence for portable cross-browser code. Never require it for product behavior. |
+| `temperature` in `create()` | Spec-normatively marked EXPERIMENTAL: extension and experimental contexts only. Chrome docs confirm it is extension-only. Edge still documents it for web pages, but spec takes precedence for portable cross-browser code. Never require it for product behavior. |
+| `measureInputUsage()` | Spec-normatively marked DEPRECATED: extension contexts only. Prefer `measureContextUsage()`; fall back only for very old implementations. |
+| `inputUsage` | Spec-normatively marked DEPRECATED: extension contexts only. Prefer `contextUsage`; fall back only for very old implementations. |
+| `inputQuota` | Spec-normatively marked DEPRECATED: extension contexts only. Current spec uses `contextWindow`; probe both before falling back to `inputQuota`. |
+| `onquotaoverflow` | Spec-normatively marked DEPRECATED: extension contexts only. Current spec uses `oncontextoverflow`; probe both before falling back to `onquotaoverflow`. |
 
 ## Compatibility Strategy
 
@@ -75,7 +75,7 @@ npm install prompt-api-polyfill built-in-ai-task-apis-polyfills
 2. Dynamically import `prompt-api-polyfill` only when `LanguageModel` is missing.
 3. Dynamically import individual Task API polyfills only for the globals the browser does not expose.
 4. Wrap context measurement and overflow handling behind compatibility helpers instead of sprinkling version checks across app code.
-5. Do not build product behavior that depends on `params()`, `topK`, or `temperature`.
+5. Do not build product behavior that depends on `params()`, `topK`, or `temperature` in web page contexts; the spec marks them EXPERIMENTAL and extension-only.
 6. Pass the same modalities, languages, and tools to `availability()` that the feature will use when creating the session.
 7. Treat documented browser language support as an implementation subset layered on top of the spec's BCP 47 language model.
 8. When supporting older preview builds, check `measureContextUsage`, `contextUsage`, `contextWindow`, `oncontextoverflow`, the user-supplied `contextWindowMeasure` and `contextOverflow` aliases, and only then the quota-era fallbacks instead of assuming a single generation of names.
