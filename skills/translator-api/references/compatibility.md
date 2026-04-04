@@ -15,7 +15,7 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 * Chrome documents the API as part of its built-in AI platform family.
 * Chrome guidance notes that translation models are downloaded on demand.
 * Chrome recommends checking support with `'Translator' in self` and using `availability()` before `create()`.
-* Chrome guidance notes that browser privacy protections can keep language-pair download state opaque until a site creates a translator for a pair.
+* Chrome guidance notes that browser privacy protections report all language pairs as `downloadable` until a site first creates a translator for a specific pair; the actual download state for a given pair is not revealed before that first creation attempt.
 * Chrome documents cross-origin iframe delegation through `allow="translator"` and states that Web Workers are unsupported.
 * Chrome guidance says translation requests are processed sequentially, so large jobs should surface explicit loading state.
 * Chrome points to `@types/dom-chromium-ai` for TypeScript typings when local DOM libs do not yet include the API.
@@ -23,8 +23,8 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 ## Microsoft Edge notes
 
 * Microsoft Edge documents the API as a developer preview in Dev or Canary starting with version `143.0.3636.0`.
-* Edge currently requires enabling `#edge-translation-api`.
-* Edge also documents `#edge-translation-api-streaming-by-sentence` for sentence-level streaming: when enabled, the translation API splits text by sentence and streams each translated sentence as it completes, providing better responsiveness for long texts.
+* Edge requires enabling two flags at `edge://flags`: `#edge-translation-api` (Experimental translation API) and `#edge-translation-api-streaming-by-sentence` (Translation API streaming split by sentence). Both must be enabled before restarting Edge.
+* When `#edge-translation-api-streaming-by-sentence` is enabled, the translation API splits text by sentence and streams each translated sentence as it completes, providing better responsiveness for long texts.
 * Edge documents an on-device model download on first use and supports `monitor` for surfacing download progress.
 * Edge documentation emphasizes that downloaded models are shared across websites in the browser after download.
 
