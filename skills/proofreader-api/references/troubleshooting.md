@@ -43,12 +43,14 @@ Likely causes:
 * unsupported input language
 * unsupported correction-type or explanation options in the current preview browser
 * missing or unsupported explanation language when explanations are requested
+* `includeCorrectionExplanations` is `true`, no `correctionExplanationLanguage` was set, and the language of the input text could not be determined
 
 Remediation:
 
 1. Canonicalize and reduce language constraints.
 2. Remove unsupported correction-detail options for the current browser.
-3. Keep browser-specific fallbacks explicit instead of silently dropping user-facing result fields.
+3. Set `correctionExplanationLanguage` explicitly when `includeCorrectionExplanations` is `true` to avoid failures from undetectable input language.
+4. Keep browser-specific fallbacks explicit instead of silently dropping user-facing result fields.
 
 ## `create()` throws `OperationError` or `UnknownError`
 
