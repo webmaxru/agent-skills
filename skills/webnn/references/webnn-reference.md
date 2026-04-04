@@ -10,6 +10,7 @@ The W3C WebNN specification at `https://www.w3.org/TR/webnn/` is the authoritati
 * `MLGraphBuilder` constructs a graph from `MLOperand` inputs, constants, and operations.
 * `builder.build()` compiles the graph asynchronously into an `MLGraph`. It can only be called once per builder.
 * `MLContext.createTensor()` creates reusable `MLTensor` objects for graph I/O.
+* `MLContext.createConstantTensor(descriptor, inputData)` creates an immutable constant `MLTensor` for weight data. The constant tensor can be destroyed after `build()` completes.
 * `MLContext.writeTensor()` copies input data into writable tensors.
 * `MLContext.dispatch()` schedules graph execution.
 * `await MLContext.readTensor(tensor)` reads output data back to script as an `ArrayBuffer`.
@@ -19,17 +20,29 @@ The W3C WebNN specification at `https://www.w3.org/TR/webnn/` is the authoritati
 ## Context options and attributes
 
 * `powerPreference`: `"default"`, `"high-performance"`, or `"low-power"`.
-* `accelerated`: boolean (default `true`). When `true`, the platform attempts to use massively parallel hardware such as a GPU or NPU. When `false`, the application prefers CPU inference.
+* `accelerated`: boolean (default `true`). When `true`, the platform attempts to use massively parallel hardware such as a GPU or NPU. When `false`, the application prefers CPU inference. `accelerated` has less priority than `powerPreference`; contradictory combinations (e.g., `powerPreference: "high-performance"` with `accelerated: false`) let the implementation choose the best available match.
 * `MLContext.accelerated`: read-only attribute reflecting whether the context uses hardware acceleration.
 * `context.lost`: a promise that resolves when the execution context becomes invalid.
-* `opSupportLimits()`: reports device-dependent support limits and data type coverage for operators.
+* `opSupportLimits()`: reports device-dependent support limits, operator data type coverage, and rank ranges for inputs, constants, and outputs.
 
 Note: `MLDeviceType` (`"cpu"` / `"gpu"` / `"npu"`) was removed from the specification (see [#809](https://github.com/webmachinelearning/webnn/pull/809)). Use `accelerated` and `powerPreference` instead.
+
+## MLTensor attributes
+
+* `MLTensor.readable`: boolean indicating the tensor was created as readable.
+* `MLTensor.writable`: boolean indicating the tensor was created as writable.
+* `MLTensor.constant`: read-only boolean indicating the tensor was created as a constant via `createConstantTensor()`.
+
+## MLGraphBuilder constant overloads
+
+* `builder.constant(descriptor, buffer)` creates a constant operand from an `MLOperandDescriptor` and a data buffer.
+* `builder.constant(type, value)` creates a scalar constant operand.
+* `builder.constant(tensor)` creates a constant operand from a constant `MLTensor` created by `context.createConstantTensor()`. The constant tensor may be destroyed after `build()` completes.
 
 ## Integration rules
 
 * WebNN requires a secure context.
-* WebNN surfaces are available in `Window` and `DedicatedWorker` contexts.
+* WebNN surfaces are available in `Window` and all `Worker` contexts (including `DedicatedWorker`, `SharedWorker`, and `ServiceWorker`).
 * `dispatch()` does not report completion. Read output tensors to synchronize with the executed result.
 * Hardware acceleration is a preference. Implementations can partition graphs or fall back per operator.
 * Reuse compiled graphs and tensors when shapes remain stable.
