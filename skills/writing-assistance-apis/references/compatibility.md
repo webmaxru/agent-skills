@@ -22,7 +22,7 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 * The supplied Chrome documentation explicitly covers `Summarizer` and points to the same built-in AI platform family for Writer and Rewriter.
 * Chrome documents stable support for built-in AI APIs on supported desktop platforms beginning in milestone 138 for the covered rollout.
 * Chrome documents desktop support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices, but not on mobile browsers.
-* Chrome documents minimum hardware requirements of at least 4 GB VRAM or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
+* Chrome documents minimum hardware requirements of strictly more than 4 GB VRAM, or a CPU path with at least 16 GB RAM and 4 CPU cores, plus at least 22 GB of free storage and an unmetered network for the initial download.
 * Validate the exact Chrome rollout status for Writer and Rewriter against current browser docs before promising stable availability in product requirements.
 * Chrome's built-in AI family now also includes a `Proofreader API` listed alongside `Summarizer`, `Writer`, and `Rewriter` in hardware requirement documentation. The Proofreader API is out of scope for this skill; route Proofreader tasks to a separate skill or the raw browser API directly.
 
@@ -48,6 +48,7 @@ Writing Assistance APIs remain browser-specific and rollout-sensitive. Treat sup
 ## TypeScript and typings
 
 * Browser DOM typings for these APIs are not guaranteed in every TypeScript version.
+* The [`@types/dom-chromium-ai`](https://www.npmjs.com/package/@types/dom-chromium-ai) npm package provides TypeScript typings for the Summarizer, Writer, Rewriter, and Prompt APIs; install it when working in a TypeScript project that targets Chrome's built-in AI APIs.
 * Preserve local declaration files or project typings when a codebase already has them.
 * Add narrow, feature-specific typings instead of widening the whole global namespace with speculative fields.
 
