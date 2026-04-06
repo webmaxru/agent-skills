@@ -70,7 +70,7 @@ Use `translateStreaming()` when the UI should render partial translated output a
 
 ## Input quota and usage
 
-* `inputQuota` exposes the session quota for future translation operations.
+* `inputQuota` exposes the session quota for future translation operations. The value is an `unrestricted double` and may be `+∞` when the implementation imposes no specific limit beyond memory or string-length constraints.
 * `measureInputUsage()` estimates how much of that quota the given input would consume.
 * Use `measureInputUsage()` for large or user-generated text before starting translation when product logic needs predictable limits.
 

@@ -43,6 +43,7 @@ Likely causes:
 
 * model initialization failed after availability passed
 * preview browser state or flags changed between checks
+* model download failed (the `downloadprogress` events stop and the `create()` promise rejects)
 
 Remediation:
 
