@@ -16,6 +16,7 @@
 2. Remove unsupported tools or modalities before retrying.
 3. Confirm that the browser implementation supports the Prompt API features the app is requesting.
 4. Confirm that the device meets the current browser's hardware and storage requirements.
+5. If `expectedInputs` includes `{ type: "audio" }` on Chrome, confirm the device has a GPU with strictly more than 4 GB of VRAM; Chrome does not support audio input on CPU-only configurations.
 
 ## `availability()` returns `downloadable`
 
