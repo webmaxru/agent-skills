@@ -81,6 +81,7 @@ Use `measureInputUsage()` when the feature needs to estimate quota cost before c
 Rules:
 
 * `inputQuota` is implementation-defined and can be `Infinity`.
+* When `inputQuota` is `Infinity`, `measureInputUsage()` returns `0`; do not treat a `0` return as empty input in that case.
 * `measureInputUsage()` and `detect()` can reject when quota is exceeded.
 * If the product accepts arbitrarily large text, add truncation, chunking, or explicit failure UI instead of retrying blindly.
 
