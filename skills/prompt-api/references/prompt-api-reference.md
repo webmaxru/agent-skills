@@ -34,11 +34,12 @@ Use this reference when planning or implementing browser-side Prompt API integra
 3. `system` messages are only valid in `initialPrompts`, and all `system` messages must appear before any non-system message.
 4. Using a `system` message in normal `prompt()`, `promptStreaming()`, `append()`, or `measureContextUsage()` input throws `NotSupportedError`.
 5. `prefix: true` is only valid on the final `assistant` message.
-6. `assistant` messages must remain text-only.
+6. `assistant` messages must remain text-only; any non-`"text"` content type in an `assistant` message throws `NotSupportedError`.
 7. Empty message arrays are invalid.
 8. Image content must use `ImageBitmapSource` or `BufferSource` values.
 9. Audio content must use `AudioBuffer`, `BufferSource`, or `Blob` values.
 10. Adjacent text content items are canonicalized together, so application code should not depend on separate contiguous text fragments remaining separate after validation.
+11. `"tool-call"` and `"tool-response"` are valid `LanguageModelMessageType` values for non-assistant messages and for `expectedInputs`/`expectedOutputs` declarations; their `value` field is a `DOMString` (typically JSON-encoded).
 
 ## Platform Constraints
 
