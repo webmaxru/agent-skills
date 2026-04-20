@@ -68,11 +68,14 @@ Use `translate()` when downstream logic needs the complete translated string.
 
 Use `translateStreaming()` when the UI should render partial translated output as it arrives.
 
+Empty strings and input that contains no translatable content (whitespace only, control characters) are returned unchanged per the specification; `sourceLanguage` and `targetLanguage` are ignored in those cases.
+
 ## Input quota and usage
 
-* `inputQuota` exposes the session quota for future translation operations.
-* `measureInputUsage()` estimates how much of that quota the given input would consume.
+* `inputQuota` exposes the session quota for future translation operations. Its type is `unrestricted double`, so it may be `+∞` if the implementation imposes no specific quota beyond available memory or JavaScript string limits.
+* `measureInputUsage()` estimates how much of that quota the given input would consume. It returns `0` when `inputQuota` is `+∞` (no quota limits apply).
 * Use `measureInputUsage()` for large or user-generated text before starting translation when product logic needs predictable limits.
+* Guard quota checks by confirming `inputQuota` is finite before treating a `0` usage estimate as meaningful.
 
 ## Lifecycle and cleanup
 

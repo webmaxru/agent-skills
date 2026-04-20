@@ -13,12 +13,14 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 
 * Chrome documents support beginning with milestone `138`.
 * Chrome documents the API as part of its built-in AI platform family.
+* The Translator API works in Chrome on **desktop only**. Chrome for Android, iOS, and mobile browsers do not support this API.
 * Chrome guidance notes that translation models are downloaded on demand.
 * Chrome recommends checking support with `'Translator' in self` and using `availability()` before `create()`.
 * Chrome guidance notes that browser privacy protections report all language pairs as `downloadable` until a site first creates a translator for a specific pair; the actual download state for a given pair is not revealed before that first creation attempt.
-* Chrome documents cross-origin iframe delegation through `allow="translator"` and states that Web Workers are unsupported.
+* Chrome documents cross-origin iframe delegation through `allow="translator"` and states that Web Workers are unsupported due to the complexity of checking permissions-policy status without a responsible document.
 * Chrome guidance says translation requests are processed sequentially, so large jobs should surface explicit loading state.
 * Chrome points to `@types/dom-chromium-ai` for TypeScript typings when local DOM libs do not yet include the API.
+* If `downloadprogress` events stop before the `create()` promise resolves, the download has failed and `create()` will reject.
 
 ## Microsoft Edge notes
 
