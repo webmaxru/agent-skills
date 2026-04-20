@@ -13,7 +13,7 @@ Core members:
 * `session.detect(input, options?)`
 * `session.measureInputUsage(input, options?)`
 * `session.destroy()`
-* `session.expectedInputLanguages`
+* `session.expectedInputLanguages` — `FrozenArray<DOMString>` or `null`; `null` when `expectedInputLanguages` was not supplied or was empty at creation time
 * `session.inputQuota`
 
 ## Create options
