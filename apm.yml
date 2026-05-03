@@ -7,5 +7,6 @@ dependencies:
   - webmaxru/ai-native-dev/skills/agent-package-manager
   - webmaxru/ai-native-dev/skills/github-agentic-workflows
   - webmaxru/ai-native-dev/skills/agent-skill-deploy
+  - webmaxru/ai-native-dev/prompts/version-bump-and-deploy.prompt.md
   mcp: []
 scripts: {}
