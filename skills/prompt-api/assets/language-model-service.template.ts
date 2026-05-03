@@ -1,5 +1,5 @@
 export type PromptRole = "system" | "user" | "assistant";
-export type PromptContentType = "text" | "image" | "audio";
+export type PromptContentType = "text" | "image" | "audio" | "tool-call" | "tool-response";
 
 export type PromptExpected = {
   type: PromptContentType;
@@ -16,7 +16,14 @@ export type PromptTool = {
 export type PromptTextContent = { type: "text"; value: string };
 export type PromptImageContent = { type: "image"; value: ImageBitmapSource | BufferSource };
 export type PromptAudioContent = { type: "audio"; value: AudioBuffer | BufferSource | Blob };
-export type PromptMessageContent = PromptTextContent | PromptImageContent | PromptAudioContent;
+export type PromptToolCallContent = { type: "tool-call"; value: string };
+export type PromptToolResponseContent = { type: "tool-response"; value: string };
+export type PromptMessageContent =
+  | PromptTextContent
+  | PromptImageContent
+  | PromptAudioContent
+  | PromptToolCallContent
+  | PromptToolResponseContent;
 
 export type PromptMessage = {
   role: PromptRole;

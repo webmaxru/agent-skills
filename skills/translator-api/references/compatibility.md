@@ -17,7 +17,7 @@ Translator API support is browser-specific and rollout-sensitive. Treat browser 
 * Chrome guidance notes that translation models are downloaded on demand.
 * Chrome recommends checking support with `'Translator' in self` and using `availability()` before `create()`.
 * Chrome guidance notes that browser privacy protections report all language pairs as `downloadable` until a site first creates a translator for a specific pair; the actual download state for a given pair is not revealed before that first creation attempt.
-* Chrome documents cross-origin iframe delegation through `allow="translator"` and states that Web Workers are unsupported.
+* Chrome documents cross-origin iframe delegation through `allow="translator"` and states that Web Workers are unsupported due to the complexity of checking permissions-policy status without a responsible document.
 * Chrome guidance says translation requests are processed sequentially, so large jobs should surface explicit loading state.
 * Chrome points to `@types/dom-chromium-ai` for TypeScript typings when local DOM libs do not yet include the API.
 * Chrome publishes a list of supported language codes; the list is implementation-specific and may change. Use `availability()` at runtime to determine whether a specific language pair is supported rather than hard-coding the list.

@@ -198,7 +198,7 @@ session.destroy();
 
 1. Do not place `system` messages in normal `prompt()`, `append()`, or `measureContextUsage()` input.
 2. Do not set `prefix: true` on any message except the final `assistant` message.
-3. Do not attach image or audio content to an `assistant` message.
+3. Do not attach image, audio, `tool-call`, or `tool-response` content to an `assistant` message; assistant messages must be text-only.
 4. Do not pass an empty message array.
 5. Both Chrome and Edge document `responseConstraint` regex support alongside JSON Schema. Prefer JSON Schema for maximum cross-browser portability. When using regex constraints, verify the target browser version supports them, since the spec IDL uses `object` type and regex is a browser-implemented extension.
 

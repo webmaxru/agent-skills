@@ -13,7 +13,7 @@ Use this reference when the feature must support multiple Prompt API generations
 
 1. Chrome documents the web Prompt API as an origin-trial feature in Chrome 138 and requires on-device model support on desktop-class hardware.
 2. Chrome page integrations use Gemini Nano and currently document support on Windows 10 or 11, macOS 13+, Linux, and Chromebook Plus devices on supported ChromeOS builds.
-3. Chrome hardware requirements: at least 22 GB of free storage on the Chrome profile volume, and either a GPU with strictly more than 4 GB of VRAM or a CPU with 16 GB or more of RAM and 4 or more CPU cores.
+3. Chrome hardware requirements: at least 22 GB of free storage on the Chrome profile volume, and either a GPU with strictly more than 4 GB of VRAM or a CPU with 16 GB or more of RAM and 4 or more CPU cores. Chrome note: Prompt API with audio input requires a GPU; the CPU fallback does not apply when `expectedInputs` includes `{ type: "audio" }`.
 4. Edge documents the Prompt API as a developer preview in Canary or Dev starting with version `138.0.3309.2`.
 5. Edge page integrations currently target the built-in Phi-4-mini model and require Windows 10 or 11 or macOS 13.3 or later, at least 20 GB of free storage on the Edge profile volume (model deleted if drops below 10 GB), and at least 5.5 GB of VRAM.
 6. Both browser docs treat model download as a separate readiness step that can require significant disk space and an unmetered network for the initial download.
