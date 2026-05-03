@@ -23,7 +23,7 @@ The W3C WebNN specification at `https://www.w3.org/TR/webnn/` is the authoritati
 * `accelerated`: boolean (default `true`). When `true`, the platform attempts to use massively parallel hardware such as a GPU or NPU. When `false`, the application prefers CPU inference. `accelerated` has less priority than `powerPreference`; contradictory combinations (e.g., `powerPreference: "high-performance"` with `accelerated: false`) let the implementation choose the best available match.
 * `MLContext.accelerated`: read-only attribute reflecting whether the context uses hardware acceleration.
 * `context.lost`: a promise that resolves when the execution context becomes invalid.
-* `opSupportLimits()`: reports device-dependent support limits, operator data type coverage, and rank ranges for inputs, constants, and outputs.
+* `opSupportLimits()`: reports device-dependent support limits, operator data type coverage, and rank ranges for inputs, constants, and outputs. Note: the W3C specification (§5.1 and §8.3.7) identifies `opSupportLimits()` as a potential fingerprinting vector; implementations may bucket capabilities to reduce entropy.
 
 Note: `MLDeviceType` (`"cpu"` / `"gpu"` / `"npu"`) was removed from the specification (see [#809](https://github.com/webmachinelearning/webnn/pull/809)). Use `accelerated` and `powerPreference` instead.
 

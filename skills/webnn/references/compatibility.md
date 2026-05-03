@@ -45,4 +45,9 @@ Note: `MLDeviceType` (`"cpu"` / `"gpu"` / `"npu"`) was removed from the specific
 * Windows ML or ONNX Runtime-specific behavior can depend on the Chromium WebNN ONNX Runtime feature flag.
 * Development-only flags such as `--no-sandbox` or `--disable-gpu-sandbox` are not acceptable shipping guidance.
 
+## Origin Trial
+
+* A WebNN Origin Trial is in preparation. Developers can register for trial keys to enable WebNN without requiring a Chromium flag flip. See `https://webnn.io/learn/get-started/ot_registration` for registration details.
+* Origin Trial keys are time-limited. Build detection and fallback paths that remain correct when a trial key expires or is unavailable.
+
 Validate the actual target browser and milestone before attributing failures to application code.
