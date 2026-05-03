@@ -13,6 +13,7 @@ Language Detector API support is rollout-sensitive. Treat browser support, previ
 
 * The Language Detector API works in Chrome on desktop only. Chrome for Android and iOS are not supported.
 * Chrome documents support beginning with milestone `138`.
+* The Language Detector and Translator APIs are desktop-only in Chrome; they are not supported on Chrome for Android, iOS, or any mobile platform.
 * Chrome documents per-language availability checking via `availability()` starting with Chrome `132`.
 * Chrome documents the API as part of its built-in AI platform family.
 * Chrome guidance notes that the model is downloaded on demand and might already be present because other browser features can use it.
