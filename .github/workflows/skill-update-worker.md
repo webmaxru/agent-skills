@@ -21,7 +21,9 @@ permissions:
 concurrency:
   group: skill-update-worker-${{ github.repository }}-${{ inputs.prompt_path }}
   cancel-in-progress: false
-engine: copilot
+engine:
+  id: copilot
+  version: "1.0.43"
 network:
   allowed:
     - defaults
